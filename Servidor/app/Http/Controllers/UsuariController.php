@@ -64,7 +64,7 @@ class UsuariController extends Controller
             $tupla = Usuari::findOrFail($id);
             return response()->json(['status' => 'correcto', 'data' => $tupla], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json(['status' => 'Usuari no trobada'], 400);
+            return response()->json(['status' => 'Usuari no trobat'], 400);
         }
     }
 
