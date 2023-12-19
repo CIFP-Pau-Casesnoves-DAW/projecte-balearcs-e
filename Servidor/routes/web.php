@@ -1,6 +1,8 @@
 <?php
 
+use App\Models\Usuari;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UsuariController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,4 +17,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
+});
+
+Route::group(['prefix' => 'usuaris'], function () {
+    Route::get('', [UsuariController::class, 'index'])->name('usuari.index');
+    Route::get('/{id}', [UsuariController::class, 'show'])->name('usuari.show');
+    Route::put('/{id}', [UsuariController::class, 'update'])->name('usuari.update');
 });
