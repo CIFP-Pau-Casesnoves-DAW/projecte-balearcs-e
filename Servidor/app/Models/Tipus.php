@@ -4,27 +4,19 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Espai;
 
-class PuntsInteres extends Model
+class Tipus extends Model
 {
     use HasFactory;
 
-    protected $table = 'punts_interes';
+    protected $table = 'tipus';
 
     protected $fillable = [
-        'titol',
-        'descripcio',
+        'nom_tipus',
         'data_baixa',
-        'espai_id',
     ];
 
     protected $dates = [
         'data_baixa',
     ];
-
-    public function espai()
-    {
-        return $this->belongsTo(Espai::class, 'espai_id');
-    }
 }

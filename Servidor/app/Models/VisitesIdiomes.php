@@ -5,20 +5,20 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ServeisIdiomes extends Model
+class VisitesIdiomes extends Model
 {
     use HasFactory;
 
-    protected $table = 'serveis_idiomes';
+    protected $table = 'visites_idiomes';
 
     protected $fillable = [
         'idioma_id',
-        'servei_id',
+        'visita_id',
         'traduccio',
         'data_baixa',
     ];
 
-    protected $primaryKey = ['idioma_id', 'servei_id'];
+    protected $primaryKey = ['idioma_id', 'visita_id'];
     public $incrementing = false;
 
     protected $dates = [
@@ -27,11 +27,11 @@ class ServeisIdiomes extends Model
 
     public function idioma()
     {
-        return $this->belongsTo(Idioma::class, 'idioma_id');
+        return $this->belongsTo(Idiomes::class, 'idioma_id');
     }
 
-    public function servei()
+    public function visita()
     {
-        return $this->belongsTo(Serveis::class, 'servei_id');
+        return $this->belongsTo(Visita::class, 'visita_id');
     }
 }
