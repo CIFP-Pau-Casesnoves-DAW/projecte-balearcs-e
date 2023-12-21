@@ -17,7 +17,14 @@ use App\Http\Controllers\VisitesController;
 use App\Http\Controllers\VisitesIdiomesController;
 use App\Http\Controllers\VisitesPuntsInteresController;
 use App\Http\Controllers\ArquitectesController;
-
+use App\Http\Controllers\AudiosController;
+use App\Http\Controllers\EspaisController;
+use App\Http\Controllers\EspaisIdiomesController;
+use App\Http\Controllers\EspaisModalitatsController;
+use App\Http\Controllers\EspaisServeisController;
+use App\Http\Controllers\FotosController;
+use App\Http\Controllers\IdiomesController;
+use App\Http\Controllers\ModalitatsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -156,4 +163,112 @@ Route::prefix('api')->group(function () {
     Route::post('/visites/punts-interes', [VisitesPuntsInteresController::class, 'store']);
     Route::get('/visites/{visitaId}/punts-interes/{puntInteresId}', [VisitesPuntsInteresController::class, 'show']);
     Route::delete('/visites/{visitaId}/punts-interes/{puntInteresId}', [VisitesPuntsInteresController::class, 'destroy']);
+});
+
+
+// Rutes per a llistar, crear, emmagatzemar, mostrar, editar, actualitzar i eliminar arquitectes
+Route::group(['prefix' => 'arquitectes'], function () {
+    Route::get('', [ArquitectesController::class, 'index'])->name('arquitectes.index');
+    Route::get('/create', [ArquitectesController::class, 'create'])->name('arquitectes.create');
+    Route::post('', [ArquitectesController::class, 'store'])->name('arquitectes.store');
+    Route::get('/{arquitecte}', [ArquitectesController::class, 'show'])->name('arquitectes.show');
+    Route::get('/{arquitecte}/edit', [ArquitectesController::class, 'edit'])->name('arquitectes.edit');
+    Route::put('/{arquitecte}', [ArquitectesController::class, 'update'])->name('arquitectes.update');
+    Route::delete('/{arquitecte}', [ArquitectesController::class, 'destroy'])->name('arquitectes.destroy');
+});
+
+
+// Rutes per a llistar, crear, emmagatzemar, mostrar, editar, actualitzar i eliminar audios
+Route::group(['prefix' => 'audios'], function () {
+    Route::get('', [AudiosController::class, 'index'])->name('audios.index');
+    Route::get('/create', [AudiosController::class, 'create'])->name('audios.create');
+    Route::post('', [AudiosController::class, 'store'])->name('audios.store');
+    Route::get('/{audio}', [AudiosController::class, 'show'])->name('audios.show');
+    Route::get('/{audio}/edit', [AudiosController::class, 'edit'])->name('audios.edit');
+    Route::put('/{audio}', [AudiosController::class, 'update'])->name('audios.update');
+    Route::delete('/{audio}', [AudiosController::class, 'destroy'])->name('audios.destroy');
+});
+
+
+// Rutes per a llistar, crear, emmagatzemar, mostrar, editar, actualitzar i eliminar espais
+Route::group(['prefix' => 'espais'], function () {
+    Route::get('', [EspaisController::class, 'index'])->name('espais.index');
+    Route::get('/create', [EspaisController::class, 'create'])->name('espais.create');
+    Route::post('', [EspaisController::class, 'store'])->name('espais.store');
+    Route::get('/{espai}', [EspaisController::class, 'show'])->name('espais.show');
+    Route::get('/{espai}/edit', [EspaisController::class, 'edit'])->name('espais.edit');
+    Route::put('/{espai}', [EspaisController::class, 'update'])->name('espais.update');
+    Route::delete('/{espai}', [EspaisController::class, 'destroy'])->name('espais.destroy');
+});
+
+
+// Rutes per a llistar, crear, emmagatzemar, mostrar, editar, actualitzar i eliminar espais_idiomes
+Route::group(['prefix' => 'espais_idiomes'], function () {
+    Route::get('', [EspaisIdiomesController::class, 'index'])->name('espais_idiomes.index');
+    Route::get('/create', [EspaisIdiomesController::class, 'create'])->name('espais_idiomes.create');
+    Route::post('', [EspaisIdiomesController::class, 'store'])->name('espais_idiomes.store');
+    Route::get('/{idioma_id}/{espai_id}', [EspaisIdiomesController::class, 'show'])->where(['idioma_id' => '[0-9]+', 'espai_id' => '[0-9]+'])->name('espais_idiomes.show');
+    Route::get('/{idioma_id}/{espai_id}/edit', [EspaisIdiomesController::class, 'edit'])->where(['idioma_id' => '[0-9]+', 'espai_id' => '[0-9]+'])->name('espais_idiomes.edit');
+    Route::put('/{idioma_id}/{espai_id}', [EspaisIdiomesController::class, 'update'])->where(['idioma_id' => '[0-9]+', 'espai_id' => '[0-9]+'])->name('espais_idiomes.update');
+    Route::delete('/{idioma_id}/{espai_id}', [EspaisIdiomesController::class, 'destroy'])->where(['idioma_id' => '[0-9]+', 'espai_id' => '[0-9]+'])->name('espais_idiomes.destroy');
+});
+
+
+// Rutes per a llistar, crear, emmagatzemar, mostrar, editar, actualitzar i eliminar espais_modalitats
+Route::group(['prefix' => 'espais_modalitats'], function () {
+    Route::get('', [EspaisModalitatsController::class, 'index'])->name('espais_modalitats.index');
+    Route::get('/create', [EspaisModalitatsController::class, 'create'])->name('espais_modalitats.create');
+    Route::post('', [EspaisModalitatsController::class, 'store'])->name('espais_modalitats.store');
+    Route::get('/{espai_id}/{modalitat_id}', [EspaisModalitatsController::class, 'show'])->where(['espai_id' => '[0-9]+', 'modalitat_id' => '[0-9]+'])->name('espais_modalitats.show');
+    Route::get('/{espai_id}/{modalitat_id}/edit', [EspaisModalitatsController::class, 'edit'])->where(['espai_id' => '[0-9]+', 'modalitat_id' => '[0-9]+'])->name('espais_modalitats.edit');
+    Route::put('/{espai_id}/{modalitat_id}', [EspaisModalitatsController::class, 'update'])->where(['espai_id' => '[0-9]+', 'modalitat_id' => '[0-9]+'])->name('espais_modalitats.update');
+    Route::delete('/{espai_id}/{modalitat_id}', [EspaisModalitatsController::class, 'destroy'])->where(['espai_id' => '[0-9]+', 'modalitat_id' => '[0-9]+'])->name('espais_modalitats.destroy');
+});
+
+
+// Rutes per a llistar, crear, emmagatzemar, mostrar, editar, actualitzar i eliminar espais_serveis
+Route::group(['prefix' => 'espais_serveis'], function () {
+    Route::get('', [EspaisServeisController::class, 'index'])->name('espais_serveis.index');
+    Route::get('/create', [EspaisServeisController::class, 'create'])->name('espais_serveis.create');
+    Route::post('', [EspaisServeisController::class, 'store'])->name('espais_serveis.store');
+    Route::get('/{espai_id}/{servei_id}', [EspaisServeisController::class, 'show'])->where(['espai_id' => '[0-9]+', 'servei_id' => '[0-9]+'])->name('espais_serveis.show');
+    Route::get('/{espai_id}/{servei_id}/edit', [EspaisServeisController::class, 'edit'])->where(['espai_id' => '[0-9]+', 'servei_id' => '[0-9]+'])->name('espais_serveis.edit');
+    Route::put('/{espai_id}/{servei_id}', [EspaisServeisController::class, 'update'])->where(['espai_id' => '[0-9]+', 'servei_id' => '[0-9]+'])->name('espais_serveis.update');
+    Route::delete('/{espai_id}/{servei_id}', [EspaisServeisController::class, 'destroy'])->where(['espai_id' => '[0-9]+', 'servei_id' => '[0-9]+'])->name('espais_serveis.destroy');
+});
+
+
+// Rutes per a llistar, crear, emmagatzemar, mostrar, editar, actualitzar i eliminar fotos
+Route::group(['prefix' => 'fotos'], function () {
+    Route::get('', [FotosController::class, 'index'])->name('fotos.index');
+    Route::get('/create', [FotosController::class, 'create'])->name('fotos.create');
+    Route::post('', [FotosController::class, 'store'])->name('fotos.store');
+    Route::get('/{foto_id}', [FotosController::class, 'show'])->where(['foto_id' => '[0-9]+'])->name('fotos.show');
+    Route::get('/{foto_id}/edit', [FotosController::class, 'edit'])->where(['foto_id' => '[0-9]+'])->name('fotos.edit');
+    Route::put('/{foto_id}', [FotosController::class, 'update'])->where(['foto_id' => '[0-9]+'])->name('fotos.update');
+    Route::delete('/{foto_id}', [FotosController::class, 'destroy'])->where(['foto_id' => '[0-9]+'])->name('fotos.destroy');
+});
+
+
+// Rutes per a llistar, crear, emmagatzemar, mostrar, editar, actualitzar i eliminar idiomes
+Route::group(['prefix' => 'idiomes'], function () {
+    Route::get('', [IdiomesController::class, 'index'])->name('idiomes.index');
+    Route::get('/create', [IdiomesController::class, 'create'])->name('idiomes.create');
+    Route::post('', [IdiomesController::class, 'store'])->name('idiomes.store');
+    Route::get('/{idioma_id}', [IdiomesController::class, 'show'])->where(['idioma_id' => '[0-9]+'])->name('idiomes.show');
+    Route::get('/{idioma_id}/edit', [IdiomesController::class, 'edit'])->where(['idioma_id' => '[0-9]+'])->name('idiomes.edit');
+    Route::put('/{idioma_id}', [IdiomesController::class, 'update'])->where(['idioma_id' => '[0-9]+'])->name('idiomes.update');
+    Route::delete('/{idioma_id}', [IdiomesController::class, 'destroy'])->where(['idioma_id' => '[0-9]+'])->name('idiomes.destroy');
+});
+
+
+// Rutes per a llistar, crear, emmagatzemar, mostrar, editar, actualitzar i eliminar modalitats
+Route::group(['prefix' => 'modalitats'], function () {
+    Route::get('', [ModalitatsController::class, 'index'])->name('modalitats.index');
+    Route::get('/create', [ModalitatsController::class, 'create'])->name('modalitats.create');
+    Route::post('', [ModalitatsController::class, 'store'])->name('modalitats.store');
+    Route::get('/{modalitat_id}', [ModalitatsController::class, 'show'])->where(['modalitat_id' => '[0-9]+'])->name('modalitats.show');
+    Route::get('/{modalitat_id}/edit', [ModalitatsController::class, 'edit'])->where(['modalitat_id' => '[0-9]+'])->name('modalitats.edit');
+    Route::put('/{modalitat_id}', [ModalitatsController::class, 'update'])->where(['modalitat_id' => '[0-9]+'])->name('modalitats.update');
+    Route::delete('/{modalitat_id}', [ModalitatsController::class, 'destroy'])->where(['modalitat_id' => '[0-9]+'])->name('modalitats.destroy');
 });
