@@ -16,6 +16,8 @@ use App\Http\Controllers\ValoracionsController;
 use App\Http\Controllers\VisitesController;
 use App\Http\Controllers\VisitesIdiomesController;
 use App\Http\Controllers\VisitesPuntsInteresController;
+use App\Http\Controllers\ArquitectesController;
+
 
 /*
 |--------------------------------------------------------------------------
