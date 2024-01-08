@@ -7,10 +7,28 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 
+/**
+ * @OA\Tag(
+ *     name="Usuari",
+ *     description="Operacions per a Usuaris"
+ * )
+ */
 class UsuariController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * @OA\Get(
+     *     path="/api/usuaris",
+     *     tags={"Usuari"},
+     *     summary="Llista tots els usuaris",
+     *     @OA\Response(
+     *         response=200,
+     *         description="Retorna un llistat de tots els usuaris",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(ref="#/components/schemas/Usuari")
+     *         )
+     *     )
+     * )
      */
     public function index()
     {
@@ -21,7 +39,19 @@ class UsuariController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * @OA\Post(
+     *     path="/api/usuaris",
+     *     tags={"Usuari"},
+     *     summary="Crea un nou usuari",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/Usuari")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Usuari creat correctament"
+     *     )
+     * )
      */
     public function store(Request $request)
     {
@@ -54,7 +84,24 @@ class UsuariController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * @OA\Get(
+     *     path="/api/usuaris/{id}",
+     *     tags={"Usuari"},
+     *     summary="Mostra un usuari específic",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Retorna l'usuari especificat",
+     *         @OA\JsonContent(ref="#/components/schemas/Usuari")
+     *     )
+     * )
      */
     public function show(string $id)
     {
@@ -69,7 +116,27 @@ class UsuariController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * @OA\Put(
+     *     path="/api/usuaris/{id}",
+     *     tags={"Usuari"},
+     *     summary="Actualitza un usuari específic",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/Usuari")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Usuari actualitzat correctament"
+     *     )
+     * )
      */
     public function update(Request $request, string $id)
     {
@@ -103,7 +170,23 @@ class UsuariController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * @OA\Delete(
+     *     path="/api/usuaris/{id}",
+     *     tags={"Usuari"},
+     *     summary="Elimina un usuari específic",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Usuari eliminat correctament"
+     *     )
+     * )
      */
     public function destroy(string $id)
     {

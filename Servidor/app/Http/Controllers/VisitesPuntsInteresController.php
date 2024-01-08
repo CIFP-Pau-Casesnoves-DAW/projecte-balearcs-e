@@ -5,6 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\VisitesPuntsInteres;
 
+/**
+ * @OA\Tag(
+ *     name="VisitesPuntsInteres",
+ *     description="Operacions per a Visites Punts d'Interès"
+ * )
+ */
 class VisitesPuntsInteresController extends Controller
 {
     /**
@@ -12,6 +18,28 @@ class VisitesPuntsInteresController extends Controller
      *
      * @param  int  $visitaId
      * @return \Illuminate\Http\Response
+     */
+
+     /**
+     * @OA\Get(
+     *     path="/api/visites/{visitaId}/puntsinteres",
+     *     tags={"VisitesPuntsInteres"},
+     *     summary="Llista tots els punts d'interès d'una visita",
+     *     @OA\Parameter(
+     *         name="visitaId",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Retorna un llistat de punts d'interès per a la visita especificada",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(ref="#/components/schemas/VisitesPuntsInteres")
+     *         )
+     *     )
+     * )
      */
     public function index($visitaId)
     {
@@ -24,6 +52,22 @@ class VisitesPuntsInteresController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
+     */
+
+     /**
+     * @OA\Post(
+     *     path="/api/visitespuntsinteres",
+     *     tags={"VisitesPuntsInteres"},
+     *     summary="Crea una nova associació entre una visita i un punt d'interès",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/VisitesPuntsInteres")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Associació entre la visita i el punt d'interès creada correctament"
+     *     )
+     * )
      */
     public function store(Request $request)
     {
@@ -46,6 +90,31 @@ class VisitesPuntsInteresController extends Controller
      * @param  int  $puntInteresId
      * @return \Illuminate\Http\Response
      */
+
+     /**
+     * @OA\Get(
+     *     path="/api/visites/{visitaId}/puntsinteres/{puntInteresId}",
+     *     tags={"VisitesPuntsInteres"},
+     *     summary="Mostra una associació específica entre una visita i un punt d'interès",
+     *     @OA\Parameter(
+     *         name="visitaId",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Parameter(
+     *         name="puntInteresId",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Retorna l'associació específica entre la visita i el punt d'interès",
+     *         @OA\JsonContent(ref="#/components/schemas/VisitesPuntsInteres")
+     *     )
+     * )
+     */
     public function show($visitaId, $puntInteresId)
     {
         $visitaPuntInteres = VisitesPuntsInteres::where('visita_id', $visitaId)->where('punts_interes_id', $puntInteresId)->first();
@@ -58,6 +127,30 @@ class VisitesPuntsInteresController extends Controller
      * @param  int  $visitaId
      * @param  int  $puntInteresId
      * @return \Illuminate\Http\Response
+     */
+
+     /**
+     * @OA\Delete(
+     *     path="/api/visites/{visitaId}/puntsinteres/{puntInteresId}",
+     *     tags={"VisitesPuntsInteres"},
+     *     summary="Elimina una associació específica entre una visita i un punt d'interès",
+     *     @OA\Parameter(
+     *         name="visitaId",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Parameter(
+     *         name="puntInteresId",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Associació entre la visita i el punt d'interès eliminada correctament"
+     *     )
+     * )
      */
     public function destroy($visitaId, $puntInteresId)
     {

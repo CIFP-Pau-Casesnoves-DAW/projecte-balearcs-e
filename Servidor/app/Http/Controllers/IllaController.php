@@ -5,12 +5,34 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Illa;
 
+/**
+ * @OA\Tag(
+ *     name="Illes",
+ *     description="Operacions relacionades amb les Illes"
+ * )
+ */
 class IllaController extends Controller
 {
     /**
      * Muestra una lista de todas las islas.
      *
      * @return \Illuminate\Http\Response
+     */
+
+     /**
+     * @OA\Get(
+     *     path="/api/illes",
+     *     tags={"Illes"},
+     *     summary="Llista totes les illes",
+     *     @OA\Response(
+     *         response=200,
+     *         description="Retorna un llistat de totes les illes",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(ref="#/components/schemas/Illa")
+     *         )
+     *     )
+     * )
      */
     public function index()
     {
@@ -23,6 +45,22 @@ class IllaController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
+     */
+
+     /**
+     * @OA\Post(
+     *     path="/api/illes",
+     *     tags={"Illes"},
+     *     summary="Crea una nova illa",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/Illa")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Illa creada correctament"
+     *     )
+     * )
      */
     public function store(Request $request)
     {
@@ -43,6 +81,27 @@ class IllaController extends Controller
      * @param  \App\Models\Illa  $illa
      * @return \Illuminate\Http\Response
      */
+
+     /**
+     * @OA\Get(
+     *     path="/api/illes/{id}",
+     *     tags={"Illes"},
+     *     summary="Mostra una illa específica",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Retorna la illa especificada",
+     *         @OA\JsonContent(ref="#/components/schemas/Illa")
+     *     )
+     * )
+     */
     public function show(Illa $illa)
     {
         return response()->json(['illa' => $illa]);
@@ -54,6 +113,30 @@ class IllaController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Illa  $illa
      * @return \Illuminate\Http\Response
+     */
+
+     /**
+     * @OA\Put(
+     *     path="/api/illes/{id}",
+     *     tags={"Illes"},
+     *     summary="Actualitza una illa específica",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/Illa")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Illa actualitzada correctament"
+     *     )
+     * )
      */
     public function update(Request $request, Illa $illa)
     {
@@ -73,6 +156,26 @@ class IllaController extends Controller
      *
      * @param  \App\Models\Illa  $illa
      * @return \Illuminate\Http\Response
+     */
+
+     /**
+     * @OA\Delete(
+     *     path="/api/illes/{id}",
+     *     tags={"Illes"},
+     *     summary="Elimina una illa específica",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Illa eliminada correctament"
+     *     )
+     * )
      */
     public function destroy(Illa $illa)
     {

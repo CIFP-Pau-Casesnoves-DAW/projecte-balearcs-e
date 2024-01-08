@@ -5,12 +5,34 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\PuntsInteres;
 
+/**
+ * @OA\Tag(
+ *     name="PuntsInteres",
+ *     description="Operacions per a Punts d'Interès"
+ * )
+ */
 class PuntsInteresController extends Controller
 {
     /**
      * Muestra una lista de todos los puntos de interés.
      *
      * @return \Illuminate\Http\Response
+     */
+
+     /**
+     * @OA\Get(
+     *     path="/api/puntsinteres",
+     *     tags={"PuntsInteres"},
+     *     summary="Llista tots els punts d'interès",
+     *     @OA\Response(
+     *         response=200,
+     *         description="Retorna un llistat de punts d'interès",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(ref="#/components/schemas/PuntsInteres")
+     *         )
+     *     )
+     * )
      */
     public function index()
     {
@@ -23,6 +45,22 @@ class PuntsInteresController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
+     */
+
+     /**
+     * @OA\Post(
+     *     path="/api/puntsinteres",
+     *     tags={"PuntsInteres"},
+     *     summary="Crea un nou punt d'interès",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/PuntsInteres")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Punt d'interès creat correctament"
+     *     )
+     * )
      */
     public function store(Request $request)
     {
@@ -44,6 +82,27 @@ class PuntsInteresController extends Controller
      * @param  \App\Models\PuntInteres  $puntInteres
      * @return \Illuminate\Http\Response
      */
+
+     /**
+     * @OA\Get(
+     *     path="/api/puntsinteres/{id}",
+     *     tags={"PuntsInteres"},
+     *     summary="Mostra un punt d'interès específic",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Retorna el punt d'interès especificat",
+     *         @OA\JsonContent(ref="#/components/schemas/PuntsInteres")
+     *     )
+     * )
+     */
     public function show(PuntsInteres $puntInteres)
     {
         return response()->json(['punt_interes' => $puntInteres]);
@@ -55,6 +114,30 @@ class PuntsInteresController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\PuntInteres  $puntInteres
      * @return \Illuminate\Http\Response
+     */
+
+     /**
+     * @OA\Put(
+     *     path="/api/puntsinteres/{id}",
+     *     tags={"PuntsInteres"},
+     *     summary="Actualitza un punt d'interès específic",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/PuntsInteres")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Punt d'interès actualitzat correctament"
+     *     )
+     * )
      */
     public function update(Request $request, PuntsInteres $puntInteres)
     {
@@ -75,6 +158,26 @@ class PuntsInteresController extends Controller
      *
      * @param  \App\Models\PuntsInteres  $puntInteres
      * @return \Illuminate\Http\Response
+     */
+
+     /**
+     * @OA\Delete(
+     *     path="/api/puntsinteres/{id}",
+     *     tags={"PuntsInteres"},
+     *     summary="Elimina un punt d'interès específic",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Punt d'interès eliminat correctament"
+     *     )
+     * )
      */
     public function destroy(PuntsInteres $puntInteres)
     {
