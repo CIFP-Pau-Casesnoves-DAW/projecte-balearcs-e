@@ -56,7 +56,7 @@ class Espai extends Model
      */
     public function municipi()
     {
-        return $this->belongsTo(Municipi::class, 'municipi_id');
+        return $this->belongsTo(Municipis::class, 'municipi_id');
     }
 
     /**
@@ -64,7 +64,7 @@ class Espai extends Model
      */
     public function fotos()
     {
-        return $this->hasMany(Foto::class);
+        return $this->hasMany(Fotos::class);
     }   
 
     

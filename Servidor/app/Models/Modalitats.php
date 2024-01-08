@@ -23,7 +23,7 @@ class Modalitats extends Model
      */
     public function espaisModalitats()
     {
-        return $this->hasMany(EspaiModalitat::class, 'modalitat_id');
+        return $this->hasMany(EspaisModalitats::class, 'modalitat_id');
     }
 
     /**

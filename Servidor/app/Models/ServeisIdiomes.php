@@ -27,7 +27,7 @@ class ServeisIdiomes extends Model
 
     public function idioma()
     {
-        return $this->belongsTo(Idioma::class, 'idioma_id');
+        return $this->belongsTo(Idiomes::class, 'idioma_id');
     }
 
     public function servei()

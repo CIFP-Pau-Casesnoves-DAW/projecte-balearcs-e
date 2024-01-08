@@ -31,6 +31,6 @@ class Valoracions extends Model
 
     public function espai()
     {
-        return $this->belongsTo(Espais::class, 'espai_id');
+        return $this->belongsTo(Espai::class, 'espai_id');
     }
 }

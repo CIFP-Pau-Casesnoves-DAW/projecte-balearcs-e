@@ -24,7 +24,7 @@ class Fotos extends Model
      */
     public function puntInteres()
     {
-        return $this->belongsTo(PuntInteres::class, 'punt_interes_id');
+        return $this->belongsTo(PuntsInteres::class, 'punt_interes_id');
     }
 
     /**

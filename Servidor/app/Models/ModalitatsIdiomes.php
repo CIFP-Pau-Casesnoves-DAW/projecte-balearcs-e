@@ -19,11 +19,11 @@ class ModalitatsIdiomes extends Model
 
         public function idioma()
         {
-            return $this->belongsTo(Idioma::class);
+            return $this->belongsTo(Idiomes::class);
         }
 
         public function modalitat()
         {
-            return $this->belongsTo(Modalitat::class);
+            return $this->belongsTo(Modalitats::class);
         }
 }

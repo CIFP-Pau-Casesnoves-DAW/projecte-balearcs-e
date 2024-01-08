@@ -24,7 +24,7 @@ class Idiomes extends Model
      */
     public function espaisIdiomes()
     {
-        return $this->hasMany(EspaiIdioma::class);
+        return $this->hasMany(EspaisIdiomes::class);
     }
 
     /**
@@ -32,7 +32,7 @@ class Idiomes extends Model
      */
     public function serveisIdiomes()
     {
-        return $this->hasMany(ServeiIdioma::class);
+        return $this->hasMany(ServeisIdiomes::class);
     }
 
     /**

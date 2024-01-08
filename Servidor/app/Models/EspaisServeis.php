@@ -25,7 +25,7 @@ class EspaisServeis extends Pivot
      */
     public function servei()
     {
-        return $this->belongsTo(Servei::class, 'servei_id');
+        return $this->belongsTo(Serveis::class, 'servei_id');
     }
 
     /**

@@ -33,7 +33,7 @@ class EspaisModalitats extends Pivot
      */
     public function modalitat()
     {
-        return $this->belongsTo(Modalitat::class, 'modalitat_id');
+        return $this->belongsTo(Modalitats::class, 'modalitat_id');
     }
 
 

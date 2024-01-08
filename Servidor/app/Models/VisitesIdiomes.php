@@ -32,6 +32,6 @@ class VisitesIdiomes extends Model
 
     public function visita()
     {
-        return $this->belongsTo(Visita::class, 'visita_id');
+        return $this->belongsTo(Visites::class, 'visita_id');
     }
 }
