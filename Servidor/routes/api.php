@@ -1,7 +1,7 @@
 <?php
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\UsuariController;
+use App\Http\Controllers\UsuarisController;
 use App\Http\Controllers\IllaController;
 use App\Http\Controllers\MunicipisController;
 use App\Http\Controllers\ModalitatsIdiomesController;
@@ -39,9 +39,9 @@ Route::get('/', function () {
 });
 
 Route::group(['prefix' => 'usuaris'], function () {
-    Route::get('', [UsuariController::class, 'index'])->name('usuari.index');
-    Route::get('/{id}', [UsuariController::class, 'show'])->name('usuari.show');
-    Route::put('/{id}', [UsuariController::class, 'update'])->name('usuari.update');
+    Route::get('', [UsuarisController::class, 'index'])->name('usuari.index');
+    Route::get('/{id}', [UsuarisController::class, 'show'])->name('usuari.show');
+    Route::put('/{id}', [UsuarisController::class, 'update'])->name('usuari.update');
 });
 
 // Rutas para listar, crear, almacenar, mostrar, editar, actualizar y eliminar islas
