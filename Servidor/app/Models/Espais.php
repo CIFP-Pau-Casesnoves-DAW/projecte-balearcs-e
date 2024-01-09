@@ -36,11 +36,11 @@ class Espais extends Model
     }
 
     /**
-     * Relació amb el model Usuari (Gestor).
+     * Relació amb el model Usuaris (Gestor).
      */
     public function gestor()
     {
-        return $this->belongsTo(Usuari::class, 'gestor_id');
+        return $this->belongsTo(Usuaris::class, 'gestor_id');
     }
 
     /**

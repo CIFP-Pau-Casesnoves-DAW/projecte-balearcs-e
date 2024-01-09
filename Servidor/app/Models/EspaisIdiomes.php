@@ -27,7 +27,7 @@ class EspaisIdiomes extends Pivot
      */
     public function espai()
     {
-        return $this->belongsTo(Espai::class, 'espai_id');
+        return $this->belongsTo(Espais::class, 'espai_id');
     }
 
     /**
@@ -35,7 +35,7 @@ class EspaisIdiomes extends Pivot
      */
     public function idioma()
     {
-        return $this->belongsTo(Idioma::class, 'idioma_id');
+        return $this->belongsTo(Idiomes::class, 'idioma_id');
     }
 
     // Recordau que hem de sobreescriure els mètodes `getKey` i `getKeyName` si utilitzam claus primàries compostes

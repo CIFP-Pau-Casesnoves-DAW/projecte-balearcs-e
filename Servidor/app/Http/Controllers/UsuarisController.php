@@ -2,54 +2,54 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Usuari;
+use App\Models\Usuaris;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 
 /**
  * @OA\Tag(
- *     name="Usuari",
- *     description="Operacions per a Usuaris"
+ *     name="Usuaris",
+ *     description="Operacions per a Usuariss"
  * )
  */
-class UsuariController extends Controller
+class UsuarisController extends Controller
 {
     /**
      * @OA\Get(
-     *     path="/api/usuaris",
-     *     tags={"Usuari"},
-     *     summary="Llista tots els usuaris",
+     *     path="/api/Usuariss",
+     *     tags={"Usuaris"},
+     *     summary="Llista tots els Usuariss",
      *     @OA\Response(
      *         response=200,
-     *         description="Retorna un llistat de tots els usuaris",
+     *         description="Retorna un llistat de tots els Usuariss",
      *         @OA\JsonContent(
      *             type="array",
-     *             @OA\Items(ref="#/components/schemas/Usuari")
+     *             @OA\Items(ref="#/components/schemas/Usuaris")
      *         )
      *     )
      * )
      */
     public function index()
     {
-        // $usuaris = Usuari::paginate(10);
-        // return view('usuari.index', ['usuaris' => $usuaris]);
-        $tuples = Usuari::all();
+        // $Usuariss = Usuaris::paginate(10);
+        // return view('Usuaris.index', ['Usuariss' => $Usuariss]);
+        $tuples = Usuaris::all();
         return response()->json(['status' => 'correcto', 'data' => $tuples], 200);
     }
 
     /**
      * @OA\Post(
-     *     path="/api/usuaris",
-     *     tags={"Usuari"},
-     *     summary="Crea un nou usuari",
+     *     path="/api/Usuariss",
+     *     tags={"Usuaris"},
+     *     summary="Crea un nou Usuaris",
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/Usuari")
+     *         @OA\JsonContent(ref="#/components/schemas/Usuaris")
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Usuari creat correctament"
+     *         description="Usuaris creat correctament"
      *     )
      * )
      */
@@ -59,9 +59,9 @@ class UsuariController extends Controller
             'nom' => 'required|string|max:255',
             'llinatges' => 'required|string|max:255',
             'dni' => 'required|string|max:20',
-            'mail' => 'required|email|unique:usuaris,mail|max:255',
+            'mail' => 'required|email|unique:Usuariss,mail|max:255',
             'contrasenya' => 'required|string|min:6',
-            'rol' => 'required|in:usuari,administrador,gestor',
+            'rol' => 'required|in:Usuaris,administrador,gestor',
             'data_baixa' => 'nullable|date',
         ];
 
@@ -76,7 +76,7 @@ class UsuariController extends Controller
 
         $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
         if (!$validacio->fails()) {
-            $tupla = Usuari::create($request->all());
+            $tupla = Usuaris::create($request->all());
             return response()->json(['status' => 'correcte', 'data' => $tupla], 200);
         } else {
             return response()->json(['status' => 'error', 'data' => $validacio->errors()], 400);
@@ -85,9 +85,9 @@ class UsuariController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/usuaris/{id}",
-     *     tags={"Usuari"},
-     *     summary="Mostra un usuari específic",
+     *     path="/api/Usuariss/{id}",
+     *     tags={"Usuaris"},
+     *     summary="Mostra un Usuaris específic",
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
@@ -98,28 +98,28 @@ class UsuariController extends Controller
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Retorna l'usuari especificat",
-     *         @OA\JsonContent(ref="#/components/schemas/Usuari")
+     *         description="Retorna l'Usuaris especificat",
+     *         @OA\JsonContent(ref="#/components/schemas/Usuaris")
      *     )
      * )
      */
     public function show(string $id)
     {
-        // $usuari = Usuari::find($id);
-        // return view('usuari.show', ['usuari' => $usuari]);
+        // $Usuaris = Usuaris::find($id);
+        // return view('Usuaris.show', ['Usuaris' => $Usuaris]);
         try {
-            $tupla = Usuari::findOrFail($id);
+            $tupla = Usuaris::findOrFail($id);
             return response()->json(['status' => 'correcto', 'data' => $tupla], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json(['status' => 'Usuari no trobada'], 400);
+            return response()->json(['status' => 'Usuaris no trobada'], 400);
         }
     }
 
     /**
      * @OA\Put(
-     *     path="/api/usuaris/{id}",
-     *     tags={"Usuari"},
-     *     summary="Actualitza un usuari específic",
+     *     path="/api/Usuariss/{id}",
+     *     tags={"Usuaris"},
+     *     summary="Actualitza un Usuaris específic",
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
@@ -130,24 +130,24 @@ class UsuariController extends Controller
      *     ),
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/Usuari")
+     *         @OA\JsonContent(ref="#/components/schemas/Usuaris")
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Usuari actualitzat correctament"
+     *         description="Usuaris actualitzat correctament"
      *     )
      * )
      */
     public function update(Request $request, string $id)
     {
-        $tupla = Usuari::findOrFail($id);
+        $tupla = Usuaris::findOrFail($id);
         $reglesValidacio = [
             'nom' => 'required|string|max:255',
             'llinatges' => 'required|string|max:255',
             'dni' => 'required|string|max:20',
-            'mail' => 'required|email|unique:usuaris,mail|max:255',
+            'mail' => 'required|email|unique:Usuariss,mail|max:255',
             'contrasenya' => 'required|string|min:6',
-            'rol' => 'required|in:usuari,administrador,gestor',
+            'rol' => 'required|in:Usuaris,administrador,gestor',
             'data_baixa' => 'nullable|date',
         ];
 
@@ -171,9 +171,9 @@ class UsuariController extends Controller
 
     /**
      * @OA\Delete(
-     *     path="/api/usuaris/{id}",
-     *     tags={"Usuari"},
-     *     summary="Elimina un usuari específic",
+     *     path="/api/Usuariss/{id}",
+     *     tags={"Usuaris"},
+     *     summary="Elimina un Usuaris específic",
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
@@ -184,16 +184,16 @@ class UsuariController extends Controller
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Usuari eliminat correctament"
+     *         description="Usuaris eliminat correctament"
      *     )
      * )
      */
     public function destroy(string $id)
     {
         try {
-            $usuari = Usuari::findOrFail($id);
-            $usuari->update(['data_baixa' => Carbon::now()]);
-            return response()->json(['status' => 'success', 'data' => $usuari], 200);
+            $Usuaris = Usuaris::findOrFail($id);
+            $Usuaris->update(['data_baixa' => Carbon::now()]);
+            return response()->json(['status' => 'success', 'data' => $Usuaris], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json(['status' => 'Error'], 400);
         }

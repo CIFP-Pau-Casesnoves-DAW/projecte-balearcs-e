@@ -1,12 +1,7 @@
 <?php
-
 use Illuminate\Http\Request;
-
-use App\Models\Usuari;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UsuariController;
-use App\Models\Illa;
-use App\Models\Municipis;
 use App\Http\Controllers\IllaController;
 use App\Http\Controllers\MunicipisController;
 use App\Http\Controllers\ModalitatsIdiomesController;
