@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Idioma;
+use App\Models\Idiomes;
 use Illuminate\Support\Facades\Validator;
 
 /**
@@ -31,7 +31,7 @@ class IdiomesController extends Controller
      */
     public function index()
     {
-        $idiomes = Idioma::all();
+        $idiomes = Idiomes::all();
         return response()->json(['idiomes' => $idiomes], 200);
     }
 
@@ -72,7 +72,7 @@ class IdiomesController extends Controller
             return response()->json(['errors' => $validacio->errors()], 400);
         }
 
-        $idioma = Idioma::create($request->all());
+        $idioma = Idiomes::create($request->all());
         return response()->json(['idioma' => $idioma], 200);
     }
 
@@ -105,7 +105,7 @@ class IdiomesController extends Controller
  */
 public function show($id)
 {
-    $idioma = Idioma::find($id);
+    $idioma = Idiomes::find($id);
     if (!$idioma) {
         return response()->json(['message' => 'Idioma no trobat'], 404);
     }
@@ -162,7 +162,7 @@ public function update(Request $request, $id)
         return response()->json(['errors' => $validacio->errors()], 400);
     }
 
-    $idioma = Idioma::find($id);
+    $idioma = Idiomes::find($id);
     if (!$idioma) {
         return response()->json(['message' => 'Idioma no trobat'], 404);
     }
@@ -200,7 +200,7 @@ public function update(Request $request, $id)
  */
 public function destroy($id)
 {
-    $idioma = Idioma::find($id);
+    $idioma = Idiomes::find($id);
     if (!$idioma) {
         return response()->json(['message' => 'Idioma no trobat'], 404);
     }

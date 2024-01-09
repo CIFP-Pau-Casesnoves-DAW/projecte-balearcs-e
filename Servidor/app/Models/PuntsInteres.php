@@ -25,6 +25,6 @@ class PuntsInteres extends Model
 
     public function espai()
     {
-        return $this->belongsTo(Espai::class, 'espai_id');
+        return $this->belongsTo(Espais::class, 'espai_id');
     }
 }

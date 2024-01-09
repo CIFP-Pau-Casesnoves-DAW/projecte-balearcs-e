@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\EspaiServei;
+use App\Models\EspaisServeis;
 use Illuminate\Support\Facades\Validator;
 
 /**
@@ -31,7 +31,7 @@ class EspaisServeisController extends Controller
      */
     public function index()
     {
-        $espaisServeis = EspaiServei::all();
+        $espaisServeis = EspaisServeis::all();
         return response()->json(['espais_serveis' => $espaisServeis], 200);
     }
 
@@ -76,7 +76,7 @@ class EspaisServeisController extends Controller
             return response()->json(['errors' => $validacio->errors()], 400);
         }
 
-        $espaiServei = EspaiServei::create($request->all());
+        $espaiServei = EspaisServeis::create($request->all());
         return response()->json(['espai_servei' => $espaiServei], 200);
     }
 
@@ -115,7 +115,7 @@ class EspaisServeisController extends Controller
  */
 public function show($servei_id, $espai_id)
 {
-    $espaiServei = EspaiServei::where('servei_id', $servei_id)->where('espai_id', $espai_id)->first();
+    $espaiServei = EspaisServeis::where('servei_id', $servei_id)->where('espai_id', $espai_id)->first();
     if (!$espaiServei) {
         return response()->json(['message' => 'Associació no trobada'], 404);
     }
@@ -159,7 +159,7 @@ public function show($servei_id, $espai_id)
  */
 public function destroy($servei_id, $espai_id)
 {
-    $espaiServei = EspaiServei::where('servei_id', $servei_id)->where('espai_id', $espai_id)->first();
+    $espaiServei = EspaisServeis::where('servei_id', $servei_id)->where('espai_id', $espai_id)->first();
     if (!$espaiServei) {
         return response()->json(['message' => 'Associació no trobada'], 404);
     }

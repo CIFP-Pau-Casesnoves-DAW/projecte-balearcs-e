@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Idioma;
+use App\Models\Idiomes;
 use App\Models\Modalitat;
 
 class ModalitatsIdiomes extends Model

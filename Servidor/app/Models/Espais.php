@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Espai extends Model
+class Espais extends Model
 {
     use HasFactory;
 
@@ -32,7 +32,7 @@ class Espai extends Model
      */
     public function arquitecte()
     {
-        return $this->belongsTo(Arquitecte::class, 'arquitecte_id');
+        return $this->belongsTo(Arquitectes::class, 'arquitecte_id');
     }
 
     /**

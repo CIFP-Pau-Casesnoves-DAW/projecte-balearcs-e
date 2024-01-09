@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Arquitecte extends Model
+class Arquitectes extends Model
 {
     use HasFactory;
 
@@ -25,7 +25,7 @@ class Arquitecte extends Model
 
     public function espais()
     {
-        return $this->hasMany(Espai::class);
+        return $this->hasMany(Espais::class);
     }
 
 }

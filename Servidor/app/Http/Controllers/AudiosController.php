@@ -2,7 +2,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Audio;
+use App\Models\Audios;
 use Illuminate\Support\Facades\Validator;
 
 /**
@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Validator;
  *     description="Operacions per a Audios"
  * )
  */
-class AudioController extends Controller
+class AudiosController extends Controller
 {
     /**
      * @OA\Get(
@@ -30,7 +30,7 @@ class AudioController extends Controller
      */
     public function index()
     {
-        $audios = Audio::all();
+        $audios = Audios::all();
         return response()->json(['status' => 'correcte', 'data' => $audios], 200);
     }
 
@@ -79,7 +79,7 @@ public function store(Request $request)
     }
 
     // Crea un nou audio
-    $audio = Audio::create($request->all());
+    $audio = Audios::create($request->all());
     return response()->json($audio, 200);
 }
 
@@ -106,7 +106,7 @@ public function store(Request $request)
      */
     public function show($id)
     {
-        $audio = Audio::findOrFail($id);
+        $audio = Audios::findOrFail($id);
         return response()->json(['status' => 'correcte', 'data' => $audio], 200);
     }
 
@@ -168,7 +168,7 @@ public function update(Request $request, $id)
     }
 
     // Troba i actualitza l'audio
-    $audio = Audio::findOrFail($id);
+    $audio = Audios::findOrFail($id);
     $audio->update($request->all());
     return response()->json($audio, 200);
 }
@@ -195,7 +195,7 @@ public function update(Request $request, $id)
      */
     public function destroy($id)
     {
-        $audio = Audio::findOrFail($id);
+        $audio = Audios::findOrFail($id);
         $audio->delete();
         return response()->json(['status' => 'success', 'message' => 'Audio eliminat correctament'], 200);
     }

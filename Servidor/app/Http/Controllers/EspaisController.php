@@ -2,7 +2,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Espai;
+use App\Models\Espais;
 use Illuminate\Support\Facades\Validator;
 
 /**
@@ -30,7 +30,7 @@ class EspaisController extends Controller
      */
     public function index()
     {
-        $espais = Espai::all();
+        $espais = Espais::all();
         return response()->json(['espais' => $espais], 200);
     }
 
@@ -99,7 +99,7 @@ class EspaisController extends Controller
         }
     
         // Crea l'espai
-        $espai = Espai::create($request->all());
+        $espai = Espais::create($request->all());
         return response()->json(['espai' => $espai], 200);
     }
     
@@ -124,7 +124,7 @@ class EspaisController extends Controller
      */
     public function show($id)
     {
-        $espai = Espai::findOrFail($id);
+        $espai = Espais::findOrFail($id);
         return response()->json(['espai' => $espai], 200);
     }
 
@@ -207,7 +207,7 @@ class EspaisController extends Controller
         }
     
         // Troba i actualitza l'espai
-        $espai = Espai::findOrFail($id);
+        $espai = Espais::findOrFail($id);
         $espai->update($request->all());
         return response()->json(['espai' => $espai], 200);
     }
@@ -235,7 +235,7 @@ class EspaisController extends Controller
      */
     public function destroy($id)
     {
-        $espai = Espai::findOrFail($id);
+        $espai = Espais::findOrFail($id);
         $espai->delete();
         return response()->json(['message' => 'Espai eliminat correctament'], 200);
     }

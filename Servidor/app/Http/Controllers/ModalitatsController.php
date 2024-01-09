@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Modalitat;
+use App\Models\Modalitats;
 use Illuminate\Support\Facades\Validator;
 
 /**
@@ -31,7 +31,7 @@ class ModalitatsController extends Controller
      */
     public function index()
     {
-        $modalitats = Modalitat::all();
+        $modalitats = Modalitats::all();
         return response()->json(['modalitats' => $modalitats], 200);
     }
 
@@ -72,7 +72,7 @@ class ModalitatsController extends Controller
             return response()->json(['errors' => $validacio->errors()], 400);
         }
 
-        $modalitat = Modalitat::create($request->all());
+        $modalitat = Modalitats::create($request->all());
         return response()->json(['modalitat' => $modalitat], 200);
     }
 
@@ -105,7 +105,7 @@ class ModalitatsController extends Controller
  */
 public function show($id)
 {
-    $modalitat = Modalitat::find($id);
+    $modalitat = Modalitats::find($id);
     if (!$modalitat) {
         return response()->json(['message' => 'Modalitat no trobada'], 404);
     }
@@ -162,7 +162,7 @@ public function update(Request $request, $id)
         return response()->json(['errors' => $validacio->errors()], 400);
     }
 
-    $modalitat = Modalitat::find($id);
+    $modalitat = Modalitats::find($id);
     if (!$modalitat) {
         return response()->json(['message' => 'Modalitat no trobada'], 404);
     }
@@ -200,7 +200,7 @@ public function update(Request $request, $id)
  */
 public function destroy($id)
 {
-    $modalitat = Modalitat::find($id);
+    $modalitat = Modalitats::find($id);
     if (!$modalitat) {
         return response()->json(['message' => 'Modalitat no trobada'], 404);
     }

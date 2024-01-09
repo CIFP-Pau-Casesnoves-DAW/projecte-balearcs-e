@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Foto;
+use App\Models\Fotos;
 use Illuminate\Support\Facades\Validator;
 
 /**
@@ -31,7 +31,7 @@ class FotosController extends Controller
      */
     public function index()
     {
-        $fotos = Foto::all();
+        $fotos = Fotos::all();
         return response()->json(['fotos' => $fotos], 200);
     }
 
@@ -80,7 +80,7 @@ class FotosController extends Controller
             return response()->json(['errors' => $validacio->errors()], 400);
         }
 
-        $foto = Foto::create($request->all());
+        $foto = Fotos::create($request->all());
         return response()->json(['foto' => $foto], 200);
     }
 
@@ -113,7 +113,7 @@ class FotosController extends Controller
  */
 public function show($id)
 {
-    $foto = Foto::find($id);
+    $foto = Fotos::find($id);
     if (!$foto) {
         return response()->json(['message' => 'Foto no trobada'], 404);
     }
@@ -173,7 +173,7 @@ public function update(Request $request, $id)
         return response()->json(['errors' => $validacio->errors()], 400);
     }
 
-    $foto = Foto::find($id);
+    $foto = Fotos::find($id);
     if (!$foto) {
         return response()->json(['message' => 'Foto no trobada'], 404);
     }
@@ -211,7 +211,7 @@ public function update(Request $request, $id)
  */
 public function destroy($id)
 {
-    $foto = Foto::find($id);
+    $foto = Fotos::find($id);
     if (!$foto) {
         return response()->json(['message' => 'Foto no trobada'], 404);
     }

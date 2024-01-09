@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\EspaiModalitat;
+use App\Models\EspaisModalitats;
 use Illuminate\Support\Facades\Validator;
 
 /**
@@ -31,7 +31,7 @@ class EspaisModalitatsController extends Controller
      */
     public function index()
     {
-        $espaisModalitats = EspaiModalitat::all();
+        $espaisModalitats = EspaisModalitats::all();
         return response()->json(['espais_modalitats' => $espaisModalitats], 200);
     }
 
@@ -76,7 +76,7 @@ class EspaisModalitatsController extends Controller
             return response()->json(['errors' => $validacio->errors()], 400);
         }
 
-        $espaiModalitat = EspaiModalitat::create($request->all());
+        $espaiModalitat = EspaisModalitats::create($request->all());
         return response()->json(['espai_modalitat' => $espaiModalitat], 200);
     }
 
@@ -115,7 +115,7 @@ class EspaisModalitatsController extends Controller
  */
 public function show($espai_id, $modalitat_id)
 {
-    $espaiModalitat = EspaiModalitat::where('espai_id', $espai_id)->where('modalitat_id', $modalitat_id)->first();
+    $espaiModalitat = EspaisModalitats::where('espai_id', $espai_id)->where('modalitat_id', $modalitat_id)->first();
     if (!$espaiModalitat) {
         return response()->json(['message' => 'Associació no trobada'], 404);
     }
@@ -159,7 +159,7 @@ public function show($espai_id, $modalitat_id)
  */
 public function destroy($espai_id, $modalitat_id)
 {
-    $espaiModalitat = EspaiModalitat::where('espai_id', $espai_id)->where('modalitat_id', $modalitat_id)->first();
+    $espaiModalitat = EspaisModalitats::where('espai_id', $espai_id)->where('modalitat_id', $modalitat_id)->first();
     if (!$espaiModalitat) {
         return response()->json(['message' => 'Associació no trobada'], 404);
     }

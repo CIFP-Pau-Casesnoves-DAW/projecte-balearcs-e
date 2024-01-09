@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Arquitecte;
+use App\Models\Arquitectes;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
 
@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Validator;
  *     description="Operacions per a Arquitectes"
  * )
  */
-class ArquitecteController extends Controller
+class ArquitectesController extends Controller
 {
     /**
      * @OA\Get(
@@ -32,7 +32,7 @@ class ArquitecteController extends Controller
      */
     public function index()
     {
-        $arquitectes = Arquitecte::all();
+        $arquitectes = Arquitectes::all();
         return response()->json(['status' => 'correcte', 'data' => $arquitectes], 200);
     }
 
@@ -54,9 +54,13 @@ class ArquitecteController extends Controller
     public function store(Request $request)
     {
        
+        $reglesValidacio = [
+            // Define your validation rules here
+        ];
+
         $validacio = Validator::make($request->all(), $reglesValidacio);
         if (!$validacio->fails()) {
-            $arquitecte = Arquitecte::create($request->all());
+            $arquitecte = Arquitectes::create($request->all());
             return response()->json(['status' => 'correcte', 'data' => $arquitecte], 200);
         } else {
             return response()->json(['status' => 'error', 'data' => $validacio->errors()], 400);
@@ -87,7 +91,7 @@ class ArquitecteController extends Controller
     public function show($id)
     {
         try {
-            $arquitecte = Arquitecte::findOrFail($id);
+            $arquitecte = Arquitectes::findOrFail($id);
             return response()->json(['status' => 'correcte', 'data' => $arquitecte], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json(['status' => 'Arquitecte no trobat'], 404);
@@ -155,7 +159,7 @@ class ArquitecteController extends Controller
         }
     
         // Troba i actualitza l'arquitecte
-        $arquitecte = Arquitecte::findOrFail($id);
+        $arquitecte = Arquitectes::findOrFail($id);
         $arquitecte->update($request->all());
     
         return response()->json(['status' => 'success', 'data' => $arquitecte], 200);
@@ -183,7 +187,7 @@ class ArquitecteController extends Controller
      */
     public function destroy($id)
     {
-        $arquitecte = Arquitecte::findOrFail($id);
+        $arquitecte = Arquitectes::findOrFail($id);
         $arquitecte->delete();
         return response()->json(['status' => 'success', 'message' => 'Arquitecte eliminat correctament'], 200);
     }

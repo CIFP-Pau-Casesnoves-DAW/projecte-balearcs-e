@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\EspaiIdioma;
+use App\Models\EspaisIdiomes;
 use Illuminate\Support\Facades\Validator;
 
 /**
@@ -31,7 +31,7 @@ class EspaisIdiomesController extends Controller
      */
     public function index()
     {
-        $espaisIdiomes = EspaiIdioma::all();
+        $espaisIdiomes = EspaisIdiomes::all();
         return response()->json(['espais_idiomes' => $espaisIdiomes], 200);
     }
 
@@ -78,7 +78,7 @@ class EspaisIdiomesController extends Controller
             return response()->json(['errors' => $validacio->errors()], 400);
         }
 
-        $espaiIdioma = EspaiIdioma::create($request->all());
+        $espaiIdioma = EspaisIdiomes::create($request->all());
         return response()->json(['espai_idioma' => $espaiIdioma], 200);
     }
 
@@ -115,7 +115,7 @@ class EspaisIdiomesController extends Controller
      */
     public function show($idioma_id, $espai_id)
     {
-        $espaiIdioma = EspaiIdioma::where('idioma_id', $idioma_id)->where('espai_id', $espai_id)->first();
+        $espaiIdioma = EspaisIdiomes::where('idioma_id', $idioma_id)->where('espai_id', $espai_id)->first();
         if (!$espaiIdioma) {
             return response()->json(['message' => 'Traducció no trobada'], 404);
         }
@@ -182,7 +182,7 @@ public function update(Request $request, $idioma_id, $espai_id)
         return response()->json(['errors' => $validacio->errors()], 400);
     }
 
-    $espaiIdioma = EspaiIdioma::where('idioma_id', $idioma_id)->where('espai_id', $espai_id)->first();
+    $espaiIdioma = EspaisIdiomes::where('idioma_id', $idioma_id)->where('espai_id', $espai_id)->first();
     if (!$espaiIdioma) {
         return response()->json(['message' => 'Traducció no trobada'], 404);
     }
@@ -226,7 +226,7 @@ public function update(Request $request, $idioma_id, $espai_id)
  */
 public function destroy($idioma_id, $espai_id)
 {
-    $espaiIdioma = EspaiIdioma::where('idioma_id', $idioma_id)->where('espai_id', $espai_id)->first();
+    $espaiIdioma = EspaisIdiomes::where('idioma_id', $idioma_id)->where('espai_id', $espai_id)->first();
     if (!$espaiIdioma) {
         return response()->json(['message' => 'Traducció no trobada'], 404);
     }
