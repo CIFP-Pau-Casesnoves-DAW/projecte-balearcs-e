@@ -158,15 +158,22 @@ Route::group(['prefix' => 'visites_idiomes'], function () {
     Route::put('/{visita_idioma}', [VisitesIdiomesController::class, 'update'])->name('visites_idiomes.update');
     Route::delete('/{visita_idioma}', [VisitesIdiomesController::class, 'destroy'])->name('visites_idiomes.destroy');
 });
-
+ 
 // Rutas para listar, crear, almacenar, mostrar, editar, actualizar y eliminar visites_punts_interes
+/*
 Route::prefix('api')->group(function () {
-    Route::get('/visites/{visitaId}/punts-interes', [VisitesPuntsInteresController::class, 'index']);
-    Route::post('/visites/punts-interes', [VisitesPuntsInteresController::class, 'store']);
-    Route::get('/visites/{visitaId}/punts-interes/{puntInteresId}', [VisitesPuntsInteresController::class, 'show']);
-    Route::delete('/visites/{visitaId}/punts-interes/{puntInteresId}', [VisitesPuntsInteresController::class, 'destroy']);
+     Route::get('/visites/{visitaId}/punts-interes', [VisitesPuntsInteresController::class, 'index']);
+     Route::post('/visites/punts-interes', [VisitesPuntsInteresController::class, 'store']);
+     Route::get('/visites/{visitaId}/punts-interes/{puntInteresId}', [VisitesPuntsInteresController::class, 'show']);
+     Route::delete('/visites/{visitaId}/punts-interes/{puntInteresId}', [VisitesPuntsInteresController::class, 'destroy']);
 });
-
+*/
+Route::group(['prefix' => 'visites'], function () {
+    Route::get('/{visitaId}/punts-interes', [VisitesPuntsInteresController::class, 'index']);
+    Route::post('/punts-interes', [VisitesPuntsInteresController::class, 'store']);
+    Route::get('/{visitaId}/punts-interes/{puntInteresId}', [VisitesPuntsInteresController::class, 'show']);
+    Route::delete('/{visitaId}/punts-interes/{puntInteresId}', [VisitesPuntsInteresController::class, 'destroy']);
+});
 
 // Rutes per a llistar, crear, emmagatzemar, mostrar, editar, actualitzar i eliminar arquitectes
 Route::group(['prefix' => 'arquitectes'], function () {
