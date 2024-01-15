@@ -5,10 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Usuari extends Model
+class Municipis extends Model
 {
     use HasFactory;
-    protected $table = 'usuaris';
+    protected $table ='municipis';
     protected $primaryKey = 'id';
     public $timestamps = false;
     public $incrementing = false;
@@ -19,12 +19,7 @@ class Usuari extends Model
      */
     protected $fillable = [
         'nom',
-        'llinatges',
-        'dni',
-        'mail',
-        'contrasenya',
-        'rol',
+        'illa_id',
         'data_baixa',
-        'api_token',
     ];
 }
