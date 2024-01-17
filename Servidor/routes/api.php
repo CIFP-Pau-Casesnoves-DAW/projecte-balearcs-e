@@ -1,7 +1,17 @@
 <?php
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\LoginController;
 use App\Http\Controllers\UsuarisController;
+use App\Http\Middleware\Controlatoken;
+use App\Http\Middleware\ControlaAdministrador;
+use App\Http\Middleware\ControlaDadesUsuari;
+use App\Http\Middleware\ControlaRegistreUsuaris;
+use App\Http\Middleware\ControlaDadesEspais;
+use App\Models\Usuari;
+use App\Models\Illa;
+use App\Models\Municipis;
 use App\Http\Controllers\IllaController;
 use App\Http\Controllers\MunicipisController;
 use App\Http\Controllers\ModalitatsIdiomesController;
@@ -25,27 +35,45 @@ use App\Http\Controllers\ModalitatsController;
 
 /*
 |--------------------------------------------------------------------------
-| Web Routes
+| API Routes
 |--------------------------------------------------------------------------
 |
-| Here is where you can register web routes for your application. These
+| Here is where you can register API routes for your application. These
 | routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
+| be assigned to the "api" middleware group. Make something great!
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+    return $request->user();
 });
 
-Route::group(['prefix' => 'usuaris'], function () {
-    Route::get('', [UsuarisController::class, 'index'])->name('usuari.index');
-    Route::get('/{id}', [UsuarisController::class, 'show'])->name('usuari.show');
-    Route::put('/{id}', [UsuarisController::class, 'update'])->name('usuari.update');
+//login
+$router->post('login', [LoginController::class, 'login']);
+
+//usuaris
+$router->group(['prefix' => 'usuaris', 'middleware' => ControlaAdministrador::class], function () use ($router) {
+    $router->get('', [UsuarisController::class, 'index']);
+    $router->get('{id}', [UsuarisController::class, 'show'])->withoutMiddleware([ControlaAdministrador::class])->middleware(ControlaDadesUsuari::class);
+    $router->post('', [UsuarisController::class, 'store'])->withoutMiddleware([ControlaAdministrador::class])->middleware(ControlaRegistreUsuaris::class);
+    $router->put('{id}', [UsuarisController::class, 'update'])->withoutMiddleware([ControlaAdministrador::class])->middleware(ControlaDadesUsuari::class);
+    $router->put('delete/{id}', [UsuarisController::class, 'delete']);
+    $router->delete('{id}', [UsuarisController::class, 'destroy']);
+});
+
+// Rutes per a llistar, crear, emmagatzemar, mostrar, editar, actualitzar i eliminar espais
+Route::group(['prefix' => 'espais', 'middleware' => ControlaAdministrador::class], function () {
+    Route::get('', [EspaisController::class, 'index'])->name('espais.index');
+    Route::get('/create', [EspaisController::class, 'create'])->name('espais.create');
+    Route::post('', [EspaisController::class, 'store'])->name('espais.store');
+    Route::get('/{espai}', [EspaisController::class, 'show'])->name('espais.show')->withoutMiddleware([ControlaAdministrador::class])->middleware(ControlaDadesEspais::class);
+    Route::get('/{espai}/edit', [EspaisController::class, 'edit'])->name('espais.edit');
+    Route::put('/{espai}', [EspaisController::class, 'update'])->name('espais.update')->withoutMiddleware([ControlaAdministrador::class])->middleware(ControlaDadesEspais::class);
+    Route::delete('/{espai}', [EspaisController::class, 'destroy'])->name('espais.destroy');
 });
 
 // Rutas para listar, crear, almacenar, mostrar, editar, actualizar y eliminar islas
-Route::group(['prefix' => 'illes'], function () {
+Route::group(['prefix' => 'illes', 'middleware' => ControlaAdministrador::class], function () {
     Route::get('', [IllaController::class, 'index'])->name('illes.index');
     Route::get('/create', [IllaController::class, 'create'])->name('illes.create');
     Route::post('', [IllaController::class, 'store'])->name('illes.store');
@@ -56,104 +84,104 @@ Route::group(['prefix' => 'illes'], function () {
 });
 
 // Rutas para listar, crear, almacenar, mostrar, editar, actualizar y eliminar municipis
-Route::group(['prefix' =>'municipis'], function () {
+Route::group(['prefix' => 'municipis', 'middleware' => ControlaAdministrador::class], function () {
     Route::get('', [MunicipisController::class, 'index'])->name('municipis.index');
     Route::get('/create', [MunicipisController::class, 'create'])->name('municipis.create');
-    Route::post('', [MunicipisController::class,'store'])->name('municipis.store');
-    Route::get('/{municipi}', [MunicipisController::class,'show'])->name('municipis.show');
+    Route::post('', [MunicipisController::class, 'store'])->name('municipis.store');
+    Route::get('/{municipi}', [MunicipisController::class, 'show'])->name('municipis.show');
     Route::get('/{municipi}/edit', [MunicipisController::class, 'edit'])->name('municipis.edit');
     Route::put('/{municipi}', [MunicipisController::class, 'update'])->name('municipis.update');
     Route::delete('/{municipi}', [MunicipisController::class, 'destroy'])->name('municipis.destroy');
 });
 
 // Rutas para listar, crear, almacenar, mostrar, editar, actualizar y eliminar modalitats_idiomes
-Route::group(['prefix' =>'modalitats_idiomes'], function () {
+Route::group(['prefix' => 'modalitats_idiomes', 'middleware' => ControlaAdministrador::class], function () {
     Route::get('', [ModalitatsIdiomesController::class, 'index'])->name('modalitats_idiomes.index');
     Route::get('/create', [ModalitatsIdiomesController::class, 'create'])->name('modalitats_idiomes.create');
-    Route::post('', [ModalitatsIdiomesController::class,'store'])->name('modalitats_idiomes.store');
-    Route::get('/{modalitat_id}', [ModalitatsIdiomesController::class,'show'])->name('modalitats_idiomes.show');
+    Route::post('', [ModalitatsIdiomesController::class, 'store'])->name('modalitats_idiomes.store');
+    Route::get('/{modalitat_id}', [ModalitatsIdiomesController::class, 'show'])->name('modalitats_idiomes.show');
     Route::get('/{modalitat_id}/edit', [ModalitatsIdiomesController::class, 'edit'])->name('modalitats_idiomes.edit');
     Route::put('/{modalitat_id}', [ModalitatsIdiomesController::class, 'update'])->name('modalitats_idiomes.update');
     Route::delete('/{modalitat_id}', [ModalitatsIdiomesController::class, 'destroy'])->name('modalitats_idiomes.destroy');
 });
 
 // Rutas para listar, crear, almacenar, mostrar, editar, actualizar y eliminar punts_interes
-Route::group(['prefix' => 'punts_interes'], function () {
+Route::group(['prefix' => 'punts_interes', 'middleware' => ControlaAdministrador::class], function () {
     Route::get('', [PuntsInteresController::class, 'index'])->name('punts_interes.index');
     Route::get('/create', [PuntsInteresController::class, 'create'])->name('punts_interes.create');
-    Route::post('', [PuntsInteresController::class,'store'])->name('punts_interes.store');
-    Route::get('/{punt_interes}', [PuntsInteresController::class,'show'])->name('punts_interes.show');
+    Route::post('', [PuntsInteresController::class, 'store'])->name('punts_interes.store');
+    Route::get('/{punt_interes}', [PuntsInteresController::class, 'show'])->name('punts_interes.show');
     Route::get('/{punt_interes}/edit', [PuntsInteresController::class, 'edit'])->name('punts_interes.edit');
     Route::put('/{punt_interes}', [PuntsInteresController::class, 'update'])->name('punts_interes.update');
     Route::delete('/{punt_interes}', [PuntsInteresController::class, 'destroy'])->name('punts_interes.destroy');
 });
 
 // Rutas para listar, crear, almacenar, mostrar, editar, actualizar y eliminar serveis
-Route::group(['prefix' =>'serveis'], function () {
+Route::group(['prefix' => 'serveis', 'middleware' => ControlaAdministrador::class], function () {
     Route::get('', [ServeisController::class, 'index'])->name('serveis.index');
     Route::get('/create', [ServeisController::class, 'create'])->name('serveis.create');
-    Route::post('', [ServeisController::class,'store'])->name('serveis.store');
-    Route::get('/{servei}', [ServeisController::class,'show'])->name('serveis.show');
+    Route::post('', [ServeisController::class, 'store'])->name('serveis.store');
+    Route::get('/{servei}', [ServeisController::class, 'show'])->name('serveis.show');
     Route::get('/{servei}/edit', [ServeisController::class, 'edit'])->name('serveis.edit');
     Route::put('/{servei}', [ServeisController::class, 'update'])->name('serveis.update');
     Route::delete('/{servei}', [ServeisController::class, 'destroy'])->name('serveis.destroy');
 });
 
 // Rutas para listar, crear, almacenar, mostrar, editar, actualizar y eliminar serveis_idiomes
-Route::group(['prefix' =>'serveis_idiomes'], function () {
+Route::group(['prefix' => 'serveis_idiomes', 'middleware' => ControlaAdministrador::class], function () {
     Route::get('', [ServeisIdiomesController::class, 'index'])->name('serveis_idiomes.index');
     Route::get('/create', [ServeisIdiomesController::class, 'create'])->name('serveis_idiomes.create');
-    Route::post('', [ServeisIdiomesController::class,'store'])->name('serveis_idiomes.store');
-    Route::get('/{servei_id}', [ServeisIdiomesController::class,'show'])->name('serveis_idiomes.show');
+    Route::post('', [ServeisIdiomesController::class, 'store'])->name('serveis_idiomes.store');
+    Route::get('/{servei_id}', [ServeisIdiomesController::class, 'show'])->name('serveis_idiomes.show');
     Route::get('/{servei_id}/edit', [ServeisIdiomesController::class, 'edit'])->name('serveis_idiomes.edit');
     Route::put('/{servei_id}', [ServeisIdiomesController::class, 'update'])->name('serveis_idiomes.update');
     Route::delete('/{servei_id}', [ServeisIdiomesController::class, 'destroy'])->name('serveis_idiomes.destroy');
 });
 
 // Rutas para listar, crear, almacenar, mostrar, editar, actualizar y eliminar tipus
-Route::group(['prefix' => 'tipus'], function () {
+Route::group(['prefix' => 'tipus', 'middleware' => ControlaAdministrador::class], function () {
     Route::get('', [TipusController::class, 'index'])->name('tipus.index');
     Route::get('/create', [TipusController::class, 'create'])->name('tipus.create');
-    Route::post('', [TipusController::class,'store'])->name('tipus.store');
-    Route::get('/{tipus}', [TipusController::class,'show'])->name('tipus.show');
+    Route::post('', [TipusController::class, 'store'])->name('tipus.store');
+    Route::get('/{tipus}', [TipusController::class, 'show'])->name('tipus.show');
     Route::get('/{tipus}/edit', [TipusController::class, 'edit'])->name('tipus.edit');
     Route::put('/{tipus}', [TipusController::class, 'update'])->name('tipus.update');
     Route::delete('/{tipus}', [TipusController::class, 'destroy'])->name('tipus.destroy');
 });
 
 // Rutas para listar, crear, almacenar, mostrar, editar, actualizar y eliminar valoracions
-Route::group(['prefix' => 'valoracions'], function () {
+Route::group(['prefix' => 'valoracions', 'middleware' => ControlaAdministrador::class], function () {
     Route::get('', [ValoracionsController::class, 'index'])->name('valoracions.index');
     Route::get('/create', [ValoracionsController::class, 'create'])->name('valoracions.create');
-    Route::post('', [ValoracionsController::class,'store'])->name('valoracions.store');
-    Route::get('/{valoracio}', [ValoracionsController::class,'show'])->name('valoracions.show');
+    Route::post('', [ValoracionsController::class, 'store'])->name('valoracions.store');
+    Route::get('/{valoracio}', [ValoracionsController::class, 'show'])->name('valoracions.show');
     Route::get('/{valoracio}/edit', [ValoracionsController::class, 'edit'])->name('valoracions.edit');
     Route::put('/{valoracio}', [ValoracionsController::class, 'update'])->name('valoracions.update');
     Route::delete('/{valoracio}', [ValoracionsController::class, 'destroy'])->name('valoracions.destroy');
 });
 
 // Rutas para listar, crear, almacenar, mostrar, editar, actualizar y eliminar visites
-Route::group(['prefix' => 'visites'], function () {
+Route::group(['prefix' => 'visites', 'middleware' => ControlaAdministrador::class], function () {
     Route::get('', [VisitesController::class, 'index'])->name('visites.index');
     Route::get('/create', [VisitesController::class, 'create'])->name('visites.create');
-    Route::post('', [VisitesController::class,'store'])->name('visites.store');
-    Route::get('/{visita}', [VisitesController::class,'show'])->name('visites.show');
+    Route::post('', [VisitesController::class, 'store'])->name('visites.store');
+    Route::get('/{visita}', [VisitesController::class, 'show'])->name('visites.show');
     Route::get('/{visita}/edit', [VisitesController::class, 'edit'])->name('visites.edit');
     Route::put('/{visita}', [VisitesController::class, 'update'])->name('visites.update');
     Route::delete('/{visita}', [VisitesController::class, 'destroy'])->name('visites.destroy');
 });
 
 // Rutas para listar, crear, almacenar, mostrar, editar, actualizar y eliminar visites_idiomes
-Route::group(['prefix' => 'visites_idiomes'], function () {
+Route::group(['prefix' => 'visites_idiomes', 'middleware' => ControlaAdministrador::class], function () {
     Route::get('', [VisitesIdiomesController::class, 'index'])->name('visites_idiomes.index');
     Route::get('/create', [VisitesIdiomesController::class, 'create'])->name('visites_idiomes.create');
-    Route::post('', [VisitesIdiomesController::class,'store'])->name('visites_idiomes.store');
-    Route::get('/{visita_idioma}', [VisitesIdiomesController::class,'show'])->name('visites_idiomes.show');
+    Route::post('', [VisitesIdiomesController::class, 'store'])->name('visites_idiomes.store');
+    Route::get('/{visita_idioma}', [VisitesIdiomesController::class, 'show'])->name('visites_idiomes.show');
     Route::get('/{visita_idioma}/edit', [VisitesIdiomesController::class, 'edit'])->name('visites_idiomes.edit');
     Route::put('/{visita_idioma}', [VisitesIdiomesController::class, 'update'])->name('visites_idiomes.update');
     Route::delete('/{visita_idioma}', [VisitesIdiomesController::class, 'destroy'])->name('visites_idiomes.destroy');
 });
- 
+
 // Rutas para listar, crear, almacenar, mostrar, editar, actualizar y eliminar visites_punts_interes
 /*
 Route::prefix('api')->group(function () {
@@ -163,7 +191,7 @@ Route::prefix('api')->group(function () {
      Route::delete('/visites/{visitaId}/punts-interes/{puntInteresId}', [VisitesPuntsInteresController::class, 'destroy']);
 });
 */
-Route::group(['prefix' => 'visites'], function () {
+Route::group(['prefix' => 'visites', 'middleware' => ControlaAdministrador::class], function () {
     Route::get('/{visitaId}/punts-interes', [VisitesPuntsInteresController::class, 'index']);
     Route::post('/punts-interes', [VisitesPuntsInteresController::class, 'store']);
     Route::get('/{visitaId}/punts-interes/{puntInteresId}', [VisitesPuntsInteresController::class, 'show']);
@@ -171,7 +199,7 @@ Route::group(['prefix' => 'visites'], function () {
 });
 
 // Rutes per a llistar, crear, emmagatzemar, mostrar, editar, actualitzar i eliminar arquitectes
-Route::group(['prefix' => 'arquitectes'], function () {
+Route::group(['prefix' => 'arquitectes', 'middleware' => ControlaAdministrador::class], function () {
     Route::get('', [ArquitectesController::class, 'index'])->name('arquitectes.index');
     Route::get('/create', [ArquitectesController::class, 'create'])->name('arquitectes.create');
     Route::post('', [ArquitectesController::class, 'store'])->name('arquitectes.store');
@@ -183,7 +211,7 @@ Route::group(['prefix' => 'arquitectes'], function () {
 
 
 // Rutes per a llistar, crear, emmagatzemar, mostrar, editar, actualitzar i eliminar audios
-Route::group(['prefix' => 'audios'], function () {
+Route::group(['prefix' => 'audios', 'middleware' => ControlaAdministrador::class], function () {
     Route::get('', [AudiosController::class, 'index'])->name('audios.index');
     Route::get('/create', [AudiosController::class, 'create'])->name('audios.create');
     Route::post('', [AudiosController::class, 'store'])->name('audios.store');
@@ -194,20 +222,8 @@ Route::group(['prefix' => 'audios'], function () {
 });
 
 
-// Rutes per a llistar, crear, emmagatzemar, mostrar, editar, actualitzar i eliminar espais
-Route::group(['prefix' => 'espais'], function () {
-    Route::get('', [EspaisController::class, 'index'])->name('espais.index');
-    Route::get('/create', [EspaisController::class, 'create'])->name('espais.create');
-    Route::post('', [EspaisController::class, 'store'])->name('espais.store');
-    Route::get('/{espai}', [EspaisController::class, 'show'])->name('espais.show');
-    Route::get('/{espai}/edit', [EspaisController::class, 'edit'])->name('espais.edit');
-    Route::put('/{espai}', [EspaisController::class, 'update'])->name('espais.update');
-    Route::delete('/{espai}', [EspaisController::class, 'destroy'])->name('espais.destroy');
-});
-
-
 // Rutes per a llistar, crear, emmagatzemar, mostrar, editar, actualitzar i eliminar espais_idiomes
-Route::group(['prefix' => 'espais_idiomes'], function () {
+Route::group(['prefix' => 'espais_idiomes', 'middleware' => ControlaAdministrador::class], function () {
     Route::get('', [EspaisIdiomesController::class, 'index'])->name('espais_idiomes.index');
     Route::get('/create', [EspaisIdiomesController::class, 'create'])->name('espais_idiomes.create');
     Route::post('', [EspaisIdiomesController::class, 'store'])->name('espais_idiomes.store');
@@ -219,7 +235,7 @@ Route::group(['prefix' => 'espais_idiomes'], function () {
 
 
 // Rutes per a llistar, crear, emmagatzemar, mostrar, editar, actualitzar i eliminar espais_modalitats
-Route::group(['prefix' => 'espais_modalitats'], function () {
+Route::group(['prefix' => 'espais_modalitats', 'middleware' => ControlaAdministrador::class], function () {
     Route::get('', [EspaisModalitatsController::class, 'index'])->name('espais_modalitats.index');
     Route::get('/create', [EspaisModalitatsController::class, 'create'])->name('espais_modalitats.create');
     Route::post('', [EspaisModalitatsController::class, 'store'])->name('espais_modalitats.store');
@@ -231,7 +247,7 @@ Route::group(['prefix' => 'espais_modalitats'], function () {
 
 
 // Rutes per a llistar, crear, emmagatzemar, mostrar, editar, actualitzar i eliminar espais_serveis
-Route::group(['prefix' => 'espais_serveis'], function () {
+Route::group(['prefix' => 'espais_serveis', 'middleware' => ControlaAdministrador::class], function () {
     Route::get('', [EspaisServeisController::class, 'index'])->name('espais_serveis.index');
     Route::get('/create', [EspaisServeisController::class, 'create'])->name('espais_serveis.create');
     Route::post('', [EspaisServeisController::class, 'store'])->name('espais_serveis.store');
@@ -243,7 +259,7 @@ Route::group(['prefix' => 'espais_serveis'], function () {
 
 
 // Rutes per a llistar, crear, emmagatzemar, mostrar, editar, actualitzar i eliminar fotos
-Route::group(['prefix' => 'fotos'], function () {
+Route::group(['prefix' => 'fotos', 'middleware' => ControlaAdministrador::class], function () {
     Route::get('', [FotosController::class, 'index'])->name('fotos.index');
     Route::get('/create', [FotosController::class, 'create'])->name('fotos.create');
     Route::post('', [FotosController::class, 'store'])->name('fotos.store');
@@ -255,7 +271,7 @@ Route::group(['prefix' => 'fotos'], function () {
 
 
 // Rutes per a llistar, crear, emmagatzemar, mostrar, editar, actualitzar i eliminar idiomes
-Route::group(['prefix' => 'idiomes'], function () {
+Route::group(['prefix' => 'idiomes', 'middleware' => ControlaAdministrador::class], function () {
     Route::get('', [IdiomesController::class, 'index'])->name('idiomes.index');
     Route::get('/create', [IdiomesController::class, 'create'])->name('idiomes.create');
     Route::post('', [IdiomesController::class, 'store'])->name('idiomes.store');
@@ -267,7 +283,7 @@ Route::group(['prefix' => 'idiomes'], function () {
 
 
 // Rutes per a llistar, crear, emmagatzemar, mostrar, editar, actualitzar i eliminar modalitats
-Route::group(['prefix' => 'modalitats'], function () {
+Route::group(['prefix' => 'modalitats', 'middleware' => ControlaAdministrador::class], function () {
     Route::get('', [ModalitatsController::class, 'index'])->name('modalitats.index');
     Route::get('/create', [ModalitatsController::class, 'create'])->name('modalitats.create');
     Route::post('', [ModalitatsController::class, 'store'])->name('modalitats.store');
@@ -275,9 +291,4 @@ Route::group(['prefix' => 'modalitats'], function () {
     Route::get('/{modalitat_id}/edit', [ModalitatsController::class, 'edit'])->where(['modalitat_id' => '[0-9]+'])->name('modalitats.edit');
     Route::put('/{modalitat_id}', [ModalitatsController::class, 'update'])->where(['modalitat_id' => '[0-9]+'])->name('modalitats.update');
     Route::delete('/{modalitat_id}', [ModalitatsController::class, 'destroy'])->where(['modalitat_id' => '[0-9]+'])->name('modalitats.destroy');
-});
-
-
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
 });

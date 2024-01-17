@@ -2,12 +2,18 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\User;
+use App\Models\Usuaris;
 use Closure;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
-class ControlatokenMiddleware
+class ControlaDadesUsuari
 {
+    /**
+     * Handle an incoming request.
+     *
+     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     */
     public function handle(Request $request, Closure $next)
     {
         if ($request->header('Authorization')) { // Hem rebut el header d’autorització?
@@ -16,9 +22,12 @@ class ControlatokenMiddleware
             if (count($key) == 2) {
                 $token = $key[1]; // key[0]->Bearer key[1]→token
             }
-            $user = User::where('api_token', $token)->first();
-            if (!empty($user)) {
-                return $next($request); // Usuari trobat. Token correcta. Continuam am la petició
+            $usuari_id = $request->route('id');
+            $user = Usuaris::where('api_token', $token)
+                ->first();
+            if (!empty($user) && ($user->id == $usuari_id || $user->rol == "administrador")) {
+                // $request->merge(['md_rol' => $user->rol, 'md_id' => $user->id]);
+                return $next($request); // Usuaris trobat. Token correcta. Continuam am la petició
             } else {
                 return response()->json(['error' => 'Accés no autoritzat'], 401); // token incorrecta
             }

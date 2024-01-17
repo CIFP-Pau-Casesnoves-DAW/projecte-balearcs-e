@@ -23,8 +23,5 @@ class Usuaris extends Model
         'dni',
         'mail',
         'contrasenya',
-        'rol',
-        'data_baixa',
-        'api_token',
     ];
 }

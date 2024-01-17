@@ -15,7 +15,7 @@ class Valoracions extends Model
         'puntuacio',
         'data',
         'data_baixa',
-        'Usuaris_id',
+        'usuari_id',
         'espai_id',
     ];
 
@@ -24,9 +24,9 @@ class Valoracions extends Model
         'data_baixa',
     ];
 
-    public function Usuaris()
+    public function usuari()
     {
-        return $this->belongsTo(Usuaris::class, 'Usuaris_id');
+        return $this->belongsTo(Usuaris::class, 'usuari_id');
     }
 
     public function espai()
