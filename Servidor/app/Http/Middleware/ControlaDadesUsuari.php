@@ -22,11 +22,11 @@ class ControlaDadesUsuari
             if (count($key) == 2) {
                 $token = $key[1]; // key[0]->Bearer key[1]→token
             }
-            $usuari_id = $request->route('id');
-            $user = Usuaris::where('api_token', $token)
+            $usuari_id = $request->route('id'); // Agafam l'id de la url
+            $user = Usuaris::where('api_token', $token) // trobam l'usuari amb el token introduït
                 ->first();
-            if (!empty($user) && ($user->id == $usuari_id || $user->rol == "administrador")) {
-                // $request->merge(['md_rol' => $user->rol, 'md_id' => $user->id]);
+            if (!empty($user) && ($user->id == $usuari_id || $user->rol == 'administrador')) {
+                $request->merge(['md_rol' => $user->rol, 'md_id' => $user->id]);
                 return $next($request); // Usuaris trobat. Token correcta. Continuam am la petició
             } else {
                 return response()->json(['error' => 'Accés no autoritzat'], 401); // token incorrecta

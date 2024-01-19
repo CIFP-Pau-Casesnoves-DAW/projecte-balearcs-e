@@ -10,8 +10,8 @@ class Usuaris extends Model
     use HasFactory;
     protected $table = 'usuaris';
     protected $primaryKey = 'id';
-    public $timestamps = false;
     public $incrementing = false;
+    public $timestamps = true;
     /**
      * Atributos que pueden ser asignados en masa.
      *
