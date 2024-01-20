@@ -14,8 +14,7 @@ class Audios extends Model
 
     protected $fillable = [
         'url',
-        'punt_interes_id',
-        'data_baixa'
+        'punt_interes_id'
     ];
 
     /**

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Municipis;
+use Illuminate\Support\Facades\Validator;
 
 /**
  * @OA\Tag(
@@ -31,8 +32,14 @@ class MunicipisController extends Controller
      */
     public function index()
     {
-        $municipis = Municipis::all();
-        return response()->json(['municipis' => $municipis]);
+        try {
+            $tuples = Municipis::all();
+            return response()->json(['status' => 'correcto', 'data' => $tuples], 200);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json(['status' => 'error', 'data' => $e->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 
     /**
@@ -52,15 +59,31 @@ class MunicipisController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'nom' => 'required|string|max:255',
-            'illa_id' => 'required|integer',
-            'data_baixa' => 'nullable|date',
-        ]);
+        try {
+            $reglesValidacio = [
+                'nom' => 'required|string|max:255',
+                'illa_id' => 'required|int',
+                'data_baixa' => 'nullable|date',
+            ];
+            $missatges = [
+                'required' => 'El camp :attribute és obligatori.',
+                'max' => 'El :attribute ha de tenir màxim :max caràcters.',
+                'int' => 'El :attribute ha de ser un número vàlid',
+            ];
 
-        $municipi = Municipis::create($request->all());
+            $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
+            if ($validacio->fails()) {
+                throw new \Illuminate\Validation\ValidationException($validacio);
+            }
 
-        return response()->json(['message' => 'Municipi creat correctament', 'municipi' => $municipi]);
+            $tupla = Municipis::create($request->all());
+
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
+        } catch (\Illuminate\Validation\ValidationException $validationException) {
+            return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 
     /**
@@ -83,9 +106,14 @@ class MunicipisController extends Controller
      *     )
      * )
      */
-    public function show(Municipis $municipi)
+    public function show($id)
     {
-        return response()->json(['municipi' => $municipi]);
+        try {
+            $tupla = Municipis::findOrFail($id);
+            return response()->json(['status' => 'correcto', 'data' => $tupla], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['status' => 'Usuaris no trobat'], 400);
+        }
     }
 
     /**
@@ -111,17 +139,34 @@ class MunicipisController extends Controller
      *     )
      * )
      */
-    public function update(Request $request, Municipis $municipi)
+    public function update(Request $request, $id)
     {
-        $request->validate([
-            'nom' => 'required|string|max:255',
-            'illa_id' => 'required|integer',
-            'data_baixa' => 'nullable|date',
-        ]);
+        try {
+            $tupla = Municipis::findOrFail($id);
+            $reglesValidacio = [
+                'nom' => 'nullable|string|max:255',
+                'illa_id' => 'nullable|int',
+                'data_baixa' => 'nullable|date',
+            ];
+            $missatges = [
+                'required' => 'El camp :attribute és obligatori.',
+                'max' => 'El :attribute ha de tenir màxim :max caràcters.',
+                'int' => 'El :attribute ha de ser un número vàlid',
+            ];
 
-        $municipi->update($request->all());
+            $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
+            if ($validacio->fails()) {
+                throw new \Illuminate\Validation\ValidationException($validacio);
+            }
 
-        return response()->json(['message' => 'Municipi actualitzat correctament', 'municipi' => $municipi]);
+            $tupla->update($request->all());
+
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
+        } catch (\Illuminate\Validation\ValidationException $validationException) {
+            return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 
     /**
@@ -143,9 +188,16 @@ class MunicipisController extends Controller
      *     )
      * )
      */
-    public function destroy(Municipis $municipi)
+    public function destroy($id)
     {
-        $municipi->delete();
-        return response()->json(['message' => 'Municipi eliminat correctament']);
+        try {
+            $tupla = Municipis::findOrFail($id);
+            $tupla->delete();
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['status' => 'Error'], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 }

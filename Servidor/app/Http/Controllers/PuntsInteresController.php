@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\PuntsInteres;
+use Illuminate\Support\Facades\Validator;
 
 /**
  * @OA\Tag(
@@ -19,7 +20,7 @@ class PuntsInteresController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-     /**
+    /**
      * @OA\Get(
      *     path="/api/puntsinteres",
      *     tags={"PuntsInteres"},
@@ -36,8 +37,14 @@ class PuntsInteresController extends Controller
      */
     public function index()
     {
-        $puntsInteres = PuntsInteres::all();
-        return response()->json(['punts_interes' => $puntsInteres]);
+        try {
+            $tuples = PuntsInteres::all();
+            return response()->json(['status' => 'correcto', 'data' => $tuples], 200);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json(['status' => 'error', 'data' => $e->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 
     /**
@@ -47,7 +54,7 @@ class PuntsInteresController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-     /**
+    /**
      * @OA\Post(
      *     path="/api/puntsinteres",
      *     tags={"PuntsInteres"},
@@ -64,16 +71,30 @@ class PuntsInteresController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'titol' => 'required|string|max:255',
-            'descripcio' => 'required|string',
-            'data_baixa' => 'nullable|date',
-            'espai_id' => 'required|exists:espais,id',
-        ]);
+        try {
+            $reglesValidacio = [
+                'titol' => 'required|string|max:255',
+                'descripcio' => 'required|string|max:2000',
+                'espai_id' => 'required|exists:espais,id',
+            ];
+            $missatges = [
+                'required' => 'El camp :attribute és obligatori.',
+                'max' => 'El :attribute ha de tenir màxim :max caràcters.'
+            ];
 
-        $puntInteres = PuntsInteres::create($request->all());
+            $validacio = PuntsInteres::make($request->all(), $reglesValidacio, $missatges);
+            if ($validacio->fails()) {
+                throw new \Illuminate\Validation\ValidationException($validacio);
+            }
 
-        return response()->json(['message' => 'Punto de interés creado correctamente', 'punt_interes' => $puntInteres]);
+            $tupla = PuntsInteres::create($request->all());
+
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
+        } catch (\Illuminate\Validation\ValidationException $validationException) {
+            return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 
     /**
@@ -83,7 +104,7 @@ class PuntsInteresController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-     /**
+    /**
      * @OA\Get(
      *     path="/api/puntsinteres/{id}",
      *     tags={"PuntsInteres"},
@@ -103,9 +124,16 @@ class PuntsInteresController extends Controller
      *     )
      * )
      */
-    public function show(PuntsInteres $puntInteres)
+    public function show($id)
     {
-        return response()->json(['punt_interes' => $puntInteres]);
+        try {
+            $tupla = PuntsInteres::findOrFail($id);
+            return response()->json(['status' => 'correcto', 'data' => $tupla], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['status' => 'Usuaris no trobat'], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 
     /**
@@ -116,7 +144,7 @@ class PuntsInteresController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-     /**
+    /**
      * @OA\Put(
      *     path="/api/puntsinteres/{id}",
      *     tags={"PuntsInteres"},
@@ -139,18 +167,33 @@ class PuntsInteresController extends Controller
      *     )
      * )
      */
-    public function update(Request $request, PuntsInteres $puntInteres)
+    public function update(Request $request, $id)
     {
-        $request->validate([
-            'titol' => 'required|string|max:255',
-            'descripcio' => 'required|string',
-            'data_baixa' => 'nullable|date',
-            'espai_id' => 'required|exists:espais,id',
-        ]);
+        try {
+            $tupla = PuntsInteres::findOrFail($id);
+            $reglesValidacio = [
+                'titol' => 'nullable|string|max:255',
+                'descripcio' => 'nullable|string|max:2000',
+                'espai_id' => 'nullable|exists:espais,id',
+            ];
+            $missatges = [
+                'required' => 'El camp :attribute és obligatori.',
+                'max' => 'El :attribute ha de tenir màxim :max caràcters.'
+            ];
 
-        $puntInteres->update($request->all());
+            $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
+            if ($validacio->fails()) {
+                throw new \Illuminate\Validation\ValidationException($validacio);
+            }
 
-        return response()->json(['message' => 'Punto de interés actualizado correctamente', 'punt_interes' => $puntInteres]);
+            $tupla->update($request->all());
+
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
+        } catch (\Illuminate\Validation\ValidationException $validationException) {
+            return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 
     /**
@@ -160,7 +203,7 @@ class PuntsInteresController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-     /**
+    /**
      * @OA\Delete(
      *     path="/api/puntsinteres/{id}",
      *     tags={"PuntsInteres"},
@@ -179,10 +222,30 @@ class PuntsInteresController extends Controller
      *     )
      * )
      */
-    public function destroy(PuntsInteres $puntInteres)
+    public function destroy($id)
     {
-        $puntInteres->delete();
+        try {
+            $tupla = PuntsInteres::findOrFail($id);
+            $tupla->delete();
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['status' => 'Error'], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
+    }
 
-        return response()->json(['message' => 'Punto de interés eliminado correctamente']);
+    public function delete($id)
+    {
+        try {
+            $puntinteres = PuntsInteres::findOrFail($id);
+            $puntinteres->data_baixa = now();
+            $puntinteres->save();
+            return response()->json(['status' => 'success', 'data' => $puntinteres], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['status' => 'Error'], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 }

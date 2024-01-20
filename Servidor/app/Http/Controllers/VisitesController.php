@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Visites;
-
+use Illuminate\Support\Facades\Validator;
 
 /**
  * @OA\Tag(
@@ -20,7 +20,7 @@ class VisitesController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-     /**
+    /**
      * @OA\Get(
      *     path="/api/visites",
      *     tags={"Visites"},
@@ -37,8 +37,14 @@ class VisitesController extends Controller
      */
     public function index()
     {
-        $visites = Visites::all();
-        return response()->json(['visites' => $visites]);
+        try {
+            $tuples = Visites::all();
+            return response()->json(['status' => 'correcto', 'data' => $tuples], 200);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json(['status' => 'error', 'data' => $e->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 
     /**
@@ -48,7 +54,7 @@ class VisitesController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-     /**
+    /**
      * @OA\Post(
      *     path="/api/visites",
      *     tags={"Visites"},
@@ -65,22 +71,37 @@ class VisitesController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'titol' => 'required|string|max:255',
-            'descripcio' => 'required|string',
-            'inscripcio_previa' => 'required|boolean',
-            'n_places' => 'required|integer',
-            'total_visitants' => 'nullable|integer',
-            'data_inici' => 'required|date',
-            'data_fi' => 'required|date',
-            'horari' => 'required|string',
-            'data_baixa' => 'nullable|date',
-            'espai_id' => 'required|exists:espais,id',
-        ]);
+        try {
+            $reglesValidacio = [
+                'titol' => 'required|string|max:255',
+                'descripcio' => 'required|string',
+                'inscripcio_previa' => 'required|boolean',
+                'n_places' => 'required|integer',
+                'total_visitants' => 'nullable|integer',
+                'data_inici' => 'required|date',
+                'data_fi' => 'required|date',
+                'horari' => 'required|string',
+                'data_baixa' => 'nullable|date',
+                'espai_id' => 'required|int',
+            ];
+            $missatges = [
+                'required' => 'El camp :attribute és obligatori.',
+                'max' => 'El :attribute ha de tenir màxim :max caràcters.'
+            ];
 
-        $visita = Visites::create($request->all());
+            $validacio = Visites::make($request->all(), $reglesValidacio, $missatges);
+            if ($validacio->fails()) {
+                throw new \Illuminate\Validation\ValidationException($validacio);
+            }
 
-        return response()->json(['message' => 'Visita creada correctamente', 'visita' => $visita]);
+            $tupla = Visites::create($request->all());
+
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
+        } catch (\Illuminate\Validation\ValidationException $validationException) {
+            return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 
     /**
@@ -90,7 +111,7 @@ class VisitesController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-     /**
+    /**
      * @OA\Get(
      *     path="/api/visites/{id}",
      *     tags={"Visites"},
@@ -110,9 +131,16 @@ class VisitesController extends Controller
      *     )
      * )
      */
-    public function show(Visites $visita)
+    public function show($id)
     {
-        return response()->json(['visita' => $visita]);
+        try {
+            $tupla = Visites::findOrFail($id);
+            return response()->json(['status' => 'correcto', 'data' => $tupla], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['status' => 'Usuaris no trobat'], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 
     /**
@@ -123,7 +151,7 @@ class VisitesController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-     /**
+    /**
      * @OA\Put(
      *     path="/api/visites/{id}",
      *     tags={"Visites"},
@@ -146,24 +174,39 @@ class VisitesController extends Controller
      *     )
      * )
      */
-    public function update(Request $request, Visites $visita)
+    public function update(Request $request, $id)
     {
-        $request->validate([
-            'titol' => 'required|string|max:255',
-            'descripcio' => 'required|string',
-            'inscripcio_previa' => 'required|boolean',
-            'n_places' => 'required|integer',
-            'total_visitants' => 'nullable|integer',
-            'data_inici' => 'required|date',
-            'data_fi' => 'required|date',
-            'horari' => 'required|string',
-            'data_baixa' => 'nullable|date',
-            'espai_id' => 'required|exists:espais,id',
-        ]);
+        try {
+            $tupla = Visites::findOrFail($id);
+            $reglesValidacio = [
+                'titol' => 'nullable|string|max:255',
+                'descripcio' => 'nullable|string',
+                'inscripcio_previa' => 'nullable|boolean',
+                'n_places' => 'nullable|integer',
+                'total_visitants' => 'nullable|integer',
+                'data_inici' => 'nullable|date',
+                'data_fi' => 'nullable|date',
+                'horari' => 'nullable|string',
+                'espai_id' => 'nullable|int',
+            ];
+            $missatges = [
+                'required' => 'El camp :attribute és obligatori.',
+                'max' => 'El :attribute ha de tenir màxim :max caràcters.'
+            ];
 
-        $visita->update($request->all());
+            $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
+            if ($validacio->fails()) {
+                throw new \Illuminate\Validation\ValidationException($validacio);
+            }
 
-        return response()->json(['message' => 'Visita actualizada correctamente', 'visita' => $visita]);
+            $tupla->update($request->all());
+
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
+        } catch (\Illuminate\Validation\ValidationException $validationException) {
+            return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 
     /**
@@ -173,7 +216,7 @@ class VisitesController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-     /**
+    /**
      * @OA\Delete(
      *     path="/api/visites/{id}",
      *     tags={"Visites"},
@@ -192,10 +235,30 @@ class VisitesController extends Controller
      *     )
      * )
      */
-    public function destroy(Visites $visita)
+    public function destroy($id)
     {
-        $visita->delete();
+        try {
+            $tupla = Visites::findOrFail($id);
+            $tupla->delete();
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['status' => 'Error'], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
+    }
 
-        return response()->json(['message' => 'Visita eliminada correctamente']);
+    public function delete($id)
+    {
+        try {
+            $visites = Visites::findOrFail($id);
+            $visites->data_baixa = now();
+            $visites->save();
+            return response()->json(['status' => 'success', 'data' => $visites], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['status' => 'Error'], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 }

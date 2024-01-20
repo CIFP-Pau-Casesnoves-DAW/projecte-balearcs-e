@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Serveis;
+use Illuminate\Support\Facades\Validator;
 
 /**
  * @OA\Tag(
@@ -19,7 +20,7 @@ class ServeisController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-     /**
+    /**
      * @OA\Get(
      *     path="/api/serveis",
      *     tags={"Serveis"},
@@ -36,8 +37,14 @@ class ServeisController extends Controller
      */
     public function index()
     {
-        $serveis = Serveis::all();
-        return response()->json(['serveis' => $serveis]);
+        try {
+            $tuples = Serveis::all();
+            return response()->json(['status' => 'correcto', 'data' => $tuples], 200);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json(['status' => 'error', 'data' => $e->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 
     /**
@@ -47,7 +54,7 @@ class ServeisController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-     /**
+    /**
      * @OA\Post(
      *     path="/api/serveis",
      *     tags={"Serveis"},
@@ -64,14 +71,29 @@ class ServeisController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'nom_serveis' => 'required|string|max:255',
-            'data_baixa' => 'nullable|date',
-        ]);
+        try {
+            $reglesValidacio = [
+                'nom_serveis' => 'required|string|max:255',
+                'data_baixa' => 'nullable|date',
+            ];
+            $missatges = [
+                'required' => 'El camp :attribute és obligatori.',
+                'max' => 'El :attribute ha de tenir màxim :max caràcters.'
+            ];
 
-        $servei = Serveis::create($request->all());
+            $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
+            if ($validacio->fails()) {
+                throw new \Illuminate\Validation\ValidationException($validacio);
+            }
 
-        return response()->json(['message' => 'Servicio creado correctamente', 'servei' => $servei]);
+            $tupla = Serveis::create($request->all());
+
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
+        } catch (\Illuminate\Validation\ValidationException $validationException) {
+            return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 
     /**
@@ -81,7 +103,7 @@ class ServeisController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-     /**
+    /**
      * @OA\Get(
      *     path="/api/serveis/{id}",
      *     tags={"Serveis"},
@@ -101,9 +123,16 @@ class ServeisController extends Controller
      *     )
      * )
      */
-    public function show(Serveis $servei)
+    public function show($id)
     {
-        return response()->json(['servei' => $servei]);
+        try {
+            $tupla = Serveis::findOrFail($id);
+            return response()->json(['status' => 'correcto', 'data' => $tupla], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['status' => 'Usuaris no trobat'], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 
     /**
@@ -114,7 +143,7 @@ class ServeisController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-     /**
+    /**
      * @OA\Put(
      *     path="/api/serveis/{id}",
      *     tags={"Serveis"},
@@ -137,16 +166,32 @@ class ServeisController extends Controller
      *     )
      * )
      */
-    public function update(Request $request, Serveis $servei)
+    public function update(Request $request, $id)
     {
-        $request->validate([
-            'nom_serveis' => 'required|string|max:255',
-            'data_baixa' => 'nullable|date',
-        ]);
+        try {
+            $tupla = Serveis::findOrFail($id);
+            $reglesValidacio = [
+                'nom_serveis' => 'nullable|string|max:255',
+                'data_baixa' => 'nullable|date',
+            ];
+            $missatges = [
+                'required' => 'El camp :attribute és obligatori.',
+                'max' => 'El :attribute ha de tenir màxim :max caràcters.'
+            ];
 
-        $servei->update($request->all());
+            $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
+            if ($validacio->fails()) {
+                throw new \Illuminate\Validation\ValidationException($validacio);
+            }
 
-        return response()->json(['message' => 'Servicio actualizado correctamente', 'servei' => $servei]);
+            $tupla->update($request->all());
+
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
+        } catch (\Illuminate\Validation\ValidationException $validationException) {
+            return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 
     /**
@@ -156,7 +201,7 @@ class ServeisController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-     /**
+    /**
      * @OA\Delete(
      *     path="/api/serveis/{id}",
      *     tags={"Serveis"},
@@ -175,10 +220,16 @@ class ServeisController extends Controller
      *     )
      * )
      */
-    public function destroy(Serveis $servei)
+    public function destroy($id)
     {
-        $servei->delete();
-
-        return response()->json(['message' => 'Servicio eliminado correctamente']);
+        try {
+            $tupla = Serveis::findOrFail($id);
+            $tupla->delete();
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['status' => 'Error'], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 }

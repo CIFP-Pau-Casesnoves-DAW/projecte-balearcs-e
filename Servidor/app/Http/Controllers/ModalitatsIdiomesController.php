@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\ModalitatsIdiomes;
+use Illuminate\Support\Facades\Validator;
 
 /**
  * @OA\Tag(
@@ -31,8 +32,14 @@ class ModalitatsIdiomesController extends Controller
      */
     public function index()
     {
-        $modalitats_idiomes = ModalitatsIdiomes::all();
-        return response()->json(['modalitats_idiomes' => $modalitats_idiomes]);
+        try {
+            $tuples = ModalitatsIdiomes::all();
+            return response()->json(['status' => 'correcto', 'data' => $tuples], 200);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json(['status' => 'error', 'data' => $e->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 
     /**
@@ -52,16 +59,31 @@ class ModalitatsIdiomesController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'idioma_id' => 'required|string|max:2',
-            'modalitat_id' => 'required|string|max:2',
-            'traduccio' => 'required|string|max:255',
-            'data_baixa' => 'nullable|date',
-        ]);
+        try {
+            $reglesValidacio = [
+                'idioma_id' => 'required|int',
+                'modalitat_id' => 'required|int',
+                'traduccio' => 'required|string|max:255',
+                'data_baixa' => 'nullable|date',
+            ];
+            $missatges = [
+                'required' => 'El camp :attribute és obligatori.',
+                'max' => 'El :attribute ha de tenir màxim :max caràcters.'
+            ];
 
-        $modalitat_idioma = ModalitatsIdiomes::create($request->all());
+            $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
+            if ($validacio->fails()) {
+                throw new \Illuminate\Validation\ValidationException($validacio);
+            }
 
-        return response()->json(['message' => 'Modalitat-idioma creada correctamente', 'modalitat_idioma' => $modalitat_idioma]);
+            $tupla = ModalitatsIdiomes::create($request->all());
+
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
+        } catch (\Illuminate\Validation\ValidationException $validationException) {
+            return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 
     /**
@@ -84,9 +106,17 @@ class ModalitatsIdiomesController extends Controller
      *     )
      * )
      */
-    public function show(ModalitatsIdiomes $modalitat_idioma)
+    public function show($idioma_id, $modalitat_id)
     {
-        return response()->json(['modalitat_idioma' => $modalitat_idioma]);
+        try {
+            $modalitatidioma = ModalitatsIdiomes::where('idioma_id', $idioma_id)->where('modalitat_id', $modalitat_id)->first();
+            if (!$modalitatidioma) {
+                return response()->json(['message' => 'Traducció no trobada'], 404);
+            }
+            return response()->json(['modalitat_idioma' => $modalitatidioma], 200);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 
     /**
@@ -112,18 +142,29 @@ class ModalitatsIdiomesController extends Controller
      *     )
      * )
      */
-    public function update(Request $request, ModalitatsIdiomes $modalitat_idioma)
+    public function update(Request $request, $idioma_id, $modalitat_id)
     {
-        $request->validate([
-            'idioma_id' => 'required|string|max:2',
-            'modalitat_id' => 'required|string|max:2',
-            'traduccio' => 'required|string|max:255',
-            'data_baixa' => 'nullable|date',
-        ]);
+        try {
+            $reglesValidacio = [
+                'traduccio' => 'nullable|string',
+                'data_baixa' => 'nullable|date',
+            ];
 
-        $modalitat_idioma->update($request->all());
+            $validacio = Validator::make($request->all(), $reglesValidacio);
+            if ($validacio->fails()) {
+                return response()->json(['errors' => $validacio->errors()], 400);
+            }
 
-        return response()->json(['message' => 'Modalitat-idioma actualitzada correctament', 'modalitat_idioma' => $modalitat_idioma]);
+            $modalitatidioma = ModalitatsIdiomes::where('idioma_id', $idioma_id)->where('modalitat_id', $modalitat_id)->first();
+            if (!$modalitatidioma) {
+                return response()->json(['message' => 'Traducció no trobada'], 404);
+            }
+
+            $modalitatidioma->update($request->all());
+            return response()->json(['modalitat_idioma' => $modalitatidioma], 200);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 
     /**
@@ -145,9 +186,18 @@ class ModalitatsIdiomesController extends Controller
      *     )
      * )
      */
-    public function destroy(ModalitatsIdiomes $modalitat_idioma)
+    public function destroy($idioma_id, $modalitat_id)
     {
-        $modalitat_idioma->delete();
-        return response()->json(['message' => 'Modalitat-idioma eliminada correctamente']);
+        try {
+            $modalitatidioma = ModalitatsIdiomes::where('idioma_id', $idioma_id)->where('modalitat_id', $modalitat_id)->first();
+            if (!$modalitatidioma) {
+                return response()->json(['message' => 'Traducció no trobada'], 404);
+            }
+
+            $modalitatidioma->delete();
+            return response()->json(['message' => 'Traducció eliminada correctament'], 200);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 }

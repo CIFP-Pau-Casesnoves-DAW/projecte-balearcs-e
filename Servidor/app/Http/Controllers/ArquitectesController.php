@@ -32,8 +32,14 @@ class ArquitectesController extends Controller
      */
     public function index()
     {
-        $arquitectes = Arquitectes::all();
-        return response()->json(['status' => 'correcte', 'data' => $arquitectes], 200);
+        try {
+            $tuples = Arquitectes::all();
+            return response()->json(['status' => 'correcto', 'data' => $tuples], 200);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json(['status' => 'error', 'data' => $e->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 
     /**
@@ -53,17 +59,28 @@ class ArquitectesController extends Controller
      */
     public function store(Request $request)
     {
-       
-        $reglesValidacio = [
-            // Define your validation rules here
-        ];
+        try {
+            $reglesValidacio = [
+                'nom' => 'required|string|max:255',
+                'data_baixa' => 'nullable|date',
+            ];
+            $missatges = [
+                'required' => 'El camp :attribute és obligatori.',
+                'max' => 'El :attribute ha de tenir màxim :max caràcters.'
+            ];
 
-        $validacio = Validator::make($request->all(), $reglesValidacio);
-        if (!$validacio->fails()) {
-            $arquitecte = Arquitectes::create($request->all());
-            return response()->json(['status' => 'correcte', 'data' => $arquitecte], 200);
-        } else {
-            return response()->json(['status' => 'error', 'data' => $validacio->errors()], 400);
+            $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
+            if ($validacio->fails()) {
+                throw new \Illuminate\Validation\ValidationException($validacio);
+            }
+
+            $tupla = Arquitectes::create($request->all());
+
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
+        } catch (\Illuminate\Validation\ValidationException $validationException) {
+            return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
         }
     }
 
@@ -91,80 +108,90 @@ class ArquitectesController extends Controller
     public function show($id)
     {
         try {
-            $arquitecte = Arquitectes::findOrFail($id);
-            return response()->json(['status' => 'correcte', 'data' => $arquitecte], 200);
+            $tupla = Arquitectes::findOrFail($id);
+            return response()->json(['status' => 'correcto', 'data' => $tupla], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json(['status' => 'Arquitecte no trobat'], 404);
+            return response()->json(['status' => 'Usuaris no trobat'], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
         }
     }
 
     /**
- * @OA\Put(
- *     path="/api/arquitectes/{id}",
- *     tags={"Arquitecte"},
- *     summary="Actualitza un arquitecte específic",
- *     @OA\Parameter(
- *         name="id",
- *         in="path",
- *         required=true,
- *         description="ID de l'arquitecte a actualitzar",
- *         @OA\Schema(type="integer")
- *     ),
- *     @OA\RequestBody(
- *         required=true,
- *         description="Dades per a actualitzar un arquitecte",
- *         @OA\JsonContent(
- *             required={"nom"},
- *             @OA\Property(property="nom", type="string", example="Joan"),
- *             // Afegiu altres propietats aquí segons el model Arquitecte
- *         )
- *     ),
- *     @OA\Response(
- *         response=200,
- *         description="Arquitecte actualitzat correctament",
- *         @OA\JsonContent(
- *             @OA\Property(property="status", type="string", example="success"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Arquitecte")
- *         )
- *     ),
- *     @OA\Response(
- *         response=400,
- *         description="Error de validació",
- *         @OA\JsonContent(
- *             @OA\Property(property="status", type="string", example="error"),
- *             @OA\Property(property="errors", type="object")
- *         )
- *     ),
- *     @OA\Response(
- *         response=404,
- *         description="Arquitecte no trobat",
- *         @OA\JsonContent(
- *             @OA\Property(property="status", type="string", example="error"),
- *             @OA\Property(property="message", type="string", example="Arquitecte no trobat")
- *         )
- *     )
- * )
- */
+     * @OA\Put(
+     *     path="/api/arquitectes/{id}",
+     *     tags={"Arquitecte"},
+     *     summary="Actualitza un arquitecte específic",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID de l'arquitecte a actualitzar",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         description="Dades per a actualitzar un arquitecte",
+     *         @OA\JsonContent(
+     *             required={"nom"},
+     *             @OA\Property(property="nom", type="string", example="Joan"),
+     *             // Afegiu altres propietats aquí segons el model Arquitecte
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Arquitecte actualitzat correctament",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="data", type="object", ref="#/components/schemas/Arquitecte")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Error de validació",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="errors", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Arquitecte no trobat",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="Arquitecte no trobat")
+     *         )
+     *     )
+     * )
+     */
     public function update(Request $request, $id)
     {
-        // Defineix les regles de validació
-        $reglesValidacio = [
-            'nom' => 'required|string|max:255',
-        ];
-    
-        // Realitza la validació
-        $validacio = Validator::make($request->all(), $reglesValidacio);
-        if ($validacio->fails()) {
-            return response()->json(['status' => 'error', 'errors' => $validacio->errors()], 400);
+        try {
+            $tupla = Arquitectes::findOrFail($id);
+            $reglesValidacio = [
+                'nom' => 'nullable|string|max:255',
+                'data_baixa' => 'nullable|date',
+            ];
+            $missatges = [
+                'required' => 'El camp :attribute és obligatori.',
+                'max' => 'El :attribute ha de tenir màxim :max caràcters.'
+            ];
+
+            $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
+            if ($validacio->fails()) {
+                throw new \Illuminate\Validation\ValidationException($validacio);
+            }
+
+            $tupla->update($request->all());
+
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
+        } catch (\Illuminate\Validation\ValidationException $validationException) {
+            return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
         }
-    
-        // Troba i actualitza l'arquitecte
-        $arquitecte = Arquitectes::findOrFail($id);
-        $arquitecte->update($request->all());
-    
-        return response()->json(['status' => 'success', 'data' => $arquitecte], 200);
     }
-    
+
 
     /**
      * @OA\Delete(
@@ -187,9 +214,14 @@ class ArquitectesController extends Controller
      */
     public function destroy($id)
     {
-        $arquitecte = Arquitectes::findOrFail($id);
-        $arquitecte->delete();
-        return response()->json(['status' => 'success', 'message' => 'Arquitecte eliminat correctament'], 200);
+        try {
+            $tupla = Arquitectes::findOrFail($id);
+            $tupla->delete();
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['status' => 'Error'], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
-
 }

@@ -142,9 +142,9 @@ class VisitesIdiomesController extends Controller
     public function update(Request $request, VisitesIdiomes $visitaIdioma)
     {
         $request->validate([
-            'idioma_id' => 'required|exists:idiomes,id',
-            'visita_id' => 'required|exists:visites,id',
-            'traduccio' => 'required|string',
+            'idioma_id' => 'nullable|exists:idiomes,id',
+            'visita_id' => 'nullable|exists:visites,id',
+            'traduccio' => 'nullable|string',
             'data_baixa' => 'nullable|date',
         ]);
 

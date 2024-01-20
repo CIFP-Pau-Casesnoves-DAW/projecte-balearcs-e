@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Tipus;
+use Illuminate\Support\Facades\Validator;
 
 /**
  * @OA\Tag(
@@ -19,7 +20,7 @@ class TipusController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-     /**
+    /**
      * @OA\Get(
      *     path="/api/tipus",
      *     tags={"Tipus"},
@@ -36,8 +37,14 @@ class TipusController extends Controller
      */
     public function index()
     {
-        $tipus = Tipus::all();
-        return response()->json(['tipus' => $tipus]);
+        try {
+            $tuples = Tipus::all();
+            return response()->json(['status' => 'correcto', 'data' => $tuples], 200);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json(['status' => 'error', 'data' => $e->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 
     /**
@@ -47,7 +54,7 @@ class TipusController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-     /**
+    /**
      * @OA\Post(
      *     path="/api/tipus",
      *     tags={"Tipus"},
@@ -64,14 +71,29 @@ class TipusController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'nom_tipus' => 'required|string|max:255',
-            'data_baixa' => 'nullable|date',
-        ]);
+        try {
+            $reglesValidacio = [
+                'nom_tipus' => 'required|string|max:255',
+                'data_baixa' => 'nullable|date',
+            ];
+            $missatges = [
+                'required' => 'El camp :attribute és obligatori.',
+                'max' => 'El :attribute ha de tenir màxim :max caràcters.'
+            ];
 
-        $tipus = Tipus::create($request->all());
+            $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
+            if ($validacio->fails()) {
+                throw new \Illuminate\Validation\ValidationException($validacio);
+            }
 
-        return response()->json(['message' => 'Tipo creado correctamente', 'tipus' => $tipus]);
+            $tupla = Tipus::create($request->all());
+
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
+        } catch (\Illuminate\Validation\ValidationException $validationException) {
+            return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 
     /**
@@ -81,7 +103,7 @@ class TipusController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-     /**
+    /**
      * @OA\Get(
      *     path="/api/tipus/{id}",
      *     tags={"Tipus"},
@@ -101,9 +123,16 @@ class TipusController extends Controller
      *     )
      * )
      */
-    public function show(Tipus $tipus)
+    public function show($id)
     {
-        return response()->json(['tipus' => $tipus]);
+        try {
+            $tupla = Tipus::findOrFail($id);
+            return response()->json(['status' => 'correcto', 'data' => $tupla], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['status' => 'Usuaris no trobat'], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 
     /**
@@ -114,7 +143,7 @@ class TipusController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-     /**
+    /**
      * @OA\Put(
      *     path="/api/tipus/{id}",
      *     tags={"Tipus"},
@@ -137,16 +166,32 @@ class TipusController extends Controller
      *     )
      * )
      */
-    public function update(Request $request, Tipus $tipus)
+    public function update(Request $request, $id)
     {
-        $request->validate([
-            'nom_tipus' => 'required|string|max:255',
-            'data_baixa' => 'nullable|date',
-        ]);
+        try {
+            $tupla = Tipus::findOrFail($id);
+            $reglesValidacio = [
+                'nom_tipus' => 'nullable|string|max:255',
+                'data_baixa' => 'nullable|date',
+            ];
+            $missatges = [
+                'required' => 'El camp :attribute és obligatori.',
+                'max' => 'El :attribute ha de tenir màxim :max caràcters.'
+            ];
 
-        $tipus->update($request->all());
+            $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
+            if ($validacio->fails()) {
+                throw new \Illuminate\Validation\ValidationException($validacio);
+            }
 
-        return response()->json(['message' => 'Tipo actualizado correctamente', 'tipus' => $tipus]);
+            $tupla->update($request->all());
+
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
+        } catch (\Illuminate\Validation\ValidationException $validationException) {
+            return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 
     /**
@@ -156,7 +201,7 @@ class TipusController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-     /**
+    /**
      * @OA\Delete(
      *     path="/api/tipus/{id}",
      *     tags={"Tipus"},
@@ -175,10 +220,16 @@ class TipusController extends Controller
      *     )
      * )
      */
-    public function destroy(Tipus $tipus)
+    public function destroy($id)
     {
-        $tipus->delete();
-
-        return response()->json(['message' => 'Tipo eliminado correctamente']);
+        try {
+            $tupla = Tipus::findOrFail($id);
+            $tupla->delete();
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['status' => 'Error'], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 }

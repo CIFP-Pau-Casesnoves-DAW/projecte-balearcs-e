@@ -142,9 +142,9 @@ class ServeisIdiomesController extends Controller
     public function update(Request $request, ServeisIdiomes $serveisIdioma)
     {
         $request->validate([
-            'idioma_id' => 'required|exists:idiomes,id',
-            'servei_id' => 'required|exists:serveis,id',
-            'traduccio' => 'required|string',
+            'idioma_id' => 'nullable|exists:idiomes,id',
+            'servei_id' => 'nullable|exists:serveis,id',
+            'traduccio' => 'nullable|string',
             'data_baixa' => 'nullable|date',
         ]);
 

@@ -38,6 +38,8 @@ class EspaisController extends Controller
             return response()->json(['status' => 'correcto', 'data' => $tuples], 200);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json(['status' => 'error', 'data' => $e->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
         }
     }
 
@@ -97,11 +99,6 @@ class EspaisController extends Controller
                 'web' => 'nullable|string|max:255',
                 'mail' => 'required|email|max:255',
                 'grau_acc' => 'nullable|in:baix,mig,alt',
-                'arquitecte_id' => 'required|exists:arquitectes,id',
-                'gestor_id' => 'required|exists:usuaris,id',
-                'tipus_id' => 'required|exists:tipus,id',
-                'municipi_id' => 'required|exists:municipis,id',
-                'destacat' => 'nullable|boolean',
                 'any_cons' => 'nullable|integer'
             ];
 
@@ -128,10 +125,11 @@ class EspaisController extends Controller
 
             $tupla = Espais::create($request->all());
 
-
             return response()->json(['status' => 'correcte', 'data' => $tupla], 200);
         } catch (\Illuminate\Validation\ValidationException $validationException) {
             return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
         }
     }
 
@@ -160,7 +158,9 @@ class EspaisController extends Controller
             $tupla = Espais::findOrFail($id);
             return response()->json(['status' => 'correcto', 'data' => $tupla], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json(['status' => 'Usuaris no trobat'], 400);
+            return response()->json(['status' => 'Espai no trobat'], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
         }
     }
 
@@ -293,6 +293,8 @@ class EspaisController extends Controller
             return response()->json(['status' => 'success', 'data' => $tupla], 200);
         } catch (\Illuminate\Validation\ValidationException $validationException) {
             return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
         }
     }
 
@@ -325,11 +327,13 @@ class EspaisController extends Controller
             return response()->json(['status' => 'success', 'data' => $espai], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json(['status' => 'Error'], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
         }
     }
 
     // No eliminamos un espacio, solo ponemos fecha de baja
-    public function delete(string $id)
+    public function delete($id)
     {
         try {
             $espai = Espais::findOrFail($id);
@@ -338,6 +342,8 @@ class EspaisController extends Controller
             return response()->json(['status' => 'success', 'data' => $espai], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json(['status' => 'Error'], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
         }
     }
 }

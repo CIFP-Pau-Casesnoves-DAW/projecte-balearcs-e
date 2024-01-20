@@ -31,8 +31,14 @@ class IdiomesController extends Controller
      */
     public function index()
     {
-        $idiomes = Idiomes::all();
-        return response()->json(['idiomes' => $idiomes], 200);
+        try {
+            $tuples = Idiomes::all();
+            return response()->json(['status' => 'correcto', 'data' => $tuples], 200);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json(['status' => 'error', 'data' => $e->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 
     /**
@@ -63,151 +69,175 @@ class IdiomesController extends Controller
      */
     public function store(Request $request)
     {
-        $reglesValidacio = [
-            'nom' => 'required|string|max:255'
-        ];
+        try {
+            $reglesValidacio = [
+                'idioma' => 'required|string|max:255',
+                'data_baixa' => 'nullable|date',
+            ];
+            $missatges = [
+                'required' => 'El camp :attribute és obligatori.',
+                'max' => 'El :attribute ha de tenir màxim :max caràcters.'
+            ];
 
-        $validacio = Validator::make($request->all(), $reglesValidacio);
-        if ($validacio->fails()) {
-            return response()->json(['errors' => $validacio->errors()], 400);
+            $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
+            if ($validacio->fails()) {
+                throw new \Illuminate\Validation\ValidationException($validacio);
+            }
+
+            $tupla = Idiomes::create($request->all());
+
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
+        } catch (\Illuminate\Validation\ValidationException $validationException) {
+            return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
         }
-
-        $idioma = Idiomes::create($request->all());
-        return response()->json(['idioma' => $idioma], 200);
     }
 
-    
 
-/**
- * @OA\Get(
- *     path="/api/idiomes/{id}",
- *     tags={"Idioma"},
- *     summary="Mostra un idioma específic",
- *     @OA\Parameter(
- *         name="id",
- *         in="path",
- *         required=true,
- *         @OA\Schema(type="integer")
- *     ),
- *     @OA\Response(
- *         response=200,
- *         description="Retorna l'idioma específic",
- *         @OA\JsonContent(ref="#/components/schemas/Idioma")
- *     ),
- *     @OA\Response(
- *         response=404,
- *         description="Idioma no trobat",
- *         @OA\JsonContent(
- *             @OA\Property(property="message", type="string", example="Idioma no trobat")
- *         )
- *     )
- * )
- */
-public function show($id)
-{
-    $idioma = Idiomes::find($id);
-    if (!$idioma) {
-        return response()->json(['message' => 'Idioma no trobat'], 404);
+
+    /**
+     * @OA\Get(
+     *     path="/api/idiomes/{id}",
+     *     tags={"Idioma"},
+     *     summary="Mostra un idioma específic",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Retorna l'idioma específic",
+     *         @OA\JsonContent(ref="#/components/schemas/Idioma")
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Idioma no trobat",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Idioma no trobat")
+     *         )
+     *     )
+     * )
+     */
+    public function show($id)
+    {
+        try {
+            $tupla = Idiomes::findOrFail($id);
+            return response()->json(['status' => 'correcto', 'data' => $tupla], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['status' => 'Usuaris no trobat'], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
-    return response()->json(['idioma' => $idioma], 200);
+
+    /**
+     * @OA\Put(
+     *     path="/api/idiomes/{id}",
+     *     tags={"Idioma"},
+     *     summary="Actualitza un idioma específic",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"nom"},
+     *             @OA\Property(property="nom", type="string", example="Anglès")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Idioma actualitzat correctament",
+     *         @OA\JsonContent(ref="#/components/schemas/Idioma")
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Error de validació",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="errors", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Idioma no trobat",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Idioma no trobat")
+     *         )
+     *     )
+     * )
+     */
+    public function update(Request $request, $id)
+    {
+        try {
+            $tupla = Idiomes::findOrFail($id);
+            $reglesValidacio = [
+                'nom' => 'nullable|string|max:255',
+                'zona' => 'nullable|string|max:255',
+                'data_baixa' => 'nullable|date',
+            ];
+            $missatges = [
+                'required' => 'El camp :attribute és obligatori.',
+                'max' => 'El :attribute ha de tenir màxim :max caràcters.'
+            ];
+
+            $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
+            if ($validacio->fails()) {
+                throw new \Illuminate\Validation\ValidationException($validacio);
+            }
+
+            $tupla->update($request->all());
+
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
+        } catch (\Illuminate\Validation\ValidationException $validationException) {
+            return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
+    }
+
+    /**
+     * @OA\Delete(
+     *     path="/api/idiomes/{id}",
+     *     tags={"Idioma"},
+     *     summary="Elimina un idioma específic",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Idioma eliminat correctament",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Idioma eliminat correctament")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Idioma no trobat",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Idioma no trobat")
+     *         )
+     *     )
+     * )
+     */
+    public function destroy($id)
+    {
+        try {
+            $tupla = Idiomes::findOrFail($id);
+            $tupla->delete();
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['status' => 'Error'], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
+    }
 }
-
-/**
- * @OA\Put(
- *     path="/api/idiomes/{id}",
- *     tags={"Idioma"},
- *     summary="Actualitza un idioma específic",
- *     @OA\Parameter(
- *         name="id",
- *         in="path",
- *         required=true,
- *         @OA\Schema(type="integer")
- *     ),
- *     @OA\RequestBody(
- *         required=true,
- *         @OA\JsonContent(
- *             required={"nom"},
- *             @OA\Property(property="nom", type="string", example="Anglès")
- *         )
- *     ),
- *     @OA\Response(
- *         response=200,
- *         description="Idioma actualitzat correctament",
- *         @OA\JsonContent(ref="#/components/schemas/Idioma")
- *     ),
- *     @OA\Response(
- *         response=400,
- *         description="Error de validació",
- *         @OA\JsonContent(
- *             @OA\Property(property="errors", type="object")
- *         )
- *     ),
- *     @OA\Response(
- *         response=404,
- *         description="Idioma no trobat",
- *         @OA\JsonContent(
- *             @OA\Property(property="message", type="string", example="Idioma no trobat")
- *         )
- *     )
- * )
- */
-public function update(Request $request, $id)
-{
-    $reglesValidacio = [
-        'nom' => 'required|string|max:255'
-    ];
-
-    $validacio = Validator::make($request->all(), $reglesValidacio);
-    if ($validacio->fails()) {
-        return response()->json(['errors' => $validacio->errors()], 400);
-    }
-
-    $idioma = Idiomes::find($id);
-    if (!$idioma) {
-        return response()->json(['message' => 'Idioma no trobat'], 404);
-    }
-
-    $idioma->update($request->all());
-    return response()->json(['idioma' => $idioma], 200);
-}
-
-/**
- * @OA\Delete(
- *     path="/api/idiomes/{id}",
- *     tags={"Idioma"},
- *     summary="Elimina un idioma específic",
- *     @OA\Parameter(
- *         name="id",
- *         in="path",
- *         required=true,
- *         @OA\Schema(type="integer")
- *     ),
- *     @OA\Response(
- *         response=200,
- *         description="Idioma eliminat correctament",
- *         @OA\JsonContent(
- *             @OA\Property(property="message", type="string", example="Idioma eliminat correctament")
- *         )
- *     ),
- *     @OA\Response(
- *         response=404,
- *         description="Idioma no trobat",
- *         @OA\JsonContent(
- *             @OA\Property(property="message", type="string", example="Idioma no trobat")
- *         )
- *     )
- * )
- */
-public function destroy($id)
-{
-    $idioma = Idiomes::find($id);
-    if (!$idioma) {
-        return response()->json(['message' => 'Idioma no trobat'], 404);
-    }
-
-    $idioma->delete();
-    return response()->json(['message' => 'Idioma eliminat correctament'], 200);
-}
-
-}
-

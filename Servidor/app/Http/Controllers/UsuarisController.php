@@ -20,6 +20,8 @@ class UsuarisController extends Controller
             return response()->json(['status' => 'correcto', 'data' => $tuples], 200);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json(['status' => 'error', 'data' => $e->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
         }
     }
 
@@ -66,30 +68,34 @@ class UsuarisController extends Controller
             return response()->json(['status' => 'correcte', 'data' => $tupla], 200);
         } catch (\Illuminate\Validation\ValidationException $validationException) {
             return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
         }
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show($id)
     {
         try {
             $tupla = Usuaris::findOrFail($id);
             return response()->json(['status' => 'correcto', 'data' => $tupla], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json(['status' => 'Usuaris no trobat'], 400);
+            return response()->json(['status' => 'Usuari no trobat'], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
         }
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
         try {
             $tupla = Usuaris::findOrFail($id);
-            
+
             $reglesValidacio = [
                 'nom' => 'nullable|string|max:255',
                 'llinatges' => 'nullable|string|max:255',
@@ -128,13 +134,15 @@ class UsuarisController extends Controller
             return response()->json(['status' => 'success', 'data' => $tupla], 200);
         } catch (\Illuminate\Validation\ValidationException $validationException) {
             return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
         }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($id)
     {
         try {
             $usuari = Usuaris::findOrFail($id);
@@ -142,11 +150,13 @@ class UsuarisController extends Controller
             return response()->json(['status' => 'success', 'data' => $usuari], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json(['status' => 'Error'], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
         }
     }
 
     // No eliminamos un usuario, solo ponemos fecha de baja
-    public function delete(string $id)
+    public function delete($id)
     {
         try {
             $usuari = Usuaris::findOrFail($id);
@@ -155,6 +165,8 @@ class UsuarisController extends Controller
             return response()->json(['status' => 'success', 'data' => $usuari], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json(['status' => 'Error'], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
         }
     }
 }

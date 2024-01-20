@@ -12,8 +12,8 @@ use App\Models\Municipis;
 class Espais extends Model
 {
     use HasFactory;
-
     protected $table = 'espais';
+    protected $primaryKey = 'id';
 
     protected $fillable = [
         'nom',
@@ -24,11 +24,6 @@ class Espais extends Model
         'web',
         'mail',
         'grau_acc',
-        'arquitecte_id',
-        'gestor_id',
-        'tipus_id',
-        'municipi_id',
-        'destacat',
         'any_cons'
     ];
 
