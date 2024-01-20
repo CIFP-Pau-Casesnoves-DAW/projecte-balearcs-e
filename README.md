@@ -54,7 +54,7 @@ Assegura't de tenir instal·lades les següents eines abans de començar:
 1. **Clonar el Repositori:**
 
    ```bash
-   git clone https://github.com/tu-usuari/tu-projecte.git
+   git clone https://github.com/CIFP-Pau-Casesnoves-DAW/projecte-balearcs-e.git
 
 2. **Instal·lar Dependències:**
 
