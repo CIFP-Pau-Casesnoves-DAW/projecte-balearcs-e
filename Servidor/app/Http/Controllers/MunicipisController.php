@@ -15,20 +15,29 @@ use App\Models\Municipis;
 class MunicipisController extends Controller
 {
     /**
-     * @OA\Get(
-     *     path="/api/municipis",
-     *     tags={"Municipis"},
-     *     summary="Llista tots els municipis",
-     *     @OA\Response(
-     *         response=200,
-     *         description="Retorna un llistat de tots els municipis",
-     *         @OA\JsonContent(
-     *             type="array",
-     *             @OA\Items(ref="#/components/schemas/Municipis")
-     *         )
-     *     )
-     * )
-     */
+ * @OA\Get(
+ *     path="/municipis",
+ *     summary="Obté llista de tots els municipis",
+ *     tags={"Municipis"},
+ *     @OA\Response(
+ *         response=200,
+ *         description="Llista de municipis",
+ *         @OA\JsonContent(
+ *             type="array",
+ *             @OA\Items(ref="#/components/schemas/Municipi")
+ *         )
+ *     )
+ * )
+ * @OA\Schema(
+ *     schema="Municipi",
+ *     type="object",
+ *     @OA\Property(property="id", type="integer"),
+ *     @OA\Property(property="nom", type="string"),
+ *     @OA\Property(property="illa_id", type="integer"),
+ *     @OA\Property(property="data_baixa", type="string", format="date", nullable=true)
+ *     // Altres propietats del model Municipi segons la teva base de dades
+ * )
+ */
     public function index()
     {
         $municipis = Municipis::all();
@@ -36,20 +45,47 @@ class MunicipisController extends Controller
     }
 
     /**
-     * @OA\Post(
-     *     path="/api/municipis",
-     *     tags={"Municipis"},
-     *     summary="Crea un nou municipi",
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/Municipis")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Municipi creat correctament"
-     *     )
-     * )
-     */
+ * @OA\Post(
+ *     path="/municipis",
+ *     summary="Crea un nou municipi",
+ *     tags={"Municipis"},
+ *     @OA\RequestBody(
+ *         required=true,
+ *         description="Dades del nou municipi",
+ *         @OA\JsonContent(
+ *             required={"nom", "illa_id"},
+ *             @OA\Property(property="nom", type="string", example="Palma"),
+ *             @OA\Property(property="illa_id", type="integer", example=1),
+ *             @OA\Property(property="data_baixa", type="string", format="date", example="2024-01-01", nullable=true)
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Municipi creat",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="message", type="string", example="Municipi creat correctament"),
+ *             @OA\Property(property="municipi", ref="#/components/schemas/Municipi")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Dades invàlides",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="errors", type="object")
+ *         )
+ *     )
+ * )
+ * @OA\Schema(
+ *     schema="Municipi",
+ *     type="object",
+ *     @OA\Property(property="nom", type="string"),
+ *     @OA\Property(property="illa_id", type="integer"),
+ *     @OA\Property(property="data_baixa", type="string", format="date", nullable=true)
+ * )
+ */
+
     public function store(Request $request)
     {
         $request->validate([
@@ -63,54 +99,106 @@ class MunicipisController extends Controller
         return response()->json(['message' => 'Municipi creat correctament', 'municipi' => $municipi]);
     }
 
+
     /**
-     * @OA\Get(
-     *     path="/api/municipis/{id}",
-     *     tags={"Municipis"},
-     *     summary="Mostra un municipi específic",
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         @OA\Schema(
-     *             type="integer"
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Retorna el municipi especificat",
-     *         @OA\JsonContent(ref="#/components/schemas/Municipis")
-     *     )
-     * )
-     */
+ * @OA\Get(
+ *     path="/municipis/{municipi}",
+ *     summary="Mostra un municipi específic",
+ *     tags={"Municipis"},
+ *     @OA\Parameter(
+ *         name="municipi",
+ *         in="path",
+ *         required=true,
+ *         description="ID del municipi a mostrar",
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Municipi mostrat",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="municipi", ref="#/components/schemas/Municipi")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Municipi no trobat",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="message", type="string", example="Municipi no trobat")
+ *         )
+ *     )
+ * )
+ * @OA\Schema(
+ *     schema="Municipi",
+ *     type="object",
+ *     @OA\Property(property="nom", type="string"),
+ *     @OA\Property(property="illa_id", type="integer"),
+ *     @OA\Property(property="data_baixa", type="string", format="date", nullable=true)
+ * )
+ */
+
     public function show(Municipis $municipi)
     {
         return response()->json(['municipi' => $municipi]);
     }
 
-    /**
-     * @OA\Put(
-     *     path="/api/municipis/{id}",
-     *     tags={"Municipis"},
-     *     summary="Actualitza un municipi específic",
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         @OA\Schema(
-     *             type="integer"
-     *         )
-     *     ),
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/Municipis")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Municipi actualitzat correctament"
-     *     )
-     * )
-     */
+   /**
+ * @OA\Put(
+ *     path="/municipis/{municipi}",
+ *     summary="Actualitza un municipi específic",
+ *     tags={"Municipis"},
+ *     @OA\Parameter(
+ *         name="municipi",
+ *         in="path",
+ *         required=true,
+ *         description="ID del municipi a actualitzar",
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\RequestBody(
+ *         required=true,
+ *         description="Dades per a actualitzar el municipi",
+ *         @OA\JsonContent(
+ *             required={"nom", "illa_id"},
+ *             @OA\Property(property="nom", type="string", example="Palma"),
+ *             @OA\Property(property="illa_id", type="integer", example="1"),
+ *             @OA\Property(property="data_baixa", type="string", format="date", nullable=true, example="2024-01-01")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Municipi actualitzat correctament",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="message", type="string", example="Municipi actualitzat correctament"),
+ *             @OA\Property(property="municipi", ref="#/components/schemas/Municipi")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Dades invàlides",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="errors", type="object")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Municipi no trobat",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="message", type="string", example="Municipi no trobat")
+ *         )
+ *     )
+ * )
+ * @OA\Schema(
+ *     schema="Municipi",
+ *     type="object",
+ *     @OA\Property(property="nom", type="string"),
+ *     @OA\Property(property="illa_id", type="integer"),
+ *     @OA\Property(property="data_baixa", type="string", format="date", nullable=true)
+ * )
+ */
     public function update(Request $request, Municipis $municipi)
     {
         $request->validate([
@@ -124,25 +212,36 @@ class MunicipisController extends Controller
         return response()->json(['message' => 'Municipi actualitzat correctament', 'municipi' => $municipi]);
     }
 
-    /**
-     * @OA\Delete(
-     *     path="/api/municipis/{id}",
-     *     tags={"Municipis"},
-     *     summary="Elimina un municipi específic",
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         @OA\Schema(
-     *             type="integer"
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Municipi eliminat correctament"
-     *     )
-     * )
-     */
+   /**
+ * @OA\Delete(
+ *     path="/municipis/{municipi}",
+ *     summary="Elimina un municipi específic",
+ *     tags={"Municipis"},
+ *     @OA\Parameter(
+ *         name="municipi",
+ *         in="path",
+ *         required=true,
+ *         description="ID del municipi a eliminar",
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Municipi eliminat correctament",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="message", type="string", example="Municipi eliminat correctament")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Municipi no trobat",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="message", type="string", example="Municipi no trobat")
+ *         )
+ *     )
+ * )
+ */
     public function destroy(Municipis $municipi)
     {
         $municipi->delete();
