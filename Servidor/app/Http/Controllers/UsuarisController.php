@@ -15,108 +15,59 @@ class UsuarisController extends Controller
      */
     public function index()
     {
-        $tuples = Usuaris::all();
-        return response()->json(['status' => 'correcto', 'data' => $tuples], 200);
+        try {
+            $tuples = Usuaris::all();
+            return response()->json(['status' => 'correcto', 'data' => $tuples], 200);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json(['status' => 'error', 'data' => $e->errors()], 400);
+        }
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    // public function store(Request $request)
-    // {
-    //     $reglesValidacio = [
-    //         'nom' => 'required|string|max:255',
-    //         'llinatges' => 'required|string|max:255',
-    //         'dni' => 'required|string|max:20',
-    //         'mail' => 'required|email|unique:usuaris,mail|max:255',
-    //         'contrasenya' => 'required|string|min:6',
-    //         'rol' => 'required|in:usuari,administrador,gestor',
-    //         'data_baixa' => 'nullable|date',
-    //     ];
-
-    //     $missatges = [
-    //         'required' => 'El camp :attribute és obligatori.',
-    //         'unique' => 'El :attribute ja està en ús.',
-    //         'email' => 'El :attribute ha de ser una adreça de correu electrònic vàlida.',
-    //         'min' => 'La :attribute ha de tenir almenys :min caràcters.',
-    //         'in' => 'El valor seleccionat per a :attribute no és vàlid.',
-    //         'date' => 'El camp :attribute ha de ser una data vàlida.',
-    //     ];
-
-    //     $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
-    //     if (!$validacio->fails()) {
-    //         $contrasenya = Hash::make($request->contrasenya);
-    //         $request->merge(['contrasenya' => $contrasenya]);
-    //         $tupla = Usuaris::create($request->all());
-    //         return response()->json(['status' => 'correcte', 'data' => $tupla], 200);
-    //     } else {
-    //         return response()->json(['status' => 'error', 'data' => $validacio->errors()], 400);
-    //     }
-    // }
     public function store(Request $request)
     {
-        $fillableAttributes = [
-            'nom',
-            'llinatges',
-            'dni',
-            'mail',
-            'contrasenya',
-        ];
-
-        $defaultValues = [
-            'rol' => 'usuari',
-            'data_baixa' => null,
-            'api_token' => null,
-            'created_at' => Carbon::now(),
-            'updated_at' => Carbon::now(),
-        ];
-
-        $reglesValidacio = [
-            'nom' => 'required|string|max:255',
-            'llinatges' => 'required|string|max:255',
-            'dni' => 'required|string|max:20',
-            'mail' => 'required|email|unique:usuaris,mail|max:255',
-            'contrasenya' => 'required|string|min:6',
-        ];
-
-        $missatges = [
-            'required' => 'El camp :attribute és obligatori.',
-            'unique' => 'El :attribute ja està en ús.',
-            'email' => 'El :attribute ha de ser una adreça de correu electrònic vàlida.',
-            'min' => 'La :attribute ha de tenir almenys :min caràcters.',
-        ];
-
-        if ($request->has(['md_rol', 'md_id'])) {
-            $reglesValidacio = [
-                'rol' => 'required|in:usuari,administrador,gestor',
+        try {
+            $defaultValues = [
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ];
 
-            $validacio = Validator::make($request->only(['rol']), $reglesValidacio);
+            $reglesValidacio = [
+                'nom' => 'required|string|max:255',
+                'llinatges' => 'required|string|max:255',
+                'dni' => 'required|string|max:20',
+                'mail' => 'required|email|unique:usuaris,mail|max:255',
+                'contrasenya' => 'required|string|min:6',
+            ];
 
-            if (!$validacio->fails()) {
-                $defaultValues['rol'] = $request->input('rol'); // Asigna el valor de 'rol' si es válido
-            } else {
-                return response()->json(['status' => 'error', 'data' => $validacio->errors()], 400);
+            $request->merge($defaultValues);
+
+            $missatges = [
+                'required' => 'El camp :attribute és obligatori.',
+                'unique' => 'El :attribute ja està en ús.',
+                'email' => 'El :attribute ha de ser una adreça de correu electrònic vàlida.',
+                'min' => 'La :attribute ha de tenir almenys :min caràcters.',
+                'in' => 'El valor seleccionat per a :attribute no és vàlid.',
+                'date' => 'El camp :attribute ha de ser una data vàlida.',
+            ];
+
+            $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
+
+            if ($validacio->fails()) {
+                throw new \Illuminate\Validation\ValidationException($validacio);
             }
+
+            $contrasenya = Hash::make($request->contrasenya);
+            $request->merge(['contrasenya' => $contrasenya]);
+            $tupla = Usuaris::create($request->all());
+
+            return response()->json(['status' => 'correcte', 'data' => $tupla], 200);
+        } catch (\Illuminate\Validation\ValidationException $validationException) {
+            return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
         }
-
-        $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
-
-        if ($validacio->fails()) {
-            return response()->json(['status' => 'error', 'data' => $validacio->errors()], 400);
-        }
-
-        $contrasenya = Hash::make($request->contrasenya);
-        $request->merge(['contrasenya' => $contrasenya]);
-
-        // Combinar los atributos fillable con los valores predeterminados
-        $dataToInsert = array_merge($request->only($fillableAttributes), $defaultValues);
-
-        $tupla = Usuaris::create($dataToInsert);
-
-        return response()->json(['status' => 'correcte', 'data' => $tupla], 200);
     }
-
 
     /**
      * Display the specified resource.
@@ -136,40 +87,47 @@ class UsuarisController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $tupla = Usuaris::findOrFail($id);
-        $reglesValidacio = [
-            'nom' => 'required|string|max:255',
-            'llinatges' => 'required|string|max:255',
-            'dni' => 'required|string|max:20',
-            'mail' => 'required|email|unique:usuaris,mail|max:255',
-            'contrasenya' => 'required|string|min:6',
-            'rol' => 'required|in:usuari,administrador,gestor',
-            'data_baixa' => 'nullable|date',
-        ];
+        try {
+            $tupla = Usuaris::findOrFail($id);
+            
+            $reglesValidacio = [
+                'nom' => 'nullable|string|max:255',
+                'llinatges' => 'nullable|string|max:255',
+                'dni' => 'nullable|string|max:20',
+                'mail' => 'nullable|email|unique:usuaris,mail|max:255',
+                'contrasenya' => 'nullable|string|min:6',
+                'rol' => 'nullable|in:usuari,administrador,gestor',
+            ];
 
-        $missatges = [
-            'required' => 'El camp :attribute és obligatori.',
-            'unique' => 'El :attribute ja està en ús.',
-            'email' => 'El :attribute ha de ser una adreça de correu electrònic vàlida.',
-            'min' => 'La :attribute ha de tenir almenys :min caràcters.',
-            'in' => 'El valor seleccionat per a :attribute no és vàlid.',
-            'date' => 'El camp :attribute ha de ser una data vàlida.',
-        ];
+            $missatges = [
+                'required' => 'El camp :attribute és obligatori.',
+                'unique' => 'El :attribute ja està en ús.',
+                'email' => 'El :attribute ha de ser una adreça de correu electrònic vàlida.',
+                'min' => 'La :attribute ha de tenir almenys :min caràcters.',
+                'in' => 'El valor seleccionat per a :attribute no és vàlid.',
+                'date' => 'El camp :attribute ha de ser una data vàlida.',
+            ];
 
-        $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
-        if (!$validacio->fails()) {
+            $mdRol = $request->md_rol;
+
+            $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
+            if ($validacio->fails()) {
+                throw new \Illuminate\Validation\ValidationException($validacio);
+            }
             if ($request->filled('contrasenya')) {
                 $novaContrasenya = Hash::make($request->contrasenya);
                 $request->merge(['contrasenya' => $novaContrasenya]);
             }
-            if ($request->filled('rol')) {
-                $rol = Hash::make($request->rol);
-                $request->merge(['rol' => $rol]);
+
+            if ($request->filled('rol') && $mdRol == 'administrador') {
+                $usuari = Usuaris::find($id);
+                $usuari->rol = $request->input('rol');
+                $usuari->save();
             }
             $tupla->update($request->all());
             return response()->json(['status' => 'success', 'data' => $tupla], 200);
-        } else {
-            return response()->json(['status' => 'validation error', 'data' => $validacio->errors()->all()], 400);
+        } catch (\Illuminate\Validation\ValidationException $validationException) {
+            return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
         }
     }
 
@@ -192,7 +150,8 @@ class UsuarisController extends Controller
     {
         try {
             $usuari = Usuaris::findOrFail($id);
-            $usuari->update(['data_baixa' => now()]);
+            $usuari->data_baixa = now();
+            $usuari->save();
             return response()->json(['status' => 'success', 'data' => $usuari], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json(['status' => 'Error'], 400);

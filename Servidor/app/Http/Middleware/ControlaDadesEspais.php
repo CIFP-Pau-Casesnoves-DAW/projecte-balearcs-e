@@ -23,11 +23,12 @@ class ControlaDadesEspais
             if (count($key) == 2) {
                 $token = $key[1]; // key[0]->Bearer key[1]→token
             }
-            $espai_id = $request->route('espai');
+            $espai_id = $request->route('id');
             $espai_gestor = Espais::where('id', $espai_id)->value('gestor_id');
             $user = Usuaris::where('api_token', $token)
                 ->first();
             if (!empty($user) && ($user->id == $espai_gestor || $user->rol == "administrador")) {
+                $request->merge(['md_rol' => $user->rol, 'md_id' => $user->id]);
                 return $next($request); // Usuaris trobat. Token correcta. Continuam am la petició
             } else {
                 return response()->json(['error' => 'Accés no autoritzat'], 401); // token incorrecta
