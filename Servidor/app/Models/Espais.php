@@ -4,8 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Arquitectes;
+use App\Models\Usuaris;
+use App\Models\Tipus;
+use App\Models\Municipis;
 
-class Espai extends Model
+class Espais extends Model
 {
     use HasFactory;
 
@@ -20,11 +24,12 @@ class Espai extends Model
         'web',
         'mail',
         'grau_acc',
-        'data_baixa',
         'arquitecte_id',
         'gestor_id',
         'tipus_id',
-        'municipi_id'
+        'municipi_id',
+        'destacat',
+        'any_cons'
     ];
 
     /**
@@ -32,15 +37,15 @@ class Espai extends Model
      */
     public function arquitecte()
     {
-        return $this->belongsTo(Arquitecte::class, 'arquitecte_id');
+        return $this->belongsTo(Arquitectes::class, 'arquitecte_id');
     }
 
     /**
-     * Relació amb el model Usuari (Gestor).
+     * Relació amb el model Usuaris (Gestor).
      */
     public function gestor()
     {
-        return $this->belongsTo(Usuari::class, 'gestor_id');
+        return $this->belongsTo(Usuaris::class, 'gestor_id');
     }
 
     /**
@@ -56,19 +61,6 @@ class Espai extends Model
      */
     public function municipi()
     {
-        return $this->belongsTo(Municipi::class, 'municipi_id');
+        return $this->belongsTo(Municipis::class, 'municipi_id');
     }
-
-    /**
-     * Relació amb el model fotos.
-     */
-    public function fotos()
-    {
-        return $this->hasMany(Foto::class);
-    }   
-
-    
-
-
 }
-

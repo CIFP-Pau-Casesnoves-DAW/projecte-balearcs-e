@@ -15,54 +15,78 @@ use Illuminate\Support\Facades\Validator;
 class EspaisModalitatsController extends Controller
 {
     /**
-     * @OA\Get(
-     *     path="/api/espais-modalitats",
-     *     tags={"EspaiModalitat"},
-     *     summary="Llista totes les modalitats dels espais",
-     *     @OA\Response(
-     *         response=200,
-     *         description="Retorna un llistat de totes les modalitats dels espais",
-     *         @OA\JsonContent(
-     *             type="array",
-     *             @OA\Items(ref="#/components/schemas/EspaiModalitat")
-     *         )
-     *     )
-     * )
-     */
+ * @OA\Get(
+ *     path="/espais-modalitats",
+ *     summary="Llista totes les associacions d'espais i modalitats",
+ *     tags={"EspaiModalitat"},
+ *     @OA\Response(
+ *         response=200,
+ *         description="Llista d'associacions d'espais i modalitats",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(
+ *                 property="espais_modalitats",
+ *                 type="array",
+ *                 @OA\Items(ref="#/components/schemas/EspaiModalitat")
+ *             )
+ *         )
+ *     )
+ * )
+ * @OA\Schema(
+ *     schema="EspaiModalitat",
+ *     type="object",
+ *     @OA\Property(property="espai_id", type="integer", example=1),
+ *     @OA\Property(property="modalitat_id", type="integer", example=2),
+ *     @OA\Property(property="data_baixa", type="string", format="date", example="2023-01-01", nullable=true)
+ *     
+ * )
+ */
     public function index()
     {
         $espaisModalitats = EspaiModalitat::all();
         return response()->json(['espais_modalitats' => $espaisModalitats], 200);
     }
 
-    /**
-     * @OA\Post(
-     *     path="/api/espais-modalitats",
-     *     tags={"EspaiModalitat"},
-     *     summary="Crea una nova associació entre un espai i una modalitat",
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(
-     *             required={"espai_id", "modalitat_id"},
-     *             @OA\Property(property="espai_id", type="integer", example=1),
-     *             @OA\Property(property="modalitat_id", type="integer", example=1),
-     *             @OA\Property(property="data_baixa", type="string", format="date", example="2023-01-01", nullable=true)
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Associació creada correctament",
-     *         @OA\JsonContent(ref="#/components/schemas/EspaiModalitat")
-     *     ),
-     *     @OA\Response(
-     *         response=400,
-     *         description="Error de validació",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="errors", type="object")
-     *         )
-     *     )
-     * )
-     */
+  /**
+ * @OA\Post(
+ *     path="/espais-modalitats",
+ *     summary="Crea una nova associació entre un espai i una modalitat",
+ *     tags={"EspaiModalitat"},
+ *     @OA\RequestBody(
+ *         required=true,
+ *         description="Dades necessàries per a crear una nova associació",
+ *         @OA\JsonContent(
+ *             required={"espai_id", "modalitat_id"},
+ *             @OA\Property(property="espai_id", type="integer", example=1),
+ *             @OA\Property(property="modalitat_id", type="integer", example=2),
+ *             @OA\Property(property="data_baixa", type="string", format="date", example="2023-01-01", nullable=true)
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Associació creada correctament",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="espai_modalitat", type="object", ref="#/components/schemas/EspaiModalitat")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Error en la validació de dades",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="errors", type="object")
+ *         )
+ *     )
+ * )
+ * @OA\Schema(
+ *     schema="EspaiModalitat",
+ *     type="object",
+ *     @OA\Property(property="espai_id", type="integer", example=1),
+ *     @OA\Property(property="modalitat_id", type="integer", example=2),
+ *     @OA\Property(property="data_baixa", type="string", format="date", example="2023-01-01", nullable=true)
+ * )
+ */
     public function store(Request $request)
     {
         $reglesValidacio = [
@@ -84,33 +108,46 @@ class EspaisModalitatsController extends Controller
 
 /**
  * @OA\Get(
- *     path="/api/espais-modalitats/{espai_id}/{modalitat_id}",
+ *     path="/espais-modalitats/{espai_id}/{modalitat_id}",
+ *     summary="Obté una associació específica entre un espai i una modalitat",
  *     tags={"EspaiModalitat"},
- *     summary="Mostra una associació específica entre espai i modalitat",
  *     @OA\Parameter(
  *         name="espai_id",
  *         in="path",
  *         required=true,
+ *         description="ID de l'espai",
  *         @OA\Schema(type="integer")
  *     ),
  *     @OA\Parameter(
  *         name="modalitat_id",
  *         in="path",
  *         required=true,
+ *         description="ID de la modalitat",
  *         @OA\Schema(type="integer")
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Retorna la associació específica",
- *         @OA\JsonContent(ref="#/components/schemas/EspaiModalitat")
+ *         description="Associació trobada amb èxit",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="espai_modalitat", type="object", ref="#/components/schemas/EspaiModalitat")
+ *         )
  *     ),
  *     @OA\Response(
  *         response=404,
  *         description="Associació no trobada",
  *         @OA\JsonContent(
+ *             type="object",
  *             @OA\Property(property="message", type="string", example="Associació no trobada")
  *         )
  *     )
+ * )
+ * @OA\Schema(
+ *     schema="EspaiModalitat",
+ *     type="object",
+ *     @OA\Property(property="espai_id", type="integer", example=1),
+ *     @OA\Property(property="modalitat_id", type="integer", example=2),
+ *     @OA\Property(property="data_baixa", type="string", format="date", example="2023-01-01", nullable=true)
  * )
  */
 public function show($espai_id, $modalitat_id)
@@ -122,29 +159,30 @@ public function show($espai_id, $modalitat_id)
     return response()->json(['espai_modalitat' => $espaiModalitat], 200);
 }
 
-// El mètode update no és comú per a aquest tipus d'associacions, ja que normalment es crea o elimina.
-
 /**
  * @OA\Delete(
- *     path="/api/espais-modalitats/{espai_id}/{modalitat_id}",
+ *     path="/espais-modalitats/{espai_id}/{modalitat_id}",
+ *     summary="Elimina una associació entre un espai i una modalitat",
  *     tags={"EspaiModalitat"},
- *     summary="Elimina una associació específica entre espai i modalitat",
  *     @OA\Parameter(
  *         name="espai_id",
  *         in="path",
  *         required=true,
+ *         description="ID de l'espai",
  *         @OA\Schema(type="integer")
  *     ),
  *     @OA\Parameter(
  *         name="modalitat_id",
  *         in="path",
  *         required=true,
+ *         description="ID de la modalitat",
  *         @OA\Schema(type="integer")
  *     ),
  *     @OA\Response(
  *         response=200,
  *         description="Associació eliminada correctament",
  *         @OA\JsonContent(
+ *             type="object",
  *             @OA\Property(property="message", type="string", example="Associació eliminada correctament")
  *         )
  *     ),
@@ -152,6 +190,7 @@ public function show($espai_id, $modalitat_id)
  *         response=404,
  *         description="Associació no trobada",
  *         @OA\JsonContent(
+ *             type="object",
  *             @OA\Property(property="message", type="string", example="Associació no trobada")
  *         )
  *     )

@@ -5,13 +5,14 @@ use Illuminate\Http\Request;
 use App\Models\Audio;
 use Illuminate\Support\Facades\Validator;
 
+
 /**
  * @OA\Tag(
  *     name="Audio",
  *     description="Operacions per a Audios"
  * )
  */
-class AudioController extends Controller
+class AudiosController extends Controller
 {
     /**
      * @OA\Get(
@@ -27,6 +28,13 @@ class AudioController extends Controller
      *         )
      *     )
      * )
+     * @OA\Schema(
+     * schema="Audio",
+     *    type="object",
+     *                @OA\Property(property="url", type="string"),
+     *               @OA\Property(property="punt_interes_id", type="integer"),
+     * )
+     * 
      */
     public function index()
     {

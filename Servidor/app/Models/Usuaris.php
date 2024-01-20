@@ -5,13 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Usuari extends Model
+class Usuaris extends Model
 {
     use HasFactory;
     protected $table = 'usuaris';
     protected $primaryKey = 'id';
-    public $timestamps = false;
     public $incrementing = false;
+    public $timestamps = true;
     /**
      * Atributos que pueden ser asignados en masa.
      *
@@ -23,8 +23,5 @@ class Usuari extends Model
         'dni',
         'mail',
         'contrasenya',
-        'rol',
-        'data_baixa',
-        'api_token',
     ];
 }

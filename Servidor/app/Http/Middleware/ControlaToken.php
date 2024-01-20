@@ -2,11 +2,11 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\User;
+use App\Models\Usuaris;
 use Closure;
 use Illuminate\Http\Request;
 
-class ControlatokenMiddleware
+class Controlatoken
 {
     public function handle(Request $request, Closure $next)
     {
@@ -16,7 +16,7 @@ class ControlatokenMiddleware
             if (count($key) == 2) {
                 $token = $key[1]; // key[0]->Bearer key[1]→token
             }
-            $user = User::where('api_token', $token)->first();
+            $user = Usuaris::where('api_token', $token)->first();
             if (!empty($user)) {
                 return $next($request); // Usuari trobat. Token correcta. Continuam am la petició
             } else {

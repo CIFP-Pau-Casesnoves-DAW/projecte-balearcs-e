@@ -15,20 +15,33 @@ use Illuminate\Support\Facades\Validator;
 class EspaisServeisController extends Controller
 {
     /**
-     * @OA\Get(
-     *     path="/api/espais-serveis",
-     *     tags={"EspaiServei"},
-     *     summary="Llista totes les associacions entre espais i serveis",
-     *     @OA\Response(
-     *         response=200,
-     *         description="Retorna un llistat de totes les associacions entre espais i serveis",
-     *         @OA\JsonContent(
-     *             type="array",
-     *             @OA\Items(ref="#/components/schemas/EspaiServei")
-     *         )
-     *     )
-     * )
-     */
+ * @OA\Get(
+ *     path="/espais-serveis",
+ *     summary="Llista totes les associacions d'espais i serveis",
+ *     tags={"EspaiServei"},
+ *     @OA\Response(
+ *         response=200,
+ *         description="Llista d'associacions d'espais i serveis",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(
+ *                 property="espais_serveis",
+ *                 type="array",
+ *                 @OA\Items(ref="#/components/schemas/EspaiServei")
+ *             )
+ *         )
+ *     )
+ * )
+ * @OA\Schema(
+ *     schema="EspaiServei",
+ *     type="object",
+ *     @OA\Property(property="espai_id", type="integer", example=1),
+ *     @OA\Property(property="servei_id", type="integer", example=2),
+ *     @OA\Property(property="data_baixa", type="string", format="date", example="2023-01-01", nullable=true)
+ * 
+ *     
+ * )
+ */
     public function index()
     {
         $espaisServeis = EspaiServei::all();
@@ -36,33 +49,48 @@ class EspaisServeisController extends Controller
     }
 
     /**
-     * @OA\Post(
-     *     path="/api/espais-serveis",
-     *     tags={"EspaiServei"},
-     *     summary="Crea una nova associació entre un espai i un servei",
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(
-     *             required={"servei_id", "espai_id"},
-     *             @OA\Property(property="servei_id", type="integer", example=1),
-     *             @OA\Property(property="espai_id", type="integer", example=1),
-     *             @OA\Property(property="data_baixa", type="string", format="date", example="2023-01-01", nullable=true)
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Associació creada correctament",
-     *         @OA\JsonContent(ref="#/components/schemas/EspaiServei")
-     *     ),
-     *     @OA\Response(
-     *         response=400,
-     *         description="Error de validació",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="errors", type="object")
-     *         )
-     *     )
-     * )
-     */
+ * @OA\Post(
+ *     path="/espais-serveis",
+ *     summary="Crea una nova associació entre un espai i un servei",
+ *     tags={"EspaiServei"},
+ *     @OA\RequestBody(
+ *         required=true,
+ *         description="Dades necessàries per a crear una nova associació",
+ *         @OA\JsonContent(
+ *             required={"servei_id", "espai_id"},
+ *             @OA\Property(property="servei_id", type="integer", example=1),
+ *             @OA\Property(property="espai_id", type="integer", example=2),
+ *             @OA\Property(property="data_baixa", type="string", format="date", example="2023-01-01", nullable=true)
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Associació creada correctament",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="espai_servei", type="object", ref="#/components/schemas/EspaiServei")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Error en la validació de dades",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="errors", type="object")
+ *         )
+ *     )
+ * )
+ * @OA\Schema(
+ *     schema="EspaiServei",
+ *     type="object",
+ *     @OA\Property(property="servei_id", type="integer", example=1),
+ *     @OA\Property(property="espai_id", type="integer", example=2),
+ *     @OA\Property(property="data_baixa", type="string", format="date", example="2023-01-01", nullable=true)
+ * 
+ *     
+ * )
+ */
+
     public function store(Request $request)
     {
         $reglesValidacio = [
@@ -80,37 +108,50 @@ class EspaisServeisController extends Controller
         return response()->json(['espai_servei' => $espaiServei], 200);
     }
 
-    // Continuació de EspaisServeisController
-
-/**
+    /**
  * @OA\Get(
- *     path="/api/espais-serveis/{servei_id}/{espai_id}",
+ *     path="/espais-serveis/{servei_id}/{espai_id}",
+ *     summary="Obté una associació específica entre un espai i un servei",
  *     tags={"EspaiServei"},
- *     summary="Mostra una associació específica entre espai i servei",
  *     @OA\Parameter(
  *         name="servei_id",
  *         in="path",
  *         required=true,
+ *         description="ID del servei",
  *         @OA\Schema(type="integer")
  *     ),
  *     @OA\Parameter(
  *         name="espai_id",
  *         in="path",
  *         required=true,
+ *         description="ID de l'espai",
  *         @OA\Schema(type="integer")
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Retorna la associació específica",
- *         @OA\JsonContent(ref="#/components/schemas/EspaiServei")
+ *         description="Associació trobada amb èxit",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="espai_servei", type="object", ref="#/components/schemas/EspaiServei")
+ *         )
  *     ),
  *     @OA\Response(
  *         response=404,
  *         description="Associació no trobada",
  *         @OA\JsonContent(
+ *             type="object",
  *             @OA\Property(property="message", type="string", example="Associació no trobada")
  *         )
  *     )
+ * )
+ * @OA\Schema(
+ *     schema="EspaiServei",
+ *     type="object",
+ *     @OA\Property(property="servei_id", type="integer", example=1),
+ *     @OA\Property(property="espai_id", type="integer", example=2),
+ *     @OA\Property(property="data_baixa", type="string", format="date", example="2023-01-01", nullable=true)
+ * 
+ *     
  * )
  */
 public function show($servei_id, $espai_id)
@@ -126,25 +167,28 @@ public function show($servei_id, $espai_id)
 
 /**
  * @OA\Delete(
- *     path="/api/espais-serveis/{servei_id}/{espai_id}",
+ *     path="/espais-serveis/{servei_id}/{espai_id}",
+ *     summary="Elimina una associació entre un espai i un servei",
  *     tags={"EspaiServei"},
- *     summary="Elimina una associació específica entre espai i servei",
  *     @OA\Parameter(
  *         name="servei_id",
  *         in="path",
  *         required=true,
+ *         description="ID del servei",
  *         @OA\Schema(type="integer")
  *     ),
  *     @OA\Parameter(
  *         name="espai_id",
  *         in="path",
  *         required=true,
+ *         description="ID de l'espai",
  *         @OA\Schema(type="integer")
  *     ),
  *     @OA\Response(
  *         response=200,
  *         description="Associació eliminada correctament",
  *         @OA\JsonContent(
+ *             type="object",
  *             @OA\Property(property="message", type="string", example="Associació eliminada correctament")
  *         )
  *     ),
@@ -152,9 +196,18 @@ public function show($servei_id, $espai_id)
  *         response=404,
  *         description="Associació no trobada",
  *         @OA\JsonContent(
+ *             type="object",
  *             @OA\Property(property="message", type="string", example="Associació no trobada")
  *         )
  *     )
+ * )
+ * @OA\Schema(
+ *     schema="EspaiServei",
+ *     type="object",
+ *     @OA\Property(property="servei_id", type="integer", example=1),
+ *     @OA\Property(property="espai_id", type="integer", example=2),
+ *     @OA\Property(property="data_baixa", type="string", format="date", example="2023-01-01", nullable=true)
+ *     // Aquí es poden afegir altres propietats del model EspaiServei.
  * )
  */
 public function destroy($servei_id, $espai_id)
