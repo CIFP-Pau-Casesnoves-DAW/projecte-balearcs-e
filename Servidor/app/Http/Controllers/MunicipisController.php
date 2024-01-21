@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Municipis;
+use Illuminate\Support\Facades\Validator;
 
 /**
  * @OA\Tag(
@@ -16,214 +17,313 @@ class MunicipisController extends Controller
 {
     /**
  * @OA\Get(
- *     path="/municipis",
- *     summary="Obté llista de tots els municipis",
+ *     path="/api/municipis",
  *     tags={"Municipis"},
+ *     summary="Llista tots els municipis",
  *     @OA\Response(
  *         response=200,
- *         description="Llista de municipis",
+ *         description="Llista de municipis recuperada amb èxit",
  *         @OA\JsonContent(
- *             type="array",
- *             @OA\Items(ref="#/components/schemas/Municipi")
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="correcto"),
+ *             @OA\Property(
+ *                 property="data",
+ *                 type="array",
+ *                 @OA\Items(ref="#/components/schemas/Municipi")
+ *             )
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Error en la sol·licitud",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="data", type="object")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Error intern del servidor",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string")
  *         )
  *     )
  * )
  * @OA\Schema(
  *     schema="Municipi",
  *     type="object",
- *     @OA\Property(property="id", type="integer"),
- *     @OA\Property(property="nom", type="string"),
- *     @OA\Property(property="illa_id", type="integer"),
- *     @OA\Property(property="data_baixa", type="string", format="date", nullable=true)
- *     
+ *     @OA\Property(property="id", type="integer", description="Identificador únic del municipi"),
+ *     @OA\Property(property="nom", type="string", description="Nom del municipi"),
+ *     @OA\Property(property="provincia_id", type="integer", description="Identificador de la província a la qual pertany el municipi"),
+ *     @OA\Property(property="comarca_id", type="integer", description="Identificador de la comarca a la qual pertany el municipi"),
+ *     @OA\Property(property="habitants", type="integer", description="Nombre d'habitants del municipi"),
+ *     @OA\Property(property="data_baixa", type="string", format="date", description="Data de baixa del municipi", nullable=true)
  * )
  */
     public function index()
     {
-        $municipis = Municipis::all();
-        return response()->json(['municipis' => $municipis]);
+        try {
+            $tuples = Municipis::all();
+            return response()->json(['status' => 'correcto', 'data' => $tuples], 200);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json(['status' => 'error', 'data' => $e->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 
     /**
  * @OA\Post(
- *     path="/municipis",
- *     summary="Crea un nou municipi",
+ *     path="/api/municipis",
  *     tags={"Municipis"},
+ *     summary="Crea un nou municipi",
  *     @OA\RequestBody(
  *         required=true,
- *         description="Dades del nou municipi",
+ *         description="Dades del municipi a crear",
  *         @OA\JsonContent(
- *             required={"nom", "illa_id"},
- *             @OA\Property(property="nom", type="string", example="Palma"),
- *             @OA\Property(property="illa_id", type="integer", example=1),
- *             @OA\Property(property="data_baixa", type="string", format="date", example="2024-01-01", nullable=true)
+ *             @OA\Property(property="nom", type="string", description="Nom del municipi"),
+ *             @OA\Property(property="illa_id", type="integer", description="Identificador de la illa a la qual pertany el municipi"),
+ *             @OA\Property(property="data_baixa", type="string", format="date", description="Data de baixa del municipi", nullable=true)
  *         )
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Municipi creat",
+ *         description="Municipi creat amb èxit",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="message", type="string", example="Municipi creat correctament"),
- *             @OA\Property(property="municipi", ref="#/components/schemas/Municipi")
+ *             @OA\Property(property="status", type="string", example="success"),
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Municipi")
  *         )
  *     ),
  *     @OA\Response(
  *         response=400,
- *         description="Dades invàlides",
+ *         description="Error en la sol·licitud",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="errors", type="object")
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="data", type="object")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Error intern del servidor",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string")
  *         )
  *     )
  * )
  */
-
     public function store(Request $request)
     {
-        $request->validate([
-            'nom' => 'required|string|max:255',
-            'illa_id' => 'required|integer',
-            'data_baixa' => 'nullable|date',
-        ]);
+        try {
+            $reglesValidacio = [
+                'nom' => 'required|string|max:255',
+                'illa_id' => 'required|int',
+                'data_baixa' => 'nullable|date',
+            ];
+            $missatges = [
+                'required' => 'El camp :attribute és obligatori.',
+                'max' => 'El :attribute ha de tenir màxim :max caràcters.',
+                'int' => 'El :attribute ha de ser un número vàlid',
+            ];
 
-        $municipi = Municipis::create($request->all());
+            $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
+            if ($validacio->fails()) {
+                throw new \Illuminate\Validation\ValidationException($validacio);
+            }
 
-        return response()->json(['message' => 'Municipi creat correctament', 'municipi' => $municipi]);
+            $tupla = Municipis::create($request->all());
+
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
+        } catch (\Illuminate\Validation\ValidationException $validationException) {
+            return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
-
 
     /**
  * @OA\Get(
- *     path="/municipis/{municipi}",
- *     summary="Mostra un municipi específic",
+ *     path="/api/municipis/{id}",
  *     tags={"Municipis"},
+ *     summary="Obté les dades d'un municipi específic",
  *     @OA\Parameter(
- *         name="municipi",
+ *         name="id",
  *         in="path",
  *         required=true,
- *         description="ID del municipi a mostrar",
- *         @OA\Schema(type="integer")
- *     ),
- *     @OA\Response(
- *         response=200,
- *         description="Municipi mostrat",
- *         @OA\JsonContent(
- *             type="object",
- *             @OA\Property(property="municipi", ref="#/components/schemas/Municipi")
- *         )
- *     ),
- *     @OA\Response(
- *         response=404,
- *         description="Municipi no trobat",
- *         @OA\JsonContent(
- *             type="object",
- *             @OA\Property(property="message", type="string", example="Municipi no trobat")
- *         )
- *     )
- * )
- */
-
-    public function show(Municipis $municipi)
-    {
-        return response()->json(['municipi' => $municipi]);
-    }
-
-   /**
- * @OA\Put(
- *     path="/municipis/{municipi}",
- *     summary="Actualitza un municipi específic",
- *     tags={"Municipis"},
- *     @OA\Parameter(
- *         name="municipi",
- *         in="path",
- *         required=true,
- *         description="ID del municipi a actualitzar",
- *         @OA\Schema(type="integer")
- *     ),
- *     @OA\RequestBody(
- *         required=true,
- *         description="Dades per a actualitzar el municipi",
- *         @OA\JsonContent(
- *             required={"nom", "illa_id"},
- *             @OA\Property(property="nom", type="string", example="Palma"),
- *             @OA\Property(property="illa_id", type="integer", example="1"),
- *             @OA\Property(property="data_baixa", type="string", format="date", nullable=true, example="2024-01-01")
+ *         description="Identificador únic del municipi",
+ *         @OA\Schema(
+ *             type="integer"
  *         )
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Municipi actualitzat correctament",
+ *         description="Dades del municipi trobades",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="message", type="string", example="Municipi actualitzat correctament"),
- *             @OA\Property(property="municipi", ref="#/components/schemas/Municipi")
+ *             @OA\Property(property="status", type="string", example="correcto"),
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Municipi")
  *         )
  *     ),
  *     @OA\Response(
  *         response=400,
- *         description="Dades invàlides",
- *         @OA\JsonContent(
- *             type="object",
- *             @OA\Property(property="errors", type="object")
- *         )
- *     ),
- *     @OA\Response(
- *         response=404,
  *         description="Municipi no trobat",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="message", type="string", example="Municipi no trobat")
+ *             @OA\Property(property="status", type="string", example="Municipi no trobat")
  *         )
  *     )
  * )
  */
-    public function update(Request $request, Municipis $municipi)
+    public function show($id)
     {
-        $request->validate([
-            'nom' => 'required|string|max:255',
-            'illa_id' => 'required|integer',
-            'data_baixa' => 'nullable|date',
-        ]);
-
-        $municipi->update($request->all());
-
-        return response()->json(['message' => 'Municipi actualitzat correctament', 'municipi' => $municipi]);
+        try {
+            $tupla = Municipis::findOrFail($id);
+            return response()->json(['status' => 'correcto', 'data' => $tupla], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['status' => 'Usuaris no trobat'], 400);
+        }
     }
 
-   /**
- * @OA\Delete(
- *     path="/municipis/{municipi}",
- *     summary="Elimina un municipi específic",
+    /**
+ * @OA\Put(
+ *     path="/api/municipis/{id}",
  *     tags={"Municipis"},
+ *     summary="Actualitza les dades d'un municipi existent",
  *     @OA\Parameter(
- *         name="municipi",
+ *         name="id",
  *         in="path",
  *         required=true,
- *         description="ID del municipi a eliminar",
- *         @OA\Schema(type="integer")
+ *         description="Identificador únic del municipi a actualitzar",
+ *         @OA\Schema(
+ *             type="integer"
+ *         )
+ *     ),
+ *     @OA\RequestBody(
+ *         required=true,
+ *         description="Dades del municipi a actualitzar",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="nom", type="string", description="Nom del municipi", nullable=true),
+ *             @OA\Property(property="illa_id", type="integer", description="Identificador de la illa a la qual pertany el municipi", nullable=true),
+ *             @OA\Property(property="data_baixa", type="string", format="date", description="Data de baixa del municipi", nullable=true)
+ *         )
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Municipi eliminat correctament",
+ *         description="Dades del municipi actualitzades amb èxit",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="message", type="string", example="Municipi eliminat correctament")
+ *             @OA\Property(property="status", type="string", example="success"),
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Municipi")
  *         )
  *     ),
  *     @OA\Response(
- *         response=404,
- *         description="Municipi no trobat",
+ *         response=400,
+ *         description="Error en la sol·licitud",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="message", type="string", example="Municipi no trobat")
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="data", type="object")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Error intern del servidor",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string")
  *         )
  *     )
  * )
  */
-    public function destroy(Municipis $municipi)
+    public function update(Request $request, $id)
     {
-        $municipi->delete();
-        return response()->json(['message' => 'Municipi eliminat correctament']);
+        try {
+            $tupla = Municipis::findOrFail($id);
+            $reglesValidacio = [
+                'nom' => 'nullable|string|max:255',
+                'illa_id' => 'nullable|int',
+                'data_baixa' => 'nullable|date',
+            ];
+            $missatges = [
+                'required' => 'El camp :attribute és obligatori.',
+                'max' => 'El :attribute ha de tenir màxim :max caràcters.',
+                'int' => 'El :attribute ha de ser un número vàlid',
+            ];
+
+            $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
+            if ($validacio->fails()) {
+                throw new \Illuminate\Validation\ValidationException($validacio);
+            }
+
+            $tupla->update($request->all());
+
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
+        } catch (\Illuminate\Validation\ValidationException $validationException) {
+            return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
+    }
+
+    /**
+ * @OA\Delete(
+ *     path="/api/municipis/{id}",
+ *     tags={"Municipis"},
+ *     summary="Elimina un municipi existent",
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="path",
+ *         required=true,
+ *         description="Identificador únic del municipi a eliminar",
+ *         @OA\Schema(
+ *             type="integer"
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Municipi eliminat amb èxit",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="success"),
+ *             @OA\Property(property="data", type="object")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Error en la sol·licitud",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Error intern del servidor",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string")
+ *         )
+ *     )
+ * )
+ */
+    public function destroy($id)
+    {
+        try {
+            $tupla = Municipis::findOrFail($id);
+            $tupla->delete();
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['status' => 'Error'], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 }

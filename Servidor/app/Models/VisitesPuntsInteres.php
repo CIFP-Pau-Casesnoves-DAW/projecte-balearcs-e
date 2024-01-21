@@ -15,7 +15,6 @@ class VisitesPuntsInteres extends Model
         'punts_interes_id',
         'visita_id',
         'ordre',
-        'data_baixa',
     ];
 
     protected $primaryKey = ['punts_interes_id', 'visita_id'];

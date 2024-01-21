@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Foto;
+use App\Models\Fotos;
 use Illuminate\Support\Facades\Validator;
 
 /**
@@ -14,74 +14,91 @@ use Illuminate\Support\Facades\Validator;
  */
 class FotosController extends Controller
 {
-   /**
+    /**
  * @OA\Get(
- *     path="/fotos",
+ *     path="/api/fotos",
+ *     tags={"Fotos"},
  *     summary="Llista totes les fotos",
- *     tags={"Foto"},
  *     @OA\Response(
  *         response=200,
- *         description="Llista de totes les fotos",
+ *         description="Llista de fotos recuperada amb èxit",
  *         @OA\JsonContent(
  *             type="object",
+ *             @OA\Property(property="status", type="string", example="correcto"),
  *             @OA\Property(
- *                 property="fotos",
+ *                 property="data",
  *                 type="array",
  *                 @OA\Items(ref="#/components/schemas/Foto")
  *             )
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Error en la sol·licitud",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="data", type="object")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Error intern del servidor",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string")
  *         )
  *     )
  * )
  * @OA\Schema(
  *     schema="Foto",
  *     type="object",
- *     @OA\Property(property="id", type="integer", example=1),
- *     @OA\Property(property="url", type="string", example="http://exemple.com/foto.jpg"),
- *     @OA\Property(property="punt_interes_id", type="integer", example=1),
- *     @OA\Property(property="espai_id", type="integer", example=2),
- *     @OA\Property(property="comentari", type="string", example="Comentari sobre la foto"),
- *     @OA\Property(property="data_baixa", type="string", format="date", example="2023-01-01", nullable=true)
+ *     @OA\Property(property="id", type="integer", description="Identificador únic de la foto"),
+ *     @OA\Property(property="url", type="string", description="URL de la foto"),
+ *     @OA\Property(property="punt_interes_id", type="integer", description="Identificador únic del punt d'interès"),
+ *     @OA\Property(property="espai_id", type="integer", description="Identificador únic de l'espai"),
+ *     @OA\Property(property="comentari", type="string", description="Comentari sobre la foto", nullable=true),
+ *     @OA\Property(property="data_baixa", type="string", format="date", description="Data de baixa de la foto", nullable=true)
  *     
  * )
  */
+
     public function index()
     {
-        $fotos = Foto::all();
-        return response()->json(['fotos' => $fotos], 200);
+        try {
+            $tuples = Fotos::all();
+            return response()->json(['status' => 'correcto', 'data' => $tuples], 200);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json(['status' => 'error', 'data' => $e->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 
-   /**
+    /**
  * @OA\Post(
- *     path="/fotos",
+ *     path="/api/fotos",
+ *     tags={"Fotos"},
  *     summary="Crea una nova foto",
- *     tags={"Foto"},
  *     @OA\RequestBody(
  *         required=true,
- *         description="Dades i fitxer necessaris per a crear una nova foto",
- *         @OA\MediaType(
- *             mediaType="multipart/form-data",
- *             @OA\Schema(
- *                 type="object",
- *                 required={"imatge", "punt_interes_id", "espai_id"},
- *                 @OA\Property(
- *                     property="imatge",
- *                     description="Fitxer de la imatge",
- *                     type="string",
- *                     format="binary"
- *                 ),
- *                 @OA\Property(property="punt_interes_id", type="integer", example=1),
- *                 @OA\Property(property="espai_id", type="integer", example=2),
- *                 @OA\Property(property="comentari", type="string", example="Comentari sobre la foto"),
- *                 @OA\Property(property="data_baixa", type="string", format="date", example="2023-01-01", nullable=true)
- *             )
+ *         description="Dades necessàries per a crear una nova foto",
+ *         @OA\JsonContent(
+ *             required={"url", "punt_interes_id", "espai_id"},
+ *             @OA\Property(property="url", type="string", format="uri", description="URL de la foto"),
+ *             @OA\Property(property="punt_interes_id", type="integer", description="Identificador del punt d'interès associat a la foto"),
+ *             @OA\Property(property="espai_id", type="integer", description="Identificador de l'espai associat a la foto"),
+ *             @OA\Property(property="comentari", type="string", description="Comentari sobre la foto", nullable=true)
  *         )
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Foto creada correctament",
+ *         description="Nova foto creada correctament",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="foto", type="object", ref="#/components/schemas/Foto")
+ *             @OA\Property(property="status", type="string", example="success"),
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Foto")
  *         )
  *     ),
  *     @OA\Response(
@@ -89,207 +106,300 @@ class FotosController extends Controller
  *         description="Error en la validació de dades",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="errors", type="object")
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="data", type="object", additionalProperties={"type":"string"})
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Error intern del servidor",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string")
  *         )
  *     )
  * )
- *     
- * )
  */
+
     public function store(Request $request)
-{
-    $reglesValidacio = [
-        'imatge' => 'required|file|image|max:2048', // Mida màxima de 2MB
-        'punt_interes_id' => 'required|exists:punts_interes,id',
-        'espai_id' => 'required|exists:espais,id',
-        'comentari' => 'nullable|string',
-        'data_baixa' => 'nullable|date',
-    ];
+    {
+        try {
+            $reglesValidacio = [
+                'url' => 'required|url',
+                'punt_interes_id' => 'required|exists:punts_interes,id',
+                'espai_id' => 'required|exists:espais,id',
+                'comentari' => 'nullable|string',
+            ];
+            $missatges = [
+                'required' => 'El camp :attribute és obligatori.',
+                'max' => 'El :attribute ha de tenir màxim :max caràcters.'
+            ];
 
-    $validacio = Validator::make($request->all(), $reglesValidacio);
-    if ($validacio->fails()) {
-        return response()->json(['errors' => $validacio->errors()], 400);
+            $validacio = Fotos::make($request->all(), $reglesValidacio, $missatges);
+            if ($validacio->fails()) {
+                throw new \Illuminate\Validation\ValidationException($validacio);
+            }
+
+            $tupla = Fotos::create($request->all());
+
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
+        } catch (\Illuminate\Validation\ValidationException $validationException) {
+            return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
-
-    if ($request->hasFile('imatge') && $request->file('imatge')->isValid()) {
-        $path = $request->imatge->store('public/fotos');
-        $url = \Storage::url($path);
-        $request->merge(['url' => $url]);
-    }
-
-    $foto = Foto::create($request->all());
-    return response()->json(['foto' => $foto], 200);
-}
-
-
-/**
- * @OA\Put(
- *     path="/fotos/{id}",
- *     summary="Actualitza una foto existent",
- *     tags={"Foto"},
- *     @OA\Parameter(
- *         name="id",
- *         in="path",
- *         required=true,
- *         description="ID de la foto a actualitzar",
- *         @OA\Schema(type="integer")
- *     ),
- *     @OA\RequestBody(
- *         required=true,
- *         description="Dades per a actualitzar la foto",
- *         @OA\MediaType(
- *             mediaType="multipart/form-data",
- *             @OA\Schema(
- *                 type="object",
- *                 @OA\Property(
- *                     property="imatge",
- *                     description="Fitxer de la imatge actualitzat",
- *                     type="string",
- *                     format="binary",
- *                     nullable=true
- *                 ),
- *                 @OA\Property(property="comentari", type="string", example="Nou comentari sobre la foto", nullable=true),
- *                 @OA\Property(property="data_baixa", type="string", format="date", example="2023-01-01", nullable=true)
- *             )
- *         )
- *     ),
- *     @OA\Response(
- *         response=200,
- *         description="Foto actualitzada correctament",
- *         @OA\JsonContent(
- *             type="object",
- *             @OA\Property(property="foto", type="object", ref="#/components/schemas/Foto")
- *         )
- *     ),
- *     @OA\Response(
- *         response=400,
- *         description="Error en la validació de dades",
- *         @OA\JsonContent(
- *             type="object",
- *             @OA\Property(property="errors", type="object")
- *         )
- *     ),
- *     @OA\Response(
- *         response=404,
- *         description="Foto no trobada",
- *         @OA\JsonContent(
- *             type="object",
- *             @OA\Property(property="message", type="string", example="Foto no trobada")
- *         )
- *     )
- * )
- */
-public function update(Request $request, $id)
-{
-    $reglesValidacio = [
-        'imatge' => 'nullable|file|image|max:2048', // Mida màxima de 2MB
-        'comentari' => 'nullable|string',
-        'data_baixa' => 'nullable|date',
-    ];
-
-    $validacio = Validator::make($request->all(), $reglesValidacio);
-    if ($validacio->fails()) {
-        return response()->json(['errors' => $validacio->errors()], 400);
-    }
-
-    $foto = Foto::findOrFail($id);
-
-    if ($request->hasFile('imatge') && $request->file('imatge')->isValid()) {
-        $path = $request->imatge->store('public/fotos');
-        $url = \Storage::url($path);
-        $request->merge(['url' => $url]);
-    }
-
-    $foto->update($request->all());
-    return response()->json(['foto' => $foto], 200);
-}
 
     
-/**
+
+    /**
  * @OA\Get(
- *     path="/fotos/{id}",
- *     summary="Obté una foto específica",
- *     tags={"Foto"},
+ *     path="/api/fotos/{id}",
+ *     tags={"Fotos"},
+ *     summary="Obté les dades d'una foto específica",
  *     @OA\Parameter(
  *         name="id",
  *         in="path",
  *         required=true,
- *         description="ID de la foto a obtenir",
- *         @OA\Schema(type="integer")
- *     ),
- *     @OA\Response(
- *         response=200,
- *         description="Foto trobada amb èxit",
- *         @OA\JsonContent(
- *             type="object",
- *             @OA\Property(property="message", type="string", example="Foto trobada amb èxit"),
- *             @OA\Property(property="foto", type="object", ref="#/components/schemas/Foto")
+ *         description="Identificador únic de la foto",
+ *         @OA\Schema(
+ *             type="integer"
  *         )
  *     ),
  *     @OA\Response(
- *         response=404,
+ *         response=200,
+ *         description="Dades de la foto trobades",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="correcto"),
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Foto")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=400,
  *         description="Foto no trobada",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="message", type="string", example="Foto no trobada")
+ *             @OA\Property(property="status", type="string", example="Usuaris no trobat")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Error intern del servidor",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string")
  *         )
  *     )
  * )
  */
-public function show($id)
-{
-    try {
-        $foto = Foto::findOrFail($id);
-        return response()->json(['message' => 'Foto trobada amb èxit', 'foto' => $foto], 200);
-    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-        return response()->json(['message' => 'Foto no trobada'], 404);
+    public function show($id)
+    {
+        try {
+            $tupla = Fotos::findOrFail($id);
+            return response()->json(['status' => 'correcto', 'data' => $tupla], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['status' => 'Usuaris no trobat'], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
-}
 
-
-
-
-
-/**
- * @OA\Delete(
- *     path="/fotos/{id}",
- *     summary="Elimina una foto específica",
- *     tags={"Foto"},
+    /**
+ * @OA\Put(
+ *     path="/api/fotos/{id}",
+ *     tags={"Fotos"},
+ *     summary="Actualitza una foto existent",
  *     @OA\Parameter(
  *         name="id",
  *         in="path",
  *         required=true,
- *         description="ID de la foto a eliminar",
- *         @OA\Schema(type="integer")
+ *         description="Identificador únic de la foto a actualitzar",
+ *         @OA\Schema(
+ *             type="integer"
+ *         )
+ *     ),
+ *     @OA\RequestBody(
+ *         required=true,
+ *         description="Dades de la foto a actualitzar",
+ *         @OA\JsonContent(
+ *             required={},
+ *             @OA\Property(property="url", type="string", format="uri", description="URL de la foto", nullable=true),
+ *             @OA\Property(property="comentari", type="string", description="Comentari sobre la foto", nullable=true),
+ *             @OA\Property(property="punt_interes_id", type="integer", description="Identificador del punt d'interès associat a la foto", nullable=true)
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Dades de la foto actualitzades correctament",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="success"),
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Foto")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Error en la validació de dades",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="data", type="object", additionalProperties={"type":"string"})
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Error intern del servidor",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string")
+ *         )
+ *     )
+ * )
+ */
+    public function update(Request $request, $id)
+    {
+        try {
+            $tupla = Fotos::findOrFail($id);
+            $reglesValidacio = [
+                'url' => 'nullable|url',
+                'comentari' => 'nullable|string',
+                'punt_interes_id' => 'nullable|exists:punts_interes,id',
+            ];
+            $missatges = [
+                'required' => 'El camp :attribute és obligatori.',
+                'max' => 'El :attribute ha de tenir màxim :max caràcters.'
+            ];
+
+            $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
+            if ($validacio->fails()) {
+                throw new \Illuminate\Validation\ValidationException($validacio);
+            }
+
+            $tupla->update($request->all());
+
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
+        } catch (\Illuminate\Validation\ValidationException $validationException) {
+            return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
+    }
+
+    /**
+ * @OA\Delete(
+ *     path="/api/fotos/{id}",
+ *     tags={"Fotos"},
+ *     summary="Elimina una foto existent",
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="path",
+ *         required=true,
+ *         description="Identificador únic de la foto a eliminar",
+ *         @OA\Schema(
+ *             type="integer"
+ *         )
  *     ),
  *     @OA\Response(
  *         response=200,
  *         description="Foto eliminada correctament",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="message", type="string", example="Foto eliminada correctament")
+ *             @OA\Property(property="status", type="string", example="success"),
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Foto")
  *         )
  *     ),
  *     @OA\Response(
- *         response=404,
- *         description="Foto no trobada",
+ *         response=400,
+ *         description="Foto no trobada o error en l'eliminació",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="message", type="string", example="Foto no trobada")
+ *             @OA\Property(property="status", type="string", example="Error")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Error intern del servidor",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string")
  *         )
  *     )
  * )
  */
-public function destroy($id)
-{
-    $foto = Foto::find($id);
-    if (!$foto) {
-        return response()->json(['message' => 'Foto no trobada'], 404);
+
+    public function destroy($id)
+    {
+        try {
+            $tupla = Fotos::findOrFail($id);
+            $tupla->delete();
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['status' => 'Error'], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 
-    $foto->delete();
-    return response()->json(['message' => 'Foto eliminada correctament'], 200);
-}
 
-}
+    /**
+ * @OA\Delete(
+ *     path="/api/fotos/delete/{id}",
+ *     tags={"Fotos"},
+ *     summary="Marca una foto com a donada de baixa",
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="path",
+ *         required=true,
+ *         description="Identificador únic de la foto a marcar com a baixa",
+ *         @OA\Schema(
+ *             type="integer"
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Foto marcada com a baixa correctament",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="success"),
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Foto")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Foto no trobada o error en el procés de baixa",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="Error")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Error intern del servidor",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string")
+ *         )
+ *     )
+ * )
+ */
 
+    public function delete($id)
+    {
+        try {
+            $foto = Fotos::findOrFail($id);
+            $foto->data_baixa = now();
+            $foto->save();
+            return response()->json(['status' => 'success', 'data' => $foto], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['status' => 'Error'], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
+    }
+}

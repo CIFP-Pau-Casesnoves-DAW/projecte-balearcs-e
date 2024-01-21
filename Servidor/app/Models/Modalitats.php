@@ -16,14 +16,12 @@ class Modalitats extends Model
         'data_baixa'
     ];
 
-
-
     /**
      * Relació amb el model EspaiModalitat.
      */
     public function espaisModalitats()
     {
-        return $this->hasMany(EspaiModalitat::class, 'modalitat_id');
+        return $this->hasMany(EspaisModalitats::class, 'modalitat_id');
     }
 
     /**
@@ -35,4 +33,3 @@ class Modalitats extends Model
     }
 
 }
-

@@ -11,20 +11,16 @@ class PuntsInteres extends Model
     use HasFactory;
 
     protected $table = 'punts_interes';
+    protected $primaryKey = 'id';
 
     protected $fillable = [
         'titol',
         'descripcio',
-        'data_baixa',
         'espai_id',
-    ];
-
-    protected $dates = [
-        'data_baixa',
     ];
 
     public function espai()
     {
-        return $this->belongsTo(Espai::class, 'espai_id');
+        return $this->belongsTo(Espais::class, 'espai_id');
     }
 }

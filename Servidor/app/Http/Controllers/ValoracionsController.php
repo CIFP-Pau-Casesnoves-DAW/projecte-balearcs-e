@@ -3,28 +3,15 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Valoracio;
 use App\Models\Valoracions;
+use Illuminate\Support\Facades\Validator;
+use Carbon\Carbon;
 
 /**
  * @OA\Tag(
  *     name="Valoracions",
  *     description="Operacions per a Valoracions"
  * )
- */
-
-/**
- * @OA\Schema(
- *     schema="Valoracio",
- *     type="object",
- *     @OA\Property(property="id", type="integer", example="1"),
- *     @OA\Property(property="puntuacio", type="integer", example="5"),
- *     @OA\Property(property="comentari", type="string", example="Excel·lent servei!"),
- *     @OA\Property(property="data_valoracio", type="string", format="date", example="2024-01-20"),
- *     @OA\Property(property="usuari_id", type="integer", example="10"),
- *     @OA\Property(property="espai_id", type="integer", example="15")
- * )
- * 
  */
 class ValoracionsController extends Controller
 {
@@ -34,29 +21,49 @@ class ValoracionsController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-   /**
+    /**
  * @OA\Get(
  *     path="/valoracions",
- *     summary="Obté un llistat de totes les valoracions",
+ *     summary="Obtenir totes les valoracions",
  *     tags={"Valoracions"},
  *     @OA\Response(
  *         response=200,
- *         description="Retorna un llistat de totes les valoracions",
+ *         description="Llista de valoracions",
+ *         @OA\JsonContent(
+ *             type="array",
+ *             @OA\Items(ref="#/components/schemas/Valoracio")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Comentari no trobat",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(
- *                 property="valoracions",
- *                 type="array",
- *                 @OA\Items(ref="#/components/schemas/Valoracio")
- *             )
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="data", type="string", example="Comentari no trobat")
  *         )
  *     )
+ * )
+ * @OA\Schema(
+ *     schema="Valoracio",
+ *     type="object",
+ *     @OA\Property(property="id", type="integer"),
+ *     @OA\Property(property="comentari", type="string"),
+ *     @OA\Property(property="puntuacio", type="integer"),
+ *     @OA\Property(property="usuari_id", type="integer"),
+ *     @OA\Property(property="espai_id", type="integer"),
+ *     @OA\Property(property="created_at", type="string", format="date-time"),
+ *     @OA\Property(property="updated_at", type="string", format="date-time"),
  * )
  */
     public function index()
     {
-        $valoracions = Valoracions::all();
-        return response()->json(['valoracions' => $valoracions]);
+        try {
+            $tuples = Valoracions::all();
+            return response()->json(['status' => 'correcto', 'data' => $tuples], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['status' => 'Comentari no trobat'], 400);
+        }
     }
 
     /**
@@ -66,21 +73,21 @@ class ValoracionsController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-   /**
+    /**
  * @OA\Post(
  *     path="/valoracions",
- *     summary="Crea una nova valoració",
+ *     summary="Crear una nova valoració",
  *     tags={"Valoracions"},
  *     @OA\RequestBody(
  *         required=true,
- *         description="Dades necessàries per crear una nova valoració",
+ *         description="Dades necessàries per a crear una nova valoració",
  *         @OA\JsonContent(
- *             required={"puntuacio", "data", "usuari_id", "espai_id"},
- *             @OA\Property(property="puntuacio", type="integer", example="4"),
- *             @OA\Property(property="data", type="string", format="date", example="2024-01-20"),
- *             @OA\Property(property="usuari_id", type="integer", example="10"),
- *             @OA\Property(property="espai_id", type="integer", example="15"),
- *             @OA\Property(property="data_baixa", type="string", format="date", example="2024-01-01")
+ *             required={"puntuacio", "espai_id", "md_id"},
+ *             @OA\Property(property="puntuacio", type="integer", example=5),
+ *             @OA\Property(property="data", type="string", format="date-time", example="2024-01-30T12:00:00Z"),
+ *             @OA\Property(property="usuari_id", type="integer", example=1),
+ *             @OA\Property(property="espai_id", type="integer", example=1),
+ *             @OA\Property(property="data_baixa", type="string", format="date", nullable=true),
  *         )
  *     ),
  *     @OA\Response(
@@ -88,26 +95,65 @@ class ValoracionsController extends Controller
  *         description="Valoració creada correctament",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="message", type="string", example="Valoración creada correctamente"),
- *             @OA\Property(property="valoracio", ref="#/components/schemas/Valoracio")
+ *             @OA\Property(property="status", type="string", example="success"),
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Valoracio")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Error en la validació de dades",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="data", type="object", additionalProperties={"type":"string"})
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Error intern del servidor",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string")
  *         )
  *     )
  * )
  */
-
     public function store(Request $request)
     {
-        $request->validate([
-            'puntuacio' => 'required|integer',
-            'data' => 'required|date',
-            'usuari_id' => 'required|exists:usuaris,id',
-            'espai_id' => 'required|exists:espais,id',
-            'data_baixa' => 'nullable|date',
-        ]);
+        try {
+            $mdId = $request->md_id;
 
-        $valoracio = Valoracions::create($request->all());
+            $request->merge(['data' => Carbon::now()]);
+            $request->merge(['usuari_id' => $mdId]);
 
-        return response()->json(['message' => 'Valoración creada correctamente', 'valoracio' => $valoracio]);
+            $reglesValidacio = [
+                'puntuacio' => 'required|integer',
+                'data' => 'required|date',
+                'usuari_id' => 'required|integer',
+                'espai_id' => 'required|integer',
+                'data_baixa' => 'nullable|date',
+            ];
+
+            $missatges = [
+                'required' => 'El camp :attribute és obligatori.',
+                'max' => 'El :attribute ha de tenir màxim :max caràcters.'
+            ];
+
+            $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
+
+            if ($validacio->fails()) {
+                throw new \Illuminate\Validation\ValidationException($validacio);
+            }
+
+            $tupla = Valoracions::create($request->all());
+
+            return response()->json(['status' => 'correcte', 'data' => $tupla], 200);
+        } catch (\Illuminate\Validation\ValidationException $validationException) {
+            return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 
     /**
@@ -117,25 +163,34 @@ class ValoracionsController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-
-     /**
+    /**
  * @OA\Get(
- *     path="/valoracions/{valoracio}",
- *     summary="Mostra una valoració específica",
+ *     path="/valoracions/{id}",
+ *     summary="Obtenir una valoració per ID",
  *     tags={"Valoracions"},
  *     @OA\Parameter(
- *         name="valoracio",
+ *         name="id",
  *         in="path",
  *         required=true,
- *         description="ID de la valoració a mostrar",
+ *         description="ID de la valoració a obtenir",
  *         @OA\Schema(type="integer")
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Retorna la valoració especificada",
+ *         description="Valoració trobada correctament",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="valoracio", ref="#/components/schemas/Valoracio")
+ *             @OA\Property(property="status", type="string", example="correcto"),
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Valoracio")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Error en la validació de dades",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="data", type="object", additionalProperties={"type":"string"})
  *         )
  *     ),
  *     @OA\Response(
@@ -143,15 +198,29 @@ class ValoracionsController extends Controller
  *         description="Valoració no trobada",
  *         @OA\JsonContent(
  *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
  *             @OA\Property(property="message", type="string", example="Valoració no trobada")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Error intern del servidor",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string")
  *         )
  *     )
  * )
  */
-
-    public function show(Valoracions $valoracio)
+    public function show($id)
     {
-        return response()->json(['valoracio' => $valoracio]);
+        try {
+            $tupla = Valoracions::findOrFail($id);
+            return response()->json(['status' => 'correcto', 'data' => $tupla], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['status' => 'Usuaris no trobat'], 400);
+        }
     }
 
     /**
@@ -162,14 +231,13 @@ class ValoracionsController extends Controller
      * @return \Illuminate\Http\Response
      */
 
- 
-     /**
+    /**
  * @OA\Put(
- *     path="/valoracions/{valoracio}",
- *     summary="Actualitza una valoració específica",
+ *     path="/valoracions/{id}",
+ *     summary="Actualitza una valoració per ID",
  *     tags={"Valoracions"},
  *     @OA\Parameter(
- *         name="valoracio",
+ *         name="id",
  *         in="path",
  *         required=true,
  *         description="ID de la valoració a actualitzar",
@@ -177,14 +245,15 @@ class ValoracionsController extends Controller
  *     ),
  *     @OA\RequestBody(
  *         required=true,
- *         description="Dades per actualitzar la valoració",
+ *         description="Dades necessàries per a actualitzar una valoració",
  *         @OA\JsonContent(
- *             required={"puntuacio", "data", "usuari_id", "espai_id"},
+ *             required={"puntuacio"},
  *             @OA\Property(property="puntuacio", type="integer", example=5),
- *             @OA\Property(property="data", type="string", format="date", example="2024-01-01"),
- *             @OA\Property(property="usuari_id", type="integer", example=1),
- *             @OA\Property(property="espai_id", type="integer", example=1),
- *             @OA\Property(property="data_baixa", type="string", format="date", example="2024-01-01")
+ *             @OA\Property(property="data", type="string", format="date", example="2024-01-21", nullable=true),
+ *             @OA\Property(property="usuari_id", type="integer", example=1, nullable=true),
+ *             @OA\Property(property="espai_id", type="integer", example=2, nullable=true),
+ *             @OA\Property(property="data_baixa", type="string", format="date", example="2024-01-28", nullable=true),
+ *             @OA\Property(property="validat", type="boolean", example=true, nullable=true)
  *         )
  *     ),
  *     @OA\Response(
@@ -192,16 +261,17 @@ class ValoracionsController extends Controller
  *         description="Valoració actualitzada correctament",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="message", type="string", example="Valoració actualitzada correctament"),
- *             @OA\Property(property="valoracio", ref="#/components/schemas/Valoracio")
+ *             @OA\Property(property="status", type="string", example="success"),
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Valoracio")
  *         )
  *     ),
  *     @OA\Response(
  *         response=400,
- *         description="Dades invàlides",
+ *         description="Error en la validació de dades",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="errors", type="object")
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="data", type="object", additionalProperties={"type":"string"})
  *         )
  *     ),
  *     @OA\Response(
@@ -209,24 +279,68 @@ class ValoracionsController extends Controller
  *         description="Valoració no trobada",
  *         @OA\JsonContent(
  *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
  *             @OA\Property(property="message", type="string", example="Valoració no trobada")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Error intern del servidor",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string")
  *         )
  *     )
  * )
  */
-    public function update(Request $request, Valoracions $valoracio)
+    public function update(Request $request, $id)
     {
-        $request->validate([
-            'puntuacio' => 'required|integer',
-            'data' => 'required|date',
-            'usuari_id' => 'required|exists:usuaris,id',
-            'espai_id' => 'required|exists:espais,id',
-            'data_baixa' => 'nullable|date',
-        ]);
+        try {
+            $tupla = Valoracions::findOrFail($id);
 
-        $valoracio->update($request->all());
+            $reglesValidacio = [
+                'puntuacio' => 'nullable|integer',
+                'data' => 'nullable|date',
+                'usuari_id' => 'nullable|integer',
+                'espai_id' => 'nullable|integer',
+                'data_baixa' => 'nullable|date',
+            ];
 
-        return response()->json(['message' => 'Valoración actualizada correctamente', 'valoracio' => $valoracio]);
+            $missatges = [
+                'required' => 'El camp :attribute és obligatori.',
+                'max' => 'El :attribute ha de tenir màxim :max caràcters.'
+            ];
+
+            $mdRol = $request->md_rol;
+
+            $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
+
+            if ($validacio->fails()) {
+                throw new \Illuminate\Validation\ValidationException($validacio);
+            }
+
+            if ($request->filled('validat') && $mdRol == 'administrador') {
+                $valoracio = Valoracions::find($id);
+                $valoracio->validat = $request->input('validat');
+                $valoracio->save();
+            }
+
+            if ($request->filled('usuari_id') && $mdRol == 'administrador') {
+                $valoracio = Valoracions::find($id);
+                $valoracio->usuari_id = $request->input('usuari_id');
+                $valoracio->save();
+            }
+
+            $request->merge(['data' => Carbon::now()]);
+            $tupla->update($request->all());
+
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
+        } catch (\Illuminate\Validation\ValidationException $validationException) {
+            return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 
     /**
@@ -236,24 +350,34 @@ class ValoracionsController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-   /**
+    /**
  * @OA\Delete(
- *     path="/valoracions/{valoracio}",
- *     summary="Elimina una valoració específica",
+ *     path="/valoracions/{id}",
+ *     summary="Esborra una valoració per ID",
  *     tags={"Valoracions"},
  *     @OA\Parameter(
- *         name="valoracio",
+ *         name="id",
  *         in="path",
  *         required=true,
- *         description="ID de la valoració a eliminar",
+ *         description="ID de la valoració a esborrar",
  *         @OA\Schema(type="integer")
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Valoració eliminada correctament",
+ *         description="Valoració esborrada correctament",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="message", type="string", example="Valoració eliminada correctament")
+ *             @OA\Property(property="status", type="string", example="success"),
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Valoracio")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Error en la validació de dades",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="data", type="object", additionalProperties={"type":"string"})
  *         )
  *     ),
  *     @OA\Response(
@@ -261,15 +385,31 @@ class ValoracionsController extends Controller
  *         description="Valoració no trobada",
  *         @OA\JsonContent(
  *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
  *             @OA\Property(property="message", type="string", example="Valoració no trobada")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Error intern del servidor",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string")
  *         )
  *     )
  * )
  */
-    public function destroy(Valoracions $valoracio)
+    public function destroy($id)
     {
-        $valoracio->delete();
-
-        return response()->json(['message' => 'Valoración eliminada correctamente']);
+        try {
+            $valoracio = Valoracions::findOrFail($id);
+            $valoracio->delete();
+            return response()->json(['status' => 'success', 'data' => $valoracio], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['status' => 'Error'], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 }

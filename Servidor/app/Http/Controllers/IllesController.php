@@ -3,32 +3,38 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Modalitats;
+use App\Models\Illes;
 use Illuminate\Support\Facades\Validator;
 
 /**
  * @OA\Tag(
- *     name="Modalitat",
- *     description="Operacions per a Modalitats"
+ *     name="Illes",
+ *     description="Operacions relacionades amb les Illes"
  * )
  */
-class ModalitatsController extends Controller
+class IllesController extends Controller
 {
     /**
+     * Muestra una lista de todas las islas.
+     *
+     * @return \Illuminate\Http\Response
+     */
+
+    /**
  * @OA\Get(
- *     path="/api/modalitats",
- *     tags={"Modalitats"},
- *     summary="Llista totes les modalitats",
+ *     path="/api/illes",
+ *     tags={"Illes"},
+ *     summary="Llista totes les illes",
  *     @OA\Response(
  *         response=200,
- *         description="Llista de modalitats recuperada amb èxit",
+ *         description="Llista d'illes recuperada amb èxit",
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="correcto"),
  *             @OA\Property(
  *                 property="data",
  *                 type="array",
- *                 @OA\Items(ref="#/components/schemas/Modalitat")
+ *                 @OA\Items(ref="#/components/schemas/Illa")
  *             )
  *         )
  *     ),
@@ -55,18 +61,19 @@ class ModalitatsController extends Controller
  *     )
  * )
  * @OA\Schema(
- *     schema="Modalitat",
+ *     schema="Illa",
  *     type="object",
- *     @OA\Property(property="id", type="integer", description="Identificador únic de la modalitat"),
- *     @OA\Property(property="nom", type="string", description="Nom de la modalitat"),
- *     @OA\Property(property="descripcio", type="string", description="Descripció de la modalitat"),
- *     @OA\Property(property="data_creacio", type="string", format="date", description="Data de creació de la modalitat", nullable=true)
+ *     @OA\Property(property="id", type="integer", description="Identificador únic de l'illa"),
+ *     @OA\Property(property="nom", type="string", description="Nom de l'illa"),
+ *     @OA\Property(property="zona", type="string", description="Zona de l'illa"),
+ *     @OA\Property(property="data_baixa", type="string", format="date", description="Data de baixa de l'illa", nullable=true)
  * )
  */
+
     public function index()
     {
         try {
-            $tuples = Modalitats::all();
+            $tuples = Illes::all();
             return response()->json(['status' => 'correcto', 'data' => $tuples], 200);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json(['status' => 'error', 'data' => $e->errors()], 400);
@@ -76,25 +83,33 @@ class ModalitatsController extends Controller
     }
 
     /**
+     * Almacena una nueva isla en la base de datos.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+
+    /**
  * @OA\Post(
- *     path="/api/modalitats",
- *     tags={"Modalitats"},
- *     summary="Crea una nova modalitat",
+ *     path="/api/illes",
+ *     tags={"Illes"},
+ *     summary="Crea una nova illa",
  *     @OA\RequestBody(
  *         required=true,
- *         description="Dades de la modalitat a crear",
+ *         description="Dades de la nova illa a crear",
  *         @OA\JsonContent(
- *             @OA\Property(property="nom_modalitat", type="string", example="Nom de la nova modalitat"),
+ *             @OA\Property(property="nom", type="string", example="Nom de l'illa"),
+ *             @OA\Property(property="zona", type="string", example="Zona de l'illa"),
  *             @OA\Property(property="data_baixa", type="string", format="date", example="2024-01-21"),
  *         )
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Modalitat creada amb èxit",
+ *         description="Illa creada amb èxit",
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="success"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Modalitat")
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Illa")
  *         )
  *     ),
  *     @OA\Response(
@@ -104,7 +119,8 @@ class ModalitatsController extends Controller
  *             type="object",
  *             @OA\Property(property="status", type="string", example="error"),
  *             @OA\Property(property="data", type="object", example={
- *                 "nom_modalitat": {"El camp nom_modalitat és obligatori."},
+ *                 "nom": {"El camp nom és obligatori."},
+ *                 "zona": {"El camp zona ha de tenir màxim 255 caràcters."},
  *                 "data_baixa": {"El camp data_baixa ha de ser una data vàlida."}
  *             })
  *         )
@@ -125,7 +141,8 @@ class ModalitatsController extends Controller
     {
         try {
             $reglesValidacio = [
-                'nom_modalitat' => 'required|string|max:255',
+                'nom' => 'required|string|max:255',
+                'zona' => 'required|string|max:255',
                 'data_baixa' => 'nullable|date',
             ];
             $missatges = [
@@ -138,7 +155,7 @@ class ModalitatsController extends Controller
                 throw new \Illuminate\Validation\ValidationException($validacio);
             }
 
-            $tupla = Modalitats::create($request->all());
+            $tupla = Illes::create($request->all());
 
             return response()->json(['status' => 'success', 'data' => $tupla], 200);
         } catch (\Illuminate\Validation\ValidationException $validationException) {
@@ -148,36 +165,43 @@ class ModalitatsController extends Controller
         }
     }
 
-   
+    /**
+     * Muestra la isla especificada.
+     *
+     * @param  \App\Models\Illes  $illa
+     * @return \Illuminate\Http\Response
+     */
+
+    
     /**
  * @OA\Get(
- *     path="/api/modalitats/{id}",
- *     tags={"Modalitats"},
- *     summary="Obté les dades d'una modalitat específica",
+ *     path="/api/illes/{id}",
+ *     tags={"Illes"},
+ *     summary="Obté les dades d'una illa específica",
  *     @OA\Parameter(
  *         name="id",
  *         in="path",
  *         required=true,
- *         description="Identificador únic de la modalitat",
+ *         description="Identificador únic de l'illa",
  *         @OA\Schema(
  *             type="integer"
  *         )
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Dades de la modalitat trobades",
+ *         description="Dades de l'illa trobades",
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="correcto"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Modalitat")
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Illa")
  *         )
  *     ),
  *     @OA\Response(
  *         response=400,
- *         description="Modalitat no trobada",
+ *         description="Illa no trobada",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="status", type="string", example="Modalitat no trobada")
+ *             @OA\Property(property="status", type="string", example="Illa no trobada")
  *         )
  *     ),
  *     @OA\Response(
@@ -195,7 +219,7 @@ class ModalitatsController extends Controller
     public function show($id)
     {
         try {
-            $tupla = Modalitats::findOrFail($id);
+            $tupla = Illes::findOrFail($id);
             return response()->json(['status' => 'correcto', 'data' => $tupla], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json(['status' => 'Usuaris no trobat'], 400);
@@ -205,34 +229,44 @@ class ModalitatsController extends Controller
     }
 
     /**
+     * Actualiza la isla especificada en la base de datos.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Illes  $illa
+     * @return \Illuminate\Http\Response
+     */
+
+  
+    /**
  * @OA\Put(
- *     path="/api/modalitats/{id}",
- *     tags={"Modalitats"},
- *     summary="Actualitza les dades d'una modalitat existent",
+ *     path="/api/illes/{id}",
+ *     tags={"Illes"},
+ *     summary="Actualitza les dades d'una illa existent",
  *     @OA\Parameter(
  *         name="id",
  *         in="path",
  *         required=true,
- *         description="Identificador únic de la modalitat a actualitzar",
+ *         description="Identificador únic de l'illa a actualitzar",
  *         @OA\Schema(
  *             type="integer"
  *         )
  *     ),
  *     @OA\RequestBody(
  *         required=true,
- *         description="Dades de la modalitat a actualitzar",
+ *         description="Dades de l'illa a actualitzar",
  *         @OA\JsonContent(
- *             @OA\Property(property="nom_modalitat", type="string", example="Nou nom de la modalitat"),
+ *             @OA\Property(property="nom", type="string", example="Nou nom de l'illa"),
+ *             @OA\Property(property="zona", type="string", example="Nova zona de l'illa"),
  *             @OA\Property(property="data_baixa", type="string", format="date", example="2024-01-21"),
  *         )
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Dades de la modalitat actualitzades amb èxit",
+ *         description="Dades de l'illa actualitzades amb èxit",
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="success"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Modalitat")
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Illa")
  *         )
  *     ),
  *     @OA\Response(
@@ -242,9 +276,18 @@ class ModalitatsController extends Controller
  *             type="object",
  *             @OA\Property(property="status", type="string", example="error"),
  *             @OA\Property(property="data", type="object", example={
- *                 "nom_modalitat": {"El camp nom_modalitat ha de ser una cadena de text."},
+ *                 "nom": {"El camp nom ha de ser una cadena de text."},
+ *                 "zona": {"El camp zona és obligatori."},
  *                 "data_baixa": {"El camp data_baixa ha de ser una data vàlida."}
  *             })
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Illa no trobada",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="Illa no trobada")
  *         )
  *     ),
  *     @OA\Response(
@@ -259,13 +302,13 @@ class ModalitatsController extends Controller
  * )
  *
  */
-
     public function update(Request $request, $id)
     {
         try {
-            $tupla = Modalitats::findOrFail($id);
+            $tupla = Illes::findOrFail($id);
             $reglesValidacio = [
-                'nom_modalitat' => 'nullable|string|max:255',
+                'nom' => 'nullable|string|max:255',
+                'zona' => 'nullable|string|max:255',
                 'data_baixa' => 'nullable|date',
             ];
             $missatges = [
@@ -289,34 +332,42 @@ class ModalitatsController extends Controller
     }
 
     /**
+     * Elimina la isla especificada de la base de datos.
+     *
+     * @param  \App\Models\Illes  $illa
+     * @return \Illuminate\Http\Response
+     */
+
+
+    /**
  * @OA\Delete(
- *     path="/api/modalitats/{id}",
- *     tags={"Modalitats"},
- *     summary="Elimina una modalitat existent",
+ *     path="/api/illes/{id}",
+ *     tags={"Illes"},
+ *     summary="Elimina una illa existent",
  *     @OA\Parameter(
  *         name="id",
  *         in="path",
  *         required=true,
- *         description="Identificador únic de la modalitat a eliminar",
+ *         description="Identificador únic de l'illa a eliminar",
  *         @OA\Schema(
  *             type="integer"
  *         )
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Modalitat eliminada amb èxit",
+ *         description="Illa eliminada amb èxit",
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="success"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Modalitat")
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Illa")
  *         )
  *     ),
  *     @OA\Response(
  *         response=400,
- *         description="Modalitat no trobada",
+ *         description="Illa no trobada",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="status", type="string", example="Modalitat no trobada")
+ *             @OA\Property(property="status", type="string", example="Illa no trobada")
  *         )
  *     ),
  *     @OA\Response(
@@ -334,7 +385,7 @@ class ModalitatsController extends Controller
     public function destroy($id)
     {
         try {
-            $tupla = Modalitats::findOrFail($id);
+            $tupla = Illes::findOrFail($id);
             $tupla->delete();
             return response()->json(['status' => 'success', 'data' => $tupla], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {

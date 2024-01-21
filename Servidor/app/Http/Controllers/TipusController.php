@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Tipus;
+use Illuminate\Support\Facades\Validator;
 
 /**
  * @OA\Tag(
@@ -19,36 +20,57 @@ class TipusController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-   /**
+    /**
  * @OA\Get(
- *     path="/tipus",
- *     summary="Llista tots els tipus",
+ *     path="/api/tipus",
+ *     operationId="getTipus",
  *     tags={"Tipus"},
+ *     summary="Obtenir tots els tipus",
+ *     description="Retorna una llista de tots els tipus",
  *     @OA\Response(
  *         response=200,
- *         description="Retorna un llistat de tots els tipus",
+ *         description="Llista de tots els tipus",
  *         @OA\JsonContent(
  *             type="array",
  *             @OA\Items(ref="#/components/schemas/Tipus")
  *         )
  *     ),
  *     @OA\Response(
+ *         response=400,
+ *         description="Error de validació",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="data", type="object", example={"field_name": {"Missatge d'error"}})
+ *         )
+ *     ),
+ *     @OA\Response(
  *         response=500,
- *         description="Error intern del servidor"
+ *         description="Error intern del servidor",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string", example="Missatge d'error intern del servidor")
+ *         )
  *     )
  * )
  * @OA\Schema(
  *     schema="Tipus",
  *     type="object",
- *     @OA\Property(property="id", type="integer", example=1),
- *     @OA\Property(property="nom_tipus", type="string", example="Tipus Exemple"),
- *     @OA\Property(property="data_baixa", type="string", format="date", example="2024-01-01")
+ *     @OA\Property(property="nom_serveis", type="string"),
+ *     @OA\Property(property="data_baixa", type="string", format="date"),
  * )
  */
     public function index()
     {
-        $tipus = Tipus::all();
-        return response()->json(['tipus' => $tipus]);
+        try {
+            $tuples = Tipus::all();
+            return response()->json(['status' => 'correcto', 'data' => $tuples], 200);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json(['status' => 'error', 'data' => $e->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 
     /**
@@ -58,53 +80,75 @@ class TipusController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-     /**
+    /**
  * @OA\Post(
- *     path="/tipus",
- *     summary="Crea un nou tipus",
+ *     path="/api/tipus",
+ *     operationId="storeTipus",
  *     tags={"Tipus"},
+ *     summary="Crear un nou tipus",
+ *     description="Crea un nou tipus amb les dades proporcionades",
  *     @OA\RequestBody(
  *         required=true,
- *         description="Dades per a crear un nou tipus",
+ *         description="Dades del tipus a crear",
  *         @OA\JsonContent(
- *             required={"nom_tipus"},
- *             @OA\Property(property="nom_tipus", type="string", example="Tipus Exemple"),
- *             @OA\Property(property="data_baixa", type="string", format="date", example="2024-01-01")
+ *             @OA\Property(property="nom_tipus", type="string"),
+ *             @OA\Property(property="data_baixa", type="string", format="date"),
  *         )
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Tipus creat correctament",
+ *         description="Tipus creat amb èxit",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="message", type="string", example="Tipo creado correctamente"),
- *             @OA\Property(property="tipus", ref="#/components/schemas/Tipus")
+ *             @OA\Property(property="status", type="string", example="success"),
+ *             @OA\Property(property="data", ref="#/components/schemas/Tipus"),
  *         )
  *     ),
  *     @OA\Response(
  *         response=400,
- *         description="Dades invàlides",
+ *         description="Error de validació",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="errors", type="object")
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="data", type="object", example={"field_name": {"Missatge d'error"}})
  *         )
  *     ),
  *     @OA\Response(
  *         response=500,
- *         description="Error intern del servidor"
+ *         description="Error intern del servidor",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string", example="Missatge d'error intern del servidor")
+ *         )
  *     )
  * )
  */
     public function store(Request $request)
     {
-        $request->validate([
-            'nom_tipus' => 'required|string|max:255',
-            'data_baixa' => 'nullable|date',
-        ]);
+        try {
+            $reglesValidacio = [
+                'nom_tipus' => 'required|string|max:255',
+                'data_baixa' => 'nullable|date',
+            ];
+            $missatges = [
+                'required' => 'El camp :attribute és obligatori.',
+                'max' => 'El :attribute ha de tenir màxim :max caràcters.'
+            ];
 
-        $tipus = Tipus::create($request->all());
+            $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
+            if ($validacio->fails()) {
+                throw new \Illuminate\Validation\ValidationException($validacio);
+            }
 
-        return response()->json(['message' => 'Tipo creado correctamente', 'tipus' => $tipus]);
+            $tupla = Tipus::create($request->all());
+
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
+        } catch (\Illuminate\Validation\ValidationException $validationException) {
+            return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 
     /**
@@ -114,39 +158,61 @@ class TipusController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-     /**
+    /**
  * @OA\Get(
- *     path="/tipus/{tipus}",
- *     summary="Mostra un tipus específic",
+ *     path="/api/tipus/{id}",
+ *     operationId="showTipus",
  *     tags={"Tipus"},
+ *     summary="Obtenir un tipus per ID",
+ *     description="Retorna un tipus específic basat en l'ID proporcionat",
  *     @OA\Parameter(
- *         name="tipus",
+ *         name="id",
  *         in="path",
  *         required=true,
- *         description="ID del tipus a mostrar",
- *         @OA\Schema(type="integer")
- *     ),
- *     @OA\Response(
- *         response=200,
- *         description="Retorna el tipus sol·licitat",
- *         @OA\JsonContent(
- *             type="object",
- *             @OA\Property(property="tipus", ref="#/components/schemas/Tipus")
+ *         description="ID del tipus a obtenir",
+ *         @OA\Schema(
+ *             type="integer"
  *         )
  *     ),
  *     @OA\Response(
- *         response=404,
- *         description="Tipus no trobat",
+ *         response=200,
+ *         description="Dades del tipus",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="message", type="string", example="Tipo no encontrado")
+ *             @OA\Property(property="status", type="string", example="correcto"),
+ *             @OA\Property(property="data", ref="#/components/schemas/Tipus"),
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Error de validació",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string", example="Missatge d'error de validació"),
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Error intern del servidor",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string", example="Missatge d'error intern del servidor"),
  *         )
  *     )
  * )
  */
-    public function show(Tipus $tipus)
+    public function show($id)
     {
-        return response()->json(['tipus' => $tipus]);
+        try {
+            $tupla = Tipus::findOrFail($id);
+            return response()->json(['status' => 'correcto', 'data' => $tupla], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['status' => 'Usuaris no trobat'], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 
     /**
@@ -157,64 +223,82 @@ class TipusController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-  /**
+    /**
  * @OA\Put(
- *     path="/tipus/{tipus}",
- *     summary="Actualitza un tipus específic",
+ *     path="/api/tipus/{id}",
+ *     operationId="updateTipus",
  *     tags={"Tipus"},
+ *     summary="Actualitzar un tipus per ID",
+ *     description="Actualitza un tipus específic basat en l'ID proporcionat",
  *     @OA\Parameter(
- *         name="tipus",
+ *         name="id",
  *         in="path",
  *         required=true,
  *         description="ID del tipus a actualitzar",
- *         @OA\Schema(type="integer")
+ *         @OA\Schema(
+ *             type="integer"
+ *         )
  *     ),
  *     @OA\RequestBody(
  *         required=true,
- *         description="Dades per a actualitzar el tipus",
- *         @OA\JsonContent(
- *             required={"nom_tipus"},
- *             @OA\Property(property="nom_tipus", type="string", example="Museu"),
- *             @OA\Property(property="data_baixa", type="string", format="date", example="2024-01-01")
- *         )
+ *         description="Dades del tipus a actualitzar",
+ *         @OA\JsonContent(ref="#/components/schemas/Tipus")
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Tipus actualitzat correctament",
+ *         description="Dades actualitzades del tipus",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="message", type="string", example="Tipo actualizado correctamente"),
- *             @OA\Property(property="tipus", ref="#/components/schemas/Tipus")
+ *             @OA\Property(property="status", type="string", example="success"),
+ *             @OA\Property(property="data", ref="#/components/schemas/Tipus"),
  *         )
  *     ),
  *     @OA\Response(
  *         response=400,
- *         description="Dades invàlides",
+ *         description="Error de validació",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="errors", type="object")
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="data", type="object", example={"field_name": {"Error message"}})
  *         )
  *     ),
  *     @OA\Response(
- *         response=404,
- *         description="Tipus no trobat",
+ *         response=500,
+ *         description="Error intern del servidor",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="message", type="string", example="Tipo no encontrado")
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string", example="Missatge d'error intern del servidor"),
  *         )
  *     )
  * )
  */
-    public function update(Request $request, Tipus $tipus)
+    public function update(Request $request, $id)
     {
-        $request->validate([
-            'nom_tipus' => 'required|string|max:255',
-            'data_baixa' => 'nullable|date',
-        ]);
+        try {
+            $tupla = Tipus::findOrFail($id);
+            $reglesValidacio = [
+                'nom_tipus' => 'nullable|string|max:255',
+                'data_baixa' => 'nullable|date',
+            ];
+            $missatges = [
+                'required' => 'El camp :attribute és obligatori.',
+                'max' => 'El :attribute ha de tenir màxim :max caràcters.'
+            ];
 
-        $tipus->update($request->all());
+            $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
+            if ($validacio->fails()) {
+                throw new \Illuminate\Validation\ValidationException($validacio);
+            }
 
-        return response()->json(['message' => 'Tipo actualizado correctamente', 'tipus' => $tipus]);
+            $tupla->update($request->all());
+
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
+        } catch (\Illuminate\Validation\ValidationException $validationException) {
+            return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 
     /**
@@ -224,40 +308,61 @@ class TipusController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-     /**
+    /**
  * @OA\Delete(
- *     path="/tipus/{tipus}",
- *     summary="Elimina un tipus específic",
+ *     path="/api/tipus/{id}",
+ *     operationId="deleteTipus",
  *     tags={"Tipus"},
+ *     summary="Eliminar un tipus per ID",
+ *     description="Elimina un tipus específic basat en l'ID proporcionat",
  *     @OA\Parameter(
- *         name="tipus",
+ *         name="id",
  *         in="path",
  *         required=true,
  *         description="ID del tipus a eliminar",
- *         @OA\Schema(type="integer")
- *     ),
- *     @OA\Response(
- *         response=200,
- *         description="Tipus eliminat correctament",
- *         @OA\JsonContent(
- *             type="object",
- *             @OA\Property(property="message", type="string", example="Tipo eliminado correctamente")
+ *         @OA\Schema(
+ *             type="integer"
  *         )
  *     ),
  *     @OA\Response(
- *         response=404,
- *         description="Tipus no trobat",
+ *         response=200,
+ *         description="Tipus eliminat amb èxit",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="message", type="string", example="Tipo no encontrado")
+ *             @OA\Property(property="status", type="string", example="success"),
+ *             @OA\Property(property="data", ref="#/components/schemas/Tipus"),
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Error de validació",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="data", type="object", example={"field_name": {"Error message"}})
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Error intern del servidor",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string", example="Missatge d'error intern del servidor"),
  *         )
  *     )
  * )
  */
-    public function destroy(Tipus $tipus)
+    public function destroy($id)
     {
-        $tipus->delete();
-
-        return response()->json(['message' => 'Tipo eliminado correctamente']);
+        try {
+            $tupla = Tipus::findOrFail($id);
+            $tupla->delete();
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['status' => 'Error'], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 }

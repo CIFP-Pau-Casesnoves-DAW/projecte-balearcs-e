@@ -10,63 +10,65 @@ use Carbon\Carbon;
 
 /**
  * @OA\Tag(
- *     name="Usuaris",
- *     description="Operacions per a Usuaris"
+ *    name="Usuaris",
+ *   description="Operacions per a usuaris"
  * )
+ * 
  */
 
-     /**
- * @OA\Schema(
- *     schema="Usuari",
- *     type="object",
- *     @OA\Property(property="id", type="integer", example=1),
- *     @OA\Property(property="nom", type="string", example="Pep"),
- *     @OA\Property(property="llinatges", type="string", example="Garcia"),
- *     @OA\Property(property="dni", type="string", example="12345678A"),
- *     @OA\Property(property="mail", type="string", example="usuari@example.com"),
- *     @OA\Property(property="contrasenya", type="string", example="123456"),
- *     @OA\Property(property="rol", type="string", example="usuari"),
- *     @OA\Property(property="data_baixa", type="string", format="date", example="2024-01-01")
- * )
- */
 class UsuarisController extends Controller
 {
-
-  /**
-  * @OA\Get(
- *     path="/usuaris",
- *     summary="Llista tots els usuaris",
- *    tags={"Usuaris"},
+    /**
+ * @OA\Get(
+ *     path="/api/usuaris",
+ *     operationId="getUsuaris",
+ *     tags={"Usuaris"},
+ *     summary="Obtenir tots els usuaris",
+ *     description="Retorna una llista de tots els usuaris",
  *     @OA\Response(
  *         response=200,
- *         description="Retorna una llista de tots els usuaris",
+ *         description="Llista d'usuaris",
  *         @OA\JsonContent(
- *             type="object",
- *             @OA\Property(
- *                 property="data",
- *                 type="array",
- *                 @OA\Items(ref="#/components/schemas/Usuari")
- *             )
+ *             type="array",
+ *             @OA\Items(ref="#/components/schemas/Usuari")
  *         )
  *     ),
  *     @OA\Response(
  *         response=400,
- *         description="Error en la validació",
+ *         description="Error de validació",
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="error"),
- *             @OA\Property(
- *                 property="data",
- *                 type="object",
- *                 additionalProperties={
- *                     @OA\Property(type="array", @OA\Items(type="string"))
- *                 }
- *             )
+ *             @OA\Property(property="data", type="object", example={"field_name": {"Error message"}})
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Error intern del servidor",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string", example="Missatge d'error intern del servidor")
  *         )
  *     )
  * )
+ * @OA\Schema(
+ *     schema="Usuari",
+ *     type="object",
+ *     title="Usuari",
+ *     properties={
+ *         @OA\Property(property="id", type="integer", format="int64", description="ID de l'usuari"),
+ *         @OA\Property(property="nom", type="string", description="Nom de l'usuari"),
+ *         @OA\Property(property="cognom", type="string", description="Cognom de l'usuari"),
+ *         @OA\Property(property="email", type="string", format="email", description="Adreça de correu de l'usuari"),
+ *         @OA\Property(property="data_naixement", type="string", format="date", description="Data de naixement de l'usuari"),
+ *         @OA\Property(property="created_at", type="string", format="date-time", description="Data de creació de l'usuari"),
+ *         @OA\Property(property="updated_at", type="string", format="date-time", description="Data de modificació de l'usuari"),
+ *         @OA\Property(property="deleted_at", type="string", format="date-time", description="Data de baixa de l'usuari")
+ *    }
+ * )
+ *
  */
-
     public function index()
     {
         try {
@@ -74,26 +76,26 @@ class UsuarisController extends Controller
             return response()->json(['status' => 'correcto', 'data' => $tuples], 200);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json(['status' => 'error', 'data' => $e->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
         }
     }
 
-/**
+    /**
  * @OA\Post(
  *     path="/usuaris",
  *     summary="Crea un nou usuari",
  *     tags={"Usuaris"},
  *     @OA\RequestBody(
  *         required=true,
- *         description="Dades de l'usuari a crear",
+ *         description="Dades necessàries per a crear un nou usuari",
  *         @OA\JsonContent(
  *             required={"nom", "llinatges", "dni", "mail", "contrasenya"},
- *             @OA\Property(property="nom", type="string", example="Joan"),
- *             @OA\Property(property="llinatges", type="string", example="Martínez López"),
+ *             @OA\Property(property="nom", type="string", example="John"),
+ *             @OA\Property(property="llinatges", type="string", example="Doe"),
  *             @OA\Property(property="dni", type="string", example="12345678A"),
- *             @OA\Property(property="mail", type="string", format="email", example="joan@example.com"),
- *             @OA\Property(property="contrasenya", type="string", example="password123"),
- *             @OA\Property(property="rol", type="string", example="usuari"),
- *             @OA\Property(property="data_baixa", type="string", format="date", example="2024-01-01")
+ *             @OA\Property(property="mail", type="string", format="email", example="johndoe@example.com"),
+ *             @OA\Property(property="contrasenya", type="string", format="password", example="secret123"),
  *         )
  *     ),
  *     @OA\Response(
@@ -101,29 +103,30 @@ class UsuarisController extends Controller
  *         description="Usuari creat correctament",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="status", type="string", example="correcte"),
- *             @OA\Property(property="data", ref="#/components/schemas/Usuari")
+ *             @OA\Property(property="status", type="string", example="success"),
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Usuari")
  *         )
  *     ),
  *     @OA\Response(
  *         response=400,
- *         description="Error en la validació",
+ *         description="Error en la validació de dades",
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="error"),
- *             @OA\Property(
- *                 property="data",
- *                 type="object",
- *                 additionalProperties={
- *                     @OA\Property(type="array", @OA\Items(type="string"))
- *                 }
- *             )
+ *             @OA\Property(property="data", type="object", additionalProperties={"type":"string"})
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Error intern del servidor",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string")
  *         )
  *     )
  * )
  */
-
-
     public function store(Request $request)
     {
         try {
@@ -164,30 +167,30 @@ class UsuarisController extends Controller
             return response()->json(['status' => 'correcte', 'data' => $tupla], 200);
         } catch (\Illuminate\Validation\ValidationException $validationException) {
             return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
         }
     }
 
     /**
  * @OA\Get(
  *     path="/usuaris/{id}",
- *     summary="Obté un usuari específic",
+ *     summary="Obtenir un usuari per ID",
  *     tags={"Usuaris"},
  *     @OA\Parameter(
- *        name="id",
- *        in="path",
- *       required=true,
- *       description="ID de l'usuari a obtenir",
- *      @OA\Schema(type="integer")
- *    ),
+ *         name="id",
+ *         in="path",
+ *         required=true,
+ *         description="ID de l'usuari a obtenir",
+ *         @OA\Schema(type="integer")
+ *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Usuari trobat",
+ *         description="Dades de l'usuari",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(
- *                 property="data",
- *                 ref="#/components/schemas/Usuari"
- *             )
+ *             @OA\Property(property="status", type="string", example="correcto"),
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Usuari")
  *         )
  *     ),
  *     @OA\Response(
@@ -195,26 +198,36 @@ class UsuarisController extends Controller
  *         description="Usuari no trobat",
  *         @OA\JsonContent(
  *             type="object",
+ *             @OA\Property(property="status", type="string", example="Usuari no trobat")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Error intern del servidor",
+ *         @OA\JsonContent(
+ *             type="object",
  *             @OA\Property(property="status", type="string", example="error"),
- *             @OA\Property(property="message", type="string", example="Usuaris no trobat")
+ *             @OA\Property(property="message", type="string")
  *         )
  *     )
  * )
  */
-    public function show(string $id)
+    public function show($id)
     {
         try {
             $tupla = Usuaris::findOrFail($id);
             return response()->json(['status' => 'correcto', 'data' => $tupla], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json(['status' => 'Usuaris no trobat'], 400);
+            return response()->json(['status' => 'Usuari no trobat'], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
         }
     }
 
     /**
  * @OA\Put(
  *     path="/usuaris/{id}",
- *     summary="Actualitza un usuari específic",
+ *     summary="Actualitzar un usuari per ID",
  *     tags={"Usuaris"},
  *     @OA\Parameter(
  *         name="id",
@@ -225,15 +238,15 @@ class UsuarisController extends Controller
  *     ),
  *     @OA\RequestBody(
  *         required=true,
- *         description="Dades de l'usuari per actualitzar",
+ *         description="Dades per a actualitzar l'usuari",
  *         @OA\JsonContent(
- *             type="object",
- *             @OA\Property(property="nom", type="string"),
- *             @OA\Property(property="llinatges", type="string"),
- *             @OA\Property(property="dni", type="string"),
- *             @OA\Property(property="mail", type="string"),
- *             @OA\Property(property="contrasenya", type="string"),
- *             @OA\Property(property="rol", type="string", enum={"usuari", "administrador", "gestor"})
+ *             @OA\Property(property="nom", type="string", example="Nou Nom"),
+ *             @OA\Property(property="llinatges", type="string", example="Nous Llinatges"),
+ *             @OA\Property(property="dni", type="string", example="12345678A"),
+ *             @OA\Property(property="mail", type="string", format="email", example="nou@example.com"),
+ *             @OA\Property(property="contrasenya", type="string", example="novaContrasenya"),
+ *             @OA\Property(property="rol", type="string", enum={"usuari", "administrador", "gestor"}, example="administrador"),
+ *             @OA\Property(property="md_rol", type="string", enum={"administrador"}, example="administrador"),
  *         )
  *     ),
  *     @OA\Response(
@@ -242,29 +255,34 @@ class UsuarisController extends Controller
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="success"),
- *             @OA\Property(
- *                 property="data",
- *                 ref="#/components/schemas/Usuari"
- *             )
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Usuari")
  *         )
  *     ),
  *     @OA\Response(
  *         response=400,
- *         description="Dades invàlides o error en la validació",
+ *         description="Error en la validació de dades o Usuari no trobat",
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="error"),
- *             @OA\Property(property="data", type="object")
+ *             @OA\Property(property="data", type="object", additionalProperties={"type":"string"})
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Error intern del servidor",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string")
  *         )
  *     )
  * )
  */
-
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
         try {
             $tupla = Usuaris::findOrFail($id);
-            
+
             $reglesValidacio = [
                 'nom' => 'nullable|string|max:255',
                 'llinatges' => 'nullable|string|max:255',
@@ -303,11 +321,53 @@ class UsuarisController extends Controller
             return response()->json(['status' => 'success', 'data' => $tupla], 200);
         } catch (\Illuminate\Validation\ValidationException $validationException) {
             return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
         }
     }
 
-    
-    public function destroy(string $id)
+    /**
+ * @OA\Delete(
+ *     path="/usuaris/{id}",
+ *     summary="Eliminar un usuari per ID",
+ *     tags={"Usuaris"},
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="path",
+ *         required=true,
+ *         description="ID de l'usuari a eliminar",
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Usuari eliminat correctament",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="success"),
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Usuari")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Usuari no trobat o Error en la validació de dades",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="data", type="object", additionalProperties={"type":"string"})
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Error intern del servidor",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string")
+ *         )
+ *     )
+ * )
+ */
+    public function destroy($id)
     {
         try {
             $usuari = Usuaris::findOrFail($id);
@@ -315,46 +375,54 @@ class UsuarisController extends Controller
             return response()->json(['status' => 'success', 'data' => $usuari], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json(['status' => 'Error'], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
         }
     }
 
     /**
- * @OA\Put(
- *     path="/usuaris/delete/{id}",
- *     summary="Marca un usuari com a inactiu (data de baixa)",
+ * @OA\Delete(
+ *     path="/usuaris/{id}/delete",
+ *     summary="Marcar un usuari com a baixa per ID",
  *     tags={"Usuaris"},
  *     @OA\Parameter(
  *         name="id",
  *         in="path",
  *         required=true,
- *         description="ID de l'usuari a marcar com a inactiu",
+ *         description="ID de l'usuari a marcar com a baixa",
  *         @OA\Schema(type="integer")
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Usuari marcat com a inactiu correctament",
+ *         description="Usuari marcat com a baixa correctament",
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="success"),
- *             @OA\Property(
- *                 property="data",
- *                 ref="#/components/schemas/Usuari"
- *             )
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Usuari")
  *         )
  *     ),
  *     @OA\Response(
  *         response=400,
- *         description="Usuari no trobat",
+ *         description="Usuari no trobat o Error en la validació de dades",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="status", type="string", example="Error")
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="data", type="object", additionalProperties={"type":"string"})
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Error intern del servidor",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string")
  *         )
  *     )
  * )
  */
-
     // No eliminamos un usuario, solo ponemos fecha de baja
-    public function delete(string $id)
+    public function delete($id)
     {
         try {
             $usuari = Usuaris::findOrFail($id);
@@ -363,6 +431,8 @@ class UsuarisController extends Controller
             return response()->json(['status' => 'success', 'data' => $usuari], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json(['status' => 'Error'], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
         }
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\PuntsInteres;
+use Illuminate\Support\Facades\Validator;
 
 /**
  * @OA\Tag(
@@ -19,39 +20,66 @@ class PuntsInteresController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-   /**
+    /**
  * @OA\Get(
- *     path="/punts-interes",
+ *     path="/api/punts-interes",
+ *     tags={"Punts d'Interès"},
  *     summary="Llista tots els punts d'interès",
- *     tags={"PuntsInteres"},
  *     @OA\Response(
  *         response=200,
- *         description="Retorna una llista de tots els punts d'interès",
+ *         description="Llista de punts d'interès recuperada amb èxit",
  *         @OA\JsonContent(
- *             type="array",
- *             @OA\Items(ref="#/components/schemas/PuntInteres")
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="correcto"),
+ *             @OA\Property(
+ *                 property="data",
+ *                 type="array",
+ *                 @OA\Items(ref="#/components/schemas/PuntInteres")
+ *             )
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Error en la sol·licitud",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="data", type="object")
  *         )
  *     ),
  *     @OA\Response(
  *         response=500,
- *         description="Error intern del servidor"
+ *         description="Error intern del servidor",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string")
+ *         )
  *     )
  * )
  * 
- * @OA\Schema(
+ *   @OA\Schema(
  *     schema="PuntInteres",
  *     type="object",
- *     @OA\Property(property="id", type="integer"),
- *     @OA\Property(property="titol", type="string"),
- *     @OA\Property(property="descripcio", type="string"),
- *     @OA\Property(property="data_baixa", type="string", format="date", example="2024-01-01"),
- *     @OA\Property(property="espai_id", type="integer", example=1)
+ *     @OA\Property(property="id", type="integer", description="Identificador únic del punt d'interès"),
+ *     @OA\Property(property="nom", type="string", description="Nom del punt d'interès"),
+ *     @OA\Property(property="descripcio", type="string", description="Descripció del punt d'interès"),
+ *     @OA\Property(property="espai_id", type="integer", description="Identificador de l'espai associat"),
+ *     @OA\Property(property="data_creacio", type="string", format="date-time", description="Data de creació del punt d'interès"),
+ *     @OA\Property(property="data_baixa", type="string", format="date-time", description="Data de baixa del punt d'interès")
  * )
+ * 
  */
     public function index()
     {
-        $puntsInteres = PuntsInteres::all();
-        return response()->json(['punts_interes' => $puntsInteres]);
+        try {
+            $tuples = PuntsInteres::all();
+            return response()->json(['status' => 'correcto', 'data' => $tuples], 200);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json(['status' => 'error', 'data' => $e->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 
     /**
@@ -63,55 +91,73 @@ class PuntsInteresController extends Controller
 
     /**
  * @OA\Post(
- *     path="/punts-interes",
+ *     path="/api/punts-interes",
+ *     tags={"Punts d'Interès"},
  *     summary="Crea un nou punt d'interès",
- *     tags={"PuntsInteres"},
  *     @OA\RequestBody(
  *         required=true,
- *         description="Dades del nou punt d'interès",
+ *         description="Dades del punt d'interès a crear",
  *         @OA\JsonContent(
- *             required={"titol", "descripcio", "espai_id"},
- *             @OA\Property(property="titol", type="string", example="Castell Bellver"),
- *             @OA\Property(property="descripcio", type="string", example="Un castell gòtic ubicat a Palma."),
- *             @OA\Property(property="data_baixa", type="string", format="date", example="2024-01-01"),
- *             @OA\Property(property="espai_id", type="integer", example=1)
+ *             @OA\Property(property="titol", type="string", description="Títol del punt d'interès"),
+ *             @OA\Property(property="descripcio", type="string", description="Descripció del punt d'interès"),
+ *             @OA\Property(property="espai_id", type="integer", description="ID de l'espai associat al punt d'interès")
  *         )
  *     ),
  *     @OA\Response(
- *         response=201,
- *         description="Punt d'interès creat correctament",
+ *         response=200,
+ *         description="Punt d'interès creat amb èxit",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="message", type="string", example="Punto de interés creado correctamente"),
- *             @OA\Property(property="punt_interes", ref="#/components/schemas/PuntInteres")
+ *             @OA\Property(property="status", type="string", example="success"),
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/PuntInteres")
  *         )
  *     ),
  *     @OA\Response(
  *         response=400,
- *         description="Dades invàlides",
+ *         description="Error en la sol·licitud",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="errors", type="object")
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="data", type="object")
  *         )
  *     ),
  *     @OA\Response(
  *         response=500,
- *         description="Error intern del servidor"
+ *         description="Error intern del servidor",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string")
+ *         )
  *     )
  * )
  */
     public function store(Request $request)
     {
-        $request->validate([
-            'titol' => 'required|string|max:255',
-            'descripcio' => 'required|string',
-            'data_baixa' => 'nullable|date',
-            'espai_id' => 'required|exists:espais,id',
-        ]);
+        try {
+            $reglesValidacio = [
+                'titol' => 'required|string|max:255',
+                'descripcio' => 'required|string|max:2000',
+                'espai_id' => 'required|exists:espais,id',
+            ];
+            $missatges = [
+                'required' => 'El camp :attribute és obligatori.',
+                'max' => 'El :attribute ha de tenir màxim :max caràcters.'
+            ];
 
-        $puntInteres = PuntsInteres::create($request->all());
+            $validacio = PuntsInteres::make($request->all(), $reglesValidacio, $missatges);
+            if ($validacio->fails()) {
+                throw new \Illuminate\Validation\ValidationException($validacio);
+            }
 
-        return response()->json(['message' => 'Punto de interés creado correctamente', 'punt_interes' => $puntInteres]);
+            $tupla = PuntsInteres::create($request->all());
+
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
+        } catch (\Illuminate\Validation\ValidationException $validationException) {
+            return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 
     /**
@@ -123,37 +169,56 @@ class PuntsInteresController extends Controller
 
     /**
  * @OA\Get(
- *     path="/punts-interes/{id}",
- *     summary="Mostra un punt d'interès específic",
- *     tags={"PuntsInteres"},
+ *     path="/api/punts-interes/{id}",
+ *     tags={"Punts d'Interès"},
+ *     summary="Obté les dades d'un punt d'interès específic",
  *     @OA\Parameter(
  *         name="id",
  *         in="path",
  *         required=true,
- *         description="ID del punt d'interès",
- *         @OA\Schema(type="integer")
- *     ),
- *     @OA\Response(
- *         response=200,
- *         description="Detalls del punt d'interès",
- *         @OA\JsonContent(
- *             type="object",
- *             @OA\Property(property="punt_interes", ref="#/components/schemas/PuntInteres")
+ *         description="Identificador únic del punt d'interès",
+ *         @OA\Schema(
+ *             type="integer"
  *         )
  *     ),
  *     @OA\Response(
- *         response=404,
+ *         response=200,
+ *         description="Dades del punt d'interès trobades",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="correcto"),
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/PuntInteres")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=400,
  *         description="Punt d'interès no trobat",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="message", type="string", example="Punto de interés no encontrado")
+ *             @OA\Property(property="status", type="string", example="Punt d'interès no trobat")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Error intern del servidor",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string")
  *         )
  *     )
  * )
  */
-    public function show(PuntsInteres $puntInteres)
+    public function show($id)
     {
-        return response()->json(['punt_interes' => $puntInteres]);
+        try {
+            $tupla = PuntsInteres::findOrFail($id);
+            return response()->json(['status' => 'correcto', 'data' => $tupla], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['status' => 'Usuaris no trobat'], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 
     /**
@@ -166,67 +231,83 @@ class PuntsInteresController extends Controller
 
     /**
  * @OA\Put(
- *     path="/punts-interes/{id}",
- *     summary="Actualitza un punt d'interès",
- *     tags={"PuntsInteres"},
+ *     path="/api/punts-interes/{id}",
+ *     tags={"Punts d'Interès"},
+ *     summary="Actualitza les dades d'un punt d'interès",
  *     @OA\Parameter(
  *         name="id",
  *         in="path",
  *         required=true,
- *         description="ID del punt d'interès a actualitzar",
- *         @OA\Schema(type="integer")
+ *         description="Identificador únic del punt d'interès",
+ *         @OA\Schema(
+ *             type="integer"
+ *         )
  *     ),
  *     @OA\RequestBody(
  *         required=true,
- *         description="Dades per a actualitzar el punt d'interès",
+ *         description="Dades a actualitzar del punt d'interès",
  *         @OA\JsonContent(
- *             required={"titol", "descripcio", "espai_id"},
- *             @OA\Property(property="titol", type="string", example="Títol del punt d'interès"),
- *             @OA\Property(property="descripcio", type="string", example="Descripció detallada del punt d'interès"),
- *             @OA\Property(property="data_baixa", type="string", format="date", example="2024-01-01"),
- *             @OA\Property(property="espai_id", type="integer", example=1)
+ *             @OA\Property(property="titol", type="string", description="Títol del punt d'interès"),
+ *             @OA\Property(property="descripcio", type="string", description="Descripció del punt d'interès"),
+ *             @OA\Property(property="espai_id", type="integer", description="Identificador de l'espai associat")
  *         )
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Punt d'interès actualitzat correctament",
+ *         description="Dades del punt d'interès actualitzades amb èxit",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="message", type="string", example="Punto de interés actualizado correctamente"),
- *             @OA\Property(property="punt_interes", ref="#/components/schemas/PuntInteres")
+ *             @OA\Property(property="status", type="string", example="correcto"),
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/PuntInteres")
  *         )
  *     ),
  *     @OA\Response(
  *         response=400,
- *         description="Dades invàlides",
+ *         description="Error de validació o punt d'interès no trobat",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="errors", type="object")
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="data", type="object")
  *         )
  *     ),
  *     @OA\Response(
- *         response=404,
- *         description="Punt d'interès no trobat",
+ *         response=500,
+ *         description="Error intern del servidor",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="message", type="string", example="Punto de interés no encontrado")
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string")
  *         )
  *     )
  * )
  */
-
-    public function update(Request $request, PuntsInteres $puntInteres)
+    public function update(Request $request, $id)
     {
-        $request->validate([
-            'titol' => 'required|string|max:255',
-            'descripcio' => 'required|string',
-            'data_baixa' => 'nullable|date',
-            'espai_id' => 'required|exists:espais,id',
-        ]);
+        try {
+            $tupla = PuntsInteres::findOrFail($id);
+            $reglesValidacio = [
+                'titol' => 'nullable|string|max:255',
+                'descripcio' => 'nullable|string|max:2000',
+                'espai_id' => 'nullable|exists:espais,id',
+            ];
+            $missatges = [
+                'required' => 'El camp :attribute és obligatori.',
+                'max' => 'El :attribute ha de tenir màxim :max caràcters.'
+            ];
 
-        $puntInteres->update($request->all());
+            $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
+            if ($validacio->fails()) {
+                throw new \Illuminate\Validation\ValidationException($validacio);
+            }
 
-        return response()->json(['message' => 'Punto de interés actualizado correctamente', 'punt_interes' => $puntInteres]);
+            $tupla->update($request->all());
+
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
+        } catch (\Illuminate\Validation\ValidationException $validationException) {
+            return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 
     /**
@@ -236,40 +317,116 @@ class PuntsInteresController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-     /**
+    /**
  * @OA\Delete(
- *     path="/punts-interes/{puntInteres}",
+ *     path="/api/punts-interes/{id}",
+ *     tags={"Punts d'Interès"},
  *     summary="Elimina un punt d'interès",
- *     tags={"PuntsInteres"},
  *     @OA\Parameter(
- *         name="puntInteres",
+ *         name="id",
  *         in="path",
  *         required=true,
- *         description="ID del punt d'interès a eliminar",
- *         @OA\Schema(type="integer")
- *     ),
- *     @OA\Response(
- *         response=200,
- *         description="Punt d'interès eliminat correctament",
- *         @OA\JsonContent(
- *             type="object",
- *             @OA\Property(property="message", type="string", example="Punto de interés eliminado correctamente")
+ *         description="Identificador únic del punt d'interès",
+ *         @OA\Schema(
+ *             type="integer"
  *         )
  *     ),
  *     @OA\Response(
- *         response=404,
- *         description="Punt d'interès no trobat",
+ *         response=200,
+ *         description="Punt d'interès eliminat amb èxit",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="message", type="string", example="Punto de interés no encontrado")
+ *             @OA\Property(property="status", type="string", example="correcto"),
+ *             @OA\Property(property="data", type="object")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Punt d'interès no trobat o error en la sol·licitud",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="data", type="object")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Error intern del servidor",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string")
  *         )
  *     )
  * )
  */
-    public function destroy(PuntsInteres $puntInteres)
+    public function destroy($id)
     {
-        $puntInteres->delete();
+        try {
+            $tupla = PuntsInteres::findOrFail($id);
+            $tupla->delete();
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['status' => 'Error'], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
+    }
 
-        return response()->json(['message' => 'Punto de interés eliminado correctamente']);
+    /**
+ * @OA\Delete(
+ *     path="/api/punts-interes/{id}/delete",
+ *     tags={"Punts d'Interès"},
+ *     summary="Realitza una eliminació lògica d'un punt d'interès",
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="path",
+ *         required=true,
+ *         description="Identificador únic del punt d'interès",
+ *         @OA\Schema(
+ *             type="integer"
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Eliminació lògica del punt d'interès realitzada amb èxit",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="correcto"),
+ *             @OA\Property(property="data", type="object")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Punt d'interès no trobat o error en la sol·licitud",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="data", type="object")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Error intern del servidor",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string")
+ *         )
+ *     )
+ * )
+ */
+    public function delete($id)
+    {
+        try {
+            $puntinteres = PuntsInteres::findOrFail($id);
+            $puntinteres->data_baixa = now();
+            $puntinteres->save();
+            return response()->json(['status' => 'success', 'data' => $puntinteres], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['status' => 'Error'], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 }

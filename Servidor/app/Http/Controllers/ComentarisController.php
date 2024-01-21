@@ -3,212 +3,333 @@
 namespace App\Http\Controllers;
 
 use App\Models\Comentaris;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
-
-/** 
- * @OA\Tag(
- *     name="Comentaris"
- * )
- */
-
-class ComentarisController extends Controller
-{
-    /**
-     * @OA\Get(
-     *     path="/comentaris",
-     *     summary="Llista de comentaris",
-     *     tags={"Comentaris"},
-     *     @OA\Response(
-     *         response=200,
-     *         description="Llista de tots els comentaris",
-     *         @OA\JsonContent(
-     *             type="array",
-     *             @OA\Items(ref="#/components/schemas/Comentari")
-     *         )
-     *     )
-     * )
-     * @OA\Schema(
-     *     schema="Comentari",
-     *     type="object",
-     *     @OA\Property(property="id", type="integer"),
-     *     @OA\Property(property="usuari_id", type="integer"),
-     *     @OA\Property(property="espai_id", type="integer"),
-     *     @OA\Property(property="data", type="string", format="date-time")
+/**
+     * @OA\Tag(
+     *    name="Comentari",
+     *   description="Operacions per a Comentaris"
      * )
      */
-    public function index()
-    {
-        $tuples = Comentaris::all();
-        return response()->json(['status' => 'correcto', 'data' => $tuples], 200);
-    }
-
-    /**
- * Emmagatzema un nou comentari a la base de dades.
- * 
- * @OA\Post(
- *     path="/comentaris",
- *     summary="Crea un nou comentari",
+class ComentarisController extends Controller
+{
+    
+     /**
+ * @OA\Get(
+ *     path="/api/comentaris",
  *     tags={"Comentaris"},
- *     @OA\RequestBody(
- *         required=true,
+ *     summary="Llista tots els comentaris",
+ *     @OA\Response(
+ *         response=200,
+ *         description="Llista de comentaris recuperada amb èxit",
  *         @OA\JsonContent(
- *             required={"usuari_id", "espai_id", "data"},
- *             @OA\Property(property="usuari_id", type="integer", example=1),
- *             @OA\Property(property="espai_id", type="integer", example=2),
- *             @OA\Property(property="data", type="string", format="date-time", example="2023-01-01T00:00:00Z")
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="correcto"),
+ *             @OA\Property(
+ *                 property="data",
+ *                 type="array",
+ *                 @OA\Items(ref="#/components/schemas/Comentari")
+ *             )
  *         )
  *     ),
  *     @OA\Response(
- *         response=201,
- *         description="Comentari creat",
+ *         response=400,
+ *         description="Comentari no trobat",
  *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="Comentari no trobat")
+ *         )
+ *     )
+ * )
+ * @OA\Schema(
+ *     schema="Comentari",
+ *     type="object",
+ *     @OA\Property(property="id", type="integer", description="Identificador únic del comentari"),
+ *     @OA\Property(property="text", type="string", description="Text del comentari"),
+ *     @OA\Property(property="usuari_id", type="integer", description="Identificador de l'usuari que ha fet el comentari"),
+ *     @OA\Property(property="audio_id", type="integer", description="Identificador de l'audio al qual pertany el comentari"),
+ *     @OA\Property(property="creat_a", type="string", format="date-time", description="Data i hora de creació del comentari")
+ * )
+ */
+
+    public function index()
+    {
+        try {
+            $tuples = Comentaris::all();
+            return response()->json(['status' => 'correcto', 'data' => $tuples], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['status' => 'Comentari no trobat'], 400);
+        }
+    }
+
+    /**
+ * @OA\Post(
+ *     path="/api/comentaris",
+ *     tags={"Comentaris"},
+ *     summary="Crea un nou comentari",
+ *     @OA\RequestBody(
+ *         required=true,
+ *         description="Dades necessàries per a crear un nou comentari",
+ *         @OA\JsonContent(
+ *             required={"comentari", "espai_id"},
+ *             @OA\Property(property="comentari", type="string", description="Text del comentari", maxLength=2000),
+ *             @OA\Property(property="espai_id", type="integer", description="Identificador de l'espai associat al comentari"),
+ *             @OA\Property(property="md_id", type="integer", description="Identificador de l'usuari que fa el comentari (opcional)")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Nou comentari creat correctament",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="correcte"),
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Comentari")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Error en la validació de dades",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="data", type="object", additionalProperties={"type":"string"})
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Error intern del servidor",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string")
+ *         )
+ *     )
+ * )
+ */
+    public function store(Request $request)
+    {
+        try {
+            $mdId = $request->md_id;
+
+            $request->merge(['data' => Carbon::now()]);
+            $request->merge(['usuari_id' => $mdId]);
+
+            $reglesValidacio = [
+                'comentari' => 'required|string|max:2000',
+                'espai_id' => 'required|integer',
+            ];
+
+            $missatges = [
+                'required' => 'El camp :attribute és obligatori.',
+                'max' => 'El :attribute ha de tenir màxim :max caràcters.'
+            ];
+
+            $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
+
+            if ($validacio->fails()) {
+                throw new \Illuminate\Validation\ValidationException($validacio);
+            }
+
+            $tupla = Comentaris::create($request->all());
+
+            return response()->json(['status' => 'correcte', 'data' => $tupla], 200);
+        } catch (\Illuminate\Validation\ValidationException $validationException) {
+            return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
+    }
+
+    /**
+ * @OA\Get(
+ *     path="/api/comentaris/{id}",
+ *     tags={"Comentaris"},
+ *     summary="Obté les dades d'un comentari específic",
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="path",
+ *         required=true,
+ *         description="Identificador únic del comentari",
+ *         @OA\Schema(
+ *             type="integer"
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Dades del comentari trobades",
+ *         @OA\JsonContent(
+ *             type="object",
  *             @OA\Property(property="status", type="string", example="correcto"),
  *             @OA\Property(property="data", type="object", ref="#/components/schemas/Comentari")
  *         )
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Comentari no trobat",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="Usuaris no trobat")
+ *         )
  *     )
  * )
  */
-        public function store(Request $request)
-        {
-            // Validació de dades
-            $validatedData = $request->validate([
-                'usuari_id' => 'required|exists:usuaris,id', 
-                'espai_id' => 'required|exists:espais,id',   
-                'data' => 'required|date'
-            ]);
-    
-            // Creació del comentari
-            $comentari = Comentaris::create($validatedData);
-    
-            // Retornem una resposta JSON amb l'estatus i el comentari creat
-            return response()->json(['status' => 'correcto', 'data' => $comentari], 201);
-        }
-    
-
-    /**
- * Mostra un comentari específic.
- * 
- * @OA\Get(
- *     path="/comentaris/{id}",
- *     summary="Obté un comentari per ID",
- *     tags={"Comentaris"},
- *     @OA\Parameter(
- *         name="id",
- *         description="ID del comentari",
- *         required=true,
- *         in="path",
- *         @OA\Schema(type="integer")
- *     ),
- *     @OA\Response(
- *         response=200,
- *         description="Comentari trobat",
- *         @OA\JsonContent(ref="#/components/schemas/Comentari")
- *     ),
- *     @OA\Response(
- *         response=404,
- *         description="Comentari no trobat"
- *     )
- * )
- */
-    public function show(string $id)
+    public function show($id)
     {
         try {
-            // Busca el comentari pel seu ID
-            $comentari = Comentaris::findOrFail($id);
-
-            // Retornem una resposta JSON amb l'estatus i les dades del comentari
-            return response()->json(['status' => 'correcto', 'data' => $comentari], 200);
+            $tupla = Comentaris::findOrFail($id);
+            return response()->json(['status' => 'correcto', 'data' => $tupla], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            // Si el comentari no es troba, retornem un error
-            return response()->json(['status' => 'Error', 'message' => 'Comentari no trobat'], 404);
+            return response()->json(['status' => 'Usuaris no trobat'], 400);
         }
     }
 
-    /**
- * Actualitza un comentari existent.
- * 
+/**
  * @OA\Put(
- *     path="/comentaris/{id}",
- *     summary="Actualitza un comentari",
+ *     path="/api/comentaris/{id}",
  *     tags={"Comentaris"},
+ *     summary="Actualitza un comentari existent",
  *     @OA\Parameter(
  *         name="id",
- *         description="ID del comentari",
- *         required=true,
  *         in="path",
- *         @OA\Schema(type="integer")
+ *         required=true,
+ *         description="Identificador únic del comentari a actualitzar",
+ *         @OA\Schema(
+ *             type="integer"
+ *         )
  *     ),
  *     @OA\RequestBody(
  *         required=true,
+ *         description="Dades del comentari a actualitzar",
  *         @OA\JsonContent(
- *             required={"usuari_id", "espai_id", "data"},
- *             @OA\Property(property="usuari_id", type="integer", example=1),
- *             @OA\Property(property="espai_id", type="integer", example=2),
- *             @OA\Property(property="data", type="string", format="date-time", example="2023-01-02T00:00:00Z")
+ *             required={},
+ *             @OA\Property(property="comentari", type="string", description="Text del comentari", maxLength=2000),
+ *             @OA\Property(property="espai_id", type="integer", description="Identificador de l'espai associat al comentari"),
+ *             @OA\Property(property="validat", type="boolean", description="Estat de validació del comentari (només administradors)"),
+ *             @OA\Property(property="usuari_id", type="integer", description="Identificador de l'usuari que ha fet el comentari (només administradors)")
  *         )
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Comentari actualitzat",
- *         @OA\JsonContent(ref="#/components/schemas/Comentari")
+ *         description="Dades del comentari actualitzades correctament",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="success"),
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Comentari")
+ *         )
  *     ),
  *     @OA\Response(
- *         response=404,
- *         description="Comentari no trobat"
+ *         response=400,
+ *         description="Error en la validació de dades",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="data", type="object", additionalProperties={"type":"string"})
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Error intern del servidor",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string")
+ *         )
  *     )
  * )
  */
-    public function update(Request $request, string $id)
+
+
+    public function update(Request $request, $id)
     {
         try {
-            $comentari = Comentaris::findOrFail($id);
+            $tupla = Comentaris::findOrFail($id);
 
-            // Validació de dades
-            $validatedData = $request->validate([
-                'usuari_id' => 'required|exists:usuaris,id', 
-                'espai_id' => 'required|exists:espais,id',   
-                'data' => 'required|date'
-            ]);
+            $reglesValidacio = [
+                'comentari' => 'nullable|string|max:2000',
+                'espai_id' => 'nullable|integer',
+            ];
 
-            // Actualització del comentari
-            $comentari->update($validatedData);
+            $missatges = [
+                'required' => 'El camp :attribute és obligatori.',
+                'max' => 'El :attribute ha de tenir màxim :max caràcters.'
+            ];
 
-            return response()->json(['status' => 'success', 'data' => $comentari], 200);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json(['status' => 'Error'], 404);
+            $mdRol = $request->md_rol;
+
+            $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
+
+            if ($validacio->fails()) {
+                throw new \Illuminate\Validation\ValidationException($validacio);
+            }
+
+            if ($request->filled('validat') && $mdRol == 'administrador') {
+                $comentari = Comentaris::find($id);
+                $comentari->validat = $request->input('validat');
+                $comentari->save();
+            }
+
+            if ($request->filled('usuari_id') && $mdRol == 'administrador') {
+                $comentari = Comentaris::find($id);
+                $comentari->usuari_id = $request->input('usuari_id');
+                $comentari->save();
+            }
+
+            $request->merge(['data' => Carbon::now()]);
+            $tupla->update($request->all());
+
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
+        } catch (\Illuminate\Validation\ValidationException $validationException) {
+            return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
         }
     }
 
     /**
- * Elimina un comentari existent.
- * 
  * @OA\Delete(
- *     path="/comentaris/{id}",
- *     summary="Elimina un comentari",
+ *     path="/api/comentaris/{id}",
  *     tags={"Comentaris"},
+ *     summary="Elimina un comentari existent",
  *     @OA\Parameter(
  *         name="id",
- *         description="ID del comentari",
- *         required=true,
  *         in="path",
- *         @OA\Schema(type="integer")
- *     ),
- *     @OA\Response(
- *         response=200,
- *         description="Comentari eliminat",
- *         @OA\JsonContent(
- *             @OA\Property(property="status", type="string", example="success"),
- *             @OA\Property(property="message", type="string", example="Comentari eliminat correctament")
+ *         required=true,
+ *         description="Identificador únic del comentari a eliminar",
+ *         @OA\Schema(
+ *             type="integer"
  *         )
  *     ),
  *     @OA\Response(
- *         response=404,
- *         description="Comentari no trobat"
+ *         response=200,
+ *         description="Comentari eliminat correctament",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="success"),
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Comentari")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Comentari no trobat o error en l'eliminació",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="Error")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Error intern del servidor",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string")
+ *         )
  *     )
  * )
  */
-    public function destroy(string $id)
+    public function destroy($id)
     {
         try {
             $comentari = Comentaris::findOrFail($id);
@@ -216,6 +337,8 @@ class ComentarisController extends Controller
             return response()->json(['status' => 'success', 'data' => $comentari], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json(['status' => 'Error'], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
         }
     }
 }

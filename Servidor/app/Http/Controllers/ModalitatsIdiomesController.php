@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\ModalitatsIdiomes;
+use Illuminate\Support\Facades\Validator;
 
 /**
  * @OA\Tag(
@@ -16,226 +17,360 @@ class ModalitatsIdiomesController extends Controller
 {
    /**
  * @OA\Get(
- *     path="/modalitats-idiomes",
- *     summary="Obté una llista de totes les modalitats d'idiomes",
- *     tags={"ModalitatsIdiomes"},
+ *     path="/api/modalitats-idiomes",
+ *     tags={"Modalitats Idiomes"},
+ *     summary="Llista totes les associacions entre modalitats i idiomes",
  *     @OA\Response(
  *         response=200,
- *         description="Retorna una llista de totes les modalitats d'idiomes",
+ *         description="Llista d'associacions recuperada amb èxit",
  *         @OA\JsonContent(
  *             type="object",
+ *             @OA\Property(property="status", type="string", example="correcto"),
  *             @OA\Property(
- *                 property="modalitats_idiomes",
+ *                 property="data",
  *                 type="array",
  *                 @OA\Items(ref="#/components/schemas/ModalitatIdioma")
  *             )
  *         )
  *     ),
  *     @OA\Response(
+ *         response=400,
+ *         description="Error en la sol·licitud",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="data", type="object")
+ *         )
+ *     ),
+ *     @OA\Response(
  *         response=500,
- *         description="Error en el servidor"
+ *         description="Error intern del servidor",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string")
+ *         )
  *     )
  * )
  * @OA\Schema(
  *     schema="ModalitatIdioma",
  *     type="object",
- *     @OA\Property(property="idioma_id", type="integer", example="1"),
- *     @OA\Property(property="modalitat_id", type="integer", example="1"),
- *     @OA\Property(property="traduccio", type="string", example="Fotografia"),
- *     @OA\Property(property="data_baixa", type="string", format="date", example="2024-01-01")
- *     
+ *     @OA\Property(property="id", type="integer", description="Identificador únic de l'associació"),
+ *     @OA\Property(property="modalitat_id", type="integer", description="Identificador de la modalitat associada"),
+ *     @OA\Property(property="idioma_id", type="integer", description="Identificador de l'idioma associat"),
+ *     @OA\Property(property="nivell", type="string", description="Nivell de competència en l'idioma"),
  * )
  */
-
     public function index()
     {
-        $modalitats_idiomes = ModalitatsIdiomes::all();
-        return response()->json(['modalitats_idiomes' => $modalitats_idiomes]);
+        try {
+            $tuples = ModalitatsIdiomes::all();
+            return response()->json(['status' => 'correcto', 'data' => $tuples], 200);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json(['status' => 'error', 'data' => $e->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 
-  /**
+    /**
  * @OA\Post(
- *     path="/modalitats-idiomes",
- *     summary="Crea una nova modalitat-idioma",
- *     tags={"ModalitatsIdiomes"},
+ *     path="/api/modalitats-idiomes",
+ *     tags={"Modalitats Idiomes"},
+ *     summary="Crea una nova associació entre modalitats i idiomes",
  *     @OA\RequestBody(
  *         required=true,
- *         description="Dades necessàries per a crear una nova modalitat-idioma",
+ *         description="Dades de l'associació a crear",
  *         @OA\JsonContent(
- *             required={"idioma_id", "modalitat_id", "traduccio"},
- *             @OA\Property(property="idioma_id", type="string", example="1"),
- *             @OA\Property(property="modalitat_id", type="string", example="1"),
- *             @OA\Property(property="traduccio", type="string", example="Fotografia"),
- *             @OA\Property(property="data_baixa", type="string", format="date", example="2024-01-01")
+ *             @OA\Property(property="idioma_id", type="integer", example="1"),
+ *             @OA\Property(property="modalitat_id", type="integer", example="2"),
+ *             @OA\Property(property="traduccio", type="string", example="Traducció de la modalitat"),
+ *             @OA\Property(property="data_baixa", type="string", format="date", example="2024-01-21"),
  *         )
  *     ),
  *     @OA\Response(
- *         response=201,
- *         description="Modalitat-idioma creada correctament",
+ *         response=200,
+ *         description="Associació creada amb èxit",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="message", type="string", example="Modalitat-idioma creada correctament"),
- *             @OA\Property(property="modalitat_idioma", ref="#/components/schemas/ModalitatIdioma")
+ *             @OA\Property(property="status", type="string", example="success"),
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/ModalitatIdioma")
  *         )
  *     ),
  *     @OA\Response(
  *         response=400,
- *         description="Dades invàlides",
+ *         description="Error de validació",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="errors", type="object")
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="data", type="object", example={
+ *                 "idioma_id": {"El camp idioma_id és obligatori."},
+ *                 "modalitat_id": {"El camp modalitat_id és obligatori."},
+ *                 "traduccio": {"El camp traduccio ha de ser una cadena de text."},
+ *             })
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Error intern del servidor",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string")
  *         )
  *     )
  * )
+ *
  */
-
     public function store(Request $request)
     {
-        $request->validate([
-            'idioma_id' => 'required|string|max:2',
-            'modalitat_id' => 'required|string|max:2',
-            'traduccio' => 'required|string|max:255',
-            'data_baixa' => 'nullable|date',
-        ]);
+        try {
+            $reglesValidacio = [
+                'idioma_id' => 'required|int',
+                'modalitat_id' => 'required|int',
+                'traduccio' => 'required|string|max:255',
+                'data_baixa' => 'nullable|date',
+            ];
+            $missatges = [
+                'required' => 'El camp :attribute és obligatori.',
+                'max' => 'El :attribute ha de tenir màxim :max caràcters.'
+            ];
 
-        $modalitat_idioma = ModalitatsIdiomes::create($request->all());
+            $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
+            if ($validacio->fails()) {
+                throw new \Illuminate\Validation\ValidationException($validacio);
+            }
 
-        return response()->json(['message' => 'Modalitat-idioma creada correctamente', 'modalitat_idioma' => $modalitat_idioma]);
+            $tupla = ModalitatsIdiomes::create($request->all());
+
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
+        } catch (\Illuminate\Validation\ValidationException $validationException) {
+            return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 
     /**
  * @OA\Get(
- *     path="/modalitats-idiomes/{modalitat_idioma}",
- *     summary="Obté una modalitat d'idioma específica",
- *     tags={"ModalitatsIdiomes"},
+ *     path="/api/modalitats-idiomes/{idioma_id}/{modalitat_id}",
+ *     tags={"Modalitats Idiomes"},
+ *     summary="Obté una associació entre modalitats i idiomes específics",
  *     @OA\Parameter(
- *         name="modalitat_idioma",
+ *         name="idioma_id",
  *         in="path",
  *         required=true,
- *         description="ID de la modalitat d'idioma",
- *         @OA\Schema(type="integer")
+ *         description="Identificador únic de l'idioma",
+ *         @OA\Schema(
+ *             type="integer"
+ *         )
+ *     ),
+ *     @OA\Parameter(
+ *         name="modalitat_id",
+ *         in="path",
+ *         required=true,
+ *         description="Identificador únic de la modalitat",
+ *         @OA\Schema(
+ *             type="integer"
+ *         )
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Retorna la modalitat d'idioma especificada",
+ *         description="Associació trobada amb èxit",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="modalitat_idioma", ref="#/components/schemas/ModalitatIdioma")
+ *             @OA\Property(property="modalitat_idioma", type="object", ref="#/components/schemas/ModalitatIdioma")
  *         )
  *     ),
  *     @OA\Response(
  *         response=404,
- *         description="Modalitat d'idioma no trobada",
+ *         description="Traducció no trobada",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="message", type="string", example="Modalitat d'idioma no trobada")
+ *             @OA\Property(property="message", type="string", example="Traducció no trobada")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Error intern del servidor",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string")
  *         )
  *     )
  * )
+ *
  */
-    public function show(ModalitatsIdiomes $modalitat_idioma)
+    public function show($idioma_id, $modalitat_id)
     {
-        return response()->json(['modalitat_idioma' => $modalitat_idioma]);
+        try {
+            $modalitatidioma = ModalitatsIdiomes::where('idioma_id', $idioma_id)->where('modalitat_id', $modalitat_id)->first();
+            if (!$modalitatidioma) {
+                return response()->json(['message' => 'Traducció no trobada'], 404);
+            }
+            return response()->json(['modalitat_idioma' => $modalitatidioma], 200);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 
-     /**
+    /**
  * @OA\Put(
- *     path="/modalitats-idiomes/{modalitat_idioma}",
- *     summary="Actualitza una modalitat d'idioma específica",
- *     tags={"ModalitatsIdiomes"},
+ *     path="/api/modalitats-idiomes/{idioma_id}/{modalitat_id}",
+ *     tags={"Modalitats Idiomes"},
+ *     summary="Actualitza una associació entre modalitats i idiomes específics",
  *     @OA\Parameter(
- *         name="modalitat_idioma",
+ *         name="idioma_id",
  *         in="path",
  *         required=true,
- *         description="ID de la modalitat d'idioma a actualitzar",
- *         @OA\Schema(type="integer")
+ *         description="Identificador únic de l'idioma",
+ *         @OA\Schema(
+ *             type="integer"
+ *         )
+ *     ),
+ *     @OA\Parameter(
+ *         name="modalitat_id",
+ *         in="path",
+ *         required=true,
+ *         description="Identificador únic de la modalitat",
+ *         @OA\Schema(
+ *             type="integer"
+ *         )
  *     ),
  *     @OA\RequestBody(
  *         required=true,
- *         description="Dades per a actualitzar la modalitat d'idioma",
+ *         description="Dades de l'associació a actualitzar",
  *         @OA\JsonContent(
- *             required={"idioma_id", "modalitat_id", "traduccio"},
- *             @OA\Property(property="idioma_id", type="string", example="1"),
- *             @OA\Property(property="modalitat_id", type="string", example="1"),
- *             @OA\Property(property="traduccio", type="string", example="Fotografia"),
- *             @OA\Property(property="data_baixa", type="string", format="date", example="2024-01-01")
+ *             @OA\Property(property="traduccio", type="string", example="Nova traducció de la modalitat"),
+ *             @OA\Property(property="data_baixa", type="string", format="date", example="2024-01-21"),
  *         )
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Modalitat d'idioma actualitzada correctament",
+ *         description="Associació actualitzada amb èxit",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="message", type="string", example="Modalitat-idioma actualitzada correctament"),
- *             @OA\Property(property="modalitat_idioma", ref="#/components/schemas/ModalitatIdioma")
+ *             @OA\Property(property="modalitat_idioma", type="object", ref="#/components/schemas/ModalitatIdioma")
  *         )
  *     ),
  *     @OA\Response(
  *         response=400,
- *         description="Dades invàlides",
+ *         description="Error de validació",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="errors", type="object")
+ *             @OA\Property(property="errors", type="object", example={
+ *                 "traduccio": {"El camp traduccio ha de ser una cadena de text."},
+ *             })
  *         )
  *     ),
  *     @OA\Response(
  *         response=404,
- *         description="Modalitat d'idioma no trobada",
+ *         description="Traducció no trobada",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="message", type="string", example="Modalitat d'idioma no trobada")
+ *             @OA\Property(property="message", type="string", example="Traducció no trobada")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Error intern del servidor",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string")
  *         )
  *     )
  * )
+ *
  */
-
-    public function update(Request $request, ModalitatsIdiomes $modalitat_idioma)
+    public function update(Request $request, $idioma_id, $modalitat_id)
     {
-        $request->validate([
-            'idioma_id' => 'required|string|max:2',
-            'modalitat_id' => 'required|string|max:2',
-            'traduccio' => 'required|string|max:255',
-            'data_baixa' => 'nullable|date',
-        ]);
+        try {
+            $reglesValidacio = [
+                'traduccio' => 'nullable|string',
+                'data_baixa' => 'nullable|date',
+            ];
 
-        $modalitat_idioma->update($request->all());
+            $validacio = Validator::make($request->all(), $reglesValidacio);
+            if ($validacio->fails()) {
+                return response()->json(['errors' => $validacio->errors()], 400);
+            }
 
-        return response()->json(['message' => 'Modalitat-idioma actualitzada correctament', 'modalitat_idioma' => $modalitat_idioma]);
+            $modalitatidioma = ModalitatsIdiomes::where('idioma_id', $idioma_id)->where('modalitat_id', $modalitat_id)->first();
+            if (!$modalitatidioma) {
+                return response()->json(['message' => 'Traducció no trobada'], 404);
+            }
+
+            $modalitatidioma->update($request->all());
+            return response()->json(['modalitat_idioma' => $modalitatidioma], 200);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 
-    /**
+   /**
  * @OA\Delete(
- *     path="/modalitats-idiomes/{modalitat_idioma}",
- *     summary="Elimina una modalitat d'idioma específica",
- *     tags={"ModalitatsIdiomes"},
+ *     path="/api/modalitats-idiomes/{idioma_id}/{modalitat_id}",
+ *     tags={"Modalitats Idiomes"},
+ *     summary="Elimina una associació entre modalitats i idiomes específics",
  *     @OA\Parameter(
- *         name="modalitat_idioma",
+ *         name="idioma_id",
  *         in="path",
  *         required=true,
- *         description="ID de la modalitat d'idioma a eliminar",
- *         @OA\Schema(type="integer")
+ *         description="Identificador únic de l'idioma",
+ *         @OA\Schema(
+ *             type="integer"
+ *         )
+ *     ),
+ *     @OA\Parameter(
+ *         name="modalitat_id",
+ *         in="path",
+ *         required=true,
+ *         description="Identificador únic de la modalitat",
+ *         @OA\Schema(
+ *             type="integer"
+ *         )
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Modalitat d'idioma eliminada correctament",
+ *         description="Associació eliminada amb èxit",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="message", type="string", example="Modalitat-idioma eliminada correctament")
+ *             @OA\Property(property="message", type="string", example="Traducció eliminada correctament")
  *         )
  *     ),
  *     @OA\Response(
  *         response=404,
- *         description="Modalitat d'idioma no trobada",
+ *         description="Traducció no trobada",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="message", type="string", example="Modalitat d'idioma no trobada")
+ *             @OA\Property(property="message", type="string", example="Traducció no trobada")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Error intern del servidor",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string")
  *         )
  *     )
  * )
  */
-    public function destroy(ModalitatsIdiomes $modalitat_idioma)
+    public function destroy($idioma_id, $modalitat_id)
     {
-        $modalitat_idioma->delete();
-        return response()->json(['message' => 'Modalitat-idioma eliminada correctamente']);
+        try {
+            $modalitatidioma = ModalitatsIdiomes::where('idioma_id', $idioma_id)->where('modalitat_id', $modalitat_id)->first();
+            if (!$modalitatidioma) {
+                return response()->json(['message' => 'Traducció no trobada'], 404);
+            }
+
+            $modalitatidioma->delete();
+            return response()->json(['message' => 'Traducció eliminada correctament'], 200);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 }

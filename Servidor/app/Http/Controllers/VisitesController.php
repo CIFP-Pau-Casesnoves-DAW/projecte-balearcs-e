@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Visites;
-
+use Illuminate\Support\Facades\Validator;
 
 /**
  * @OA\Tag(
@@ -22,37 +22,71 @@ class VisitesController extends Controller
 
     /**
  * @OA\Get(
- *     path="/visites",
- *     summary="Llista totes les visites",
+ *     path="/api/visites",
  *     tags={"Visites"},
+ *     summary="Llista totes les visites",
  *     @OA\Response(
  *         response=200,
- *         description="Retorna un llistat de totes les visites",
+ *         description="Llista de visites recuperada amb èxit",
  *         @OA\JsonContent(
- *             type="array",
- *             @OA\Items(ref="#/components/schemas/Visita")
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="correcto"),
+ *             @OA\Property(
+ *                 property="data",
+ *                 type="array",
+ *                 @OA\Items(ref="#/components/schemas/Visita")
+ *             )
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Error en la sol·licitud",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="data", type="object")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Error intern del servidor",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string")
  *         )
  *     )
  * )
  * @OA\Schema(
  *     schema="Visita",
  *     type="object",
- *     @OA\Property(property="id", type="integer", example="1"),
- *     @OA\Property(property="títol", type="string", example="Visita Guiada al Museu"),
- *     @OA\Property(property="descripcio", type="string", example="Recorregut pel museu amb guia especialitzat"),
- *     @OA\Property(property="data_inici", type="string", format="date", example="2024-05-01"),
- *     @OA\Property(property="data_fi", type="string", format="date", example="2024-05-15"),
- *     @OA\Property(property="requereix_inscripcio", type="boolean", example=true),
- *     @OA\Property(property="numero_places", type="integer", example="30"),
- *     @OA\Property(property="numero_total_visites", type="integer", example="100"),
- *     @OA\Property(property="punts_interes", type="array", @OA\Items(type="string")),
- *     @OA\Property(property="data_baixa", type="string", format="date", example="null")
+ *     @OA\Property(property="id", type="integer", description="Identificador únic de la visita"),
+ *     @OA\Property(property="titol", type="string", description="Títol de la visita"),
+ *     @OA\Property(property="descripcio", type="string", description="Descripció de la visita"),
+ *     @OA\Property(property="inscripcio_previa", type="boolean", description="Indica si la visita requereix inscripció prèvia"),
+ *     @OA\Property(property="n_places", type="integer", description="Nombre de places de la visita"),
+ *     @OA\Property(property="total_visitants", type="integer", description="Nombre total de visitants de la visita"),
+ *     @OA\Property(property="data_inici", type="string", format="date", description="Data d'inici de la visita"),
+ *     @OA\Property(property="data_fi", type="string", format="date", description="Data de fi de la visita"),
+ *     @OA\Property(property="horari", type="string", description="Horari de la visita"),
+ *     @OA\Property(property="data_baixa", type="string", format="date", description="Data de baixa de la visita"),
+ *     @OA\Property(property="espai_id", type="integer", description="Identificador únic de l'espai"),
+ *     @OA\Property(property="created_at", type="string", format="date-time", description="Data de creació del registre"),
+ *     @OA\Property(property="updated_at", type="string", format="date-time", description="Data de modificació del registre"),
+ *     @OA\Property(property="deleted_at", type="string", format="date-time", description="Data de baixa del registre")
  * )
  */
+
     public function index()
     {
-        $visites = Visites::all();
-        return response()->json(['visites' => $visites]);
+        try {
+            $tuples = Visites::all();
+            return response()->json(['status' => 'correcto', 'data' => $tuples], 200);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json(['status' => 'error', 'data' => $e->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 
     /**
@@ -64,63 +98,89 @@ class VisitesController extends Controller
 
     /**
  * @OA\Post(
- *     path="/visites",
- *     summary="Crea una nova visita",
+ *     path="/api/visites",
  *     tags={"Visites"},
+ *     summary="Crea una nova visita",
  *     @OA\RequestBody(
  *         required=true,
- *         description="Dades necessàries per a la creació d'una visita",
+ *         description="Dades necessàries per a crear una nova visita",
  *         @OA\JsonContent(
  *             required={"titol", "descripcio", "inscripcio_previa", "n_places", "data_inici", "data_fi", "horari", "espai_id"},
- *             @OA\Property(property="titol", type="string", example="Visita al Castell"),
- *             @OA\Property(property="descripcio", type="string", example="Un recorregut històric pel castell"),
- *             @OA\Property(property="inscripcio_previa", type="boolean", example=true),
- *             @OA\Property(property="n_places", type="integer", example=20),
- *             @OA\Property(property="total_visitants", type="integer", example=null),
- *             @OA\Property(property="data_inici", type="string", format="date", example="2024-06-01"),
- *             @OA\Property(property="data_fi", type="string", format="date", example="2024-06-15"),
- *             @OA\Property(property="horari", type="string", example="De 10:00 a 18:00"),
- *             @OA\Property(property="data_baixa", type="string", format="date", example=null),
- *             @OA\Property(property="espai_id", type="integer", example=1)
+ *             @OA\Property(property="titol", type="string", description="Títol de la visita", maxLength=255),
+ *             @OA\Property(property="descripcio", type="string", description="Descripció de la visita"),
+ *             @OA\Property(property="inscripcio_previa", type="boolean", description="Indica si la visita requereix inscripció prèvia"),
+ *             @OA\Property(property="n_places", type="integer", description="Nombre de places disponibles per a la visita"),
+ *             @OA\Property(property="total_visitants", type="integer", description="Total de visitants de la visita", nullable=true),
+ *             @OA\Property(property="data_inici", type="string", format="date", description="Data d'inici de la visita"),
+ *             @OA\Property(property="data_fi", type="string", format="date", description="Data de fi de la visita"),
+ *             @OA\Property(property="horari", type="string", description="Horari de la visita"),
+ *             @OA\Property(property="data_baixa", type="string", format="date", description="Data de baixa de la visita", nullable=true),
+ *             @OA\Property(property="espai_id", type="integer", description="Identificador de l'espai associat a la visita")
  *         )
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Visita creada correctament",
+ *         description="Nova visita creada correctament",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="message", type="string", example="Visita creada correctamente"),
- *             @OA\Property(property="visita", ref="#/components/schemas/Visita")
+ *             @OA\Property(property="status", type="string", example="success"),
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Visita")
  *         )
  *     ),
  *     @OA\Response(
  *         response=400,
- *         description="Dades invàlides",
+ *         description="Error en la validació de dades",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="errors", type="object")
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="data", type="object", additionalProperties={"type":"string"})
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Error intern del servidor",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string")
  *         )
  *     )
  * )
  */
+
     public function store(Request $request)
     {
-        $request->validate([
-            'titol' => 'required|string|max:255',
-            'descripcio' => 'required|string',
-            'inscripcio_previa' => 'required|boolean',
-            'n_places' => 'required|integer',
-            'total_visitants' => 'nullable|integer',
-            'data_inici' => 'required|date',
-            'data_fi' => 'required|date',
-            'horari' => 'required|string',
-            'data_baixa' => 'nullable|date',
-            'espai_id' => 'required|exists:espais,id',
-        ]);
+        try {
+            $reglesValidacio = [
+                'titol' => 'required|string|max:255',
+                'descripcio' => 'required|string',
+                'inscripcio_previa' => 'required|boolean',
+                'n_places' => 'required|integer',
+                'total_visitants' => 'nullable|integer',
+                'data_inici' => 'required|date',
+                'data_fi' => 'required|date',
+                'horari' => 'required|string',
+                'data_baixa' => 'nullable|date',
+                'espai_id' => 'required|int',
+            ];
+            $missatges = [
+                'required' => 'El camp :attribute és obligatori.',
+                'max' => 'El :attribute ha de tenir màxim :max caràcters.'
+            ];
 
-        $visita = Visites::create($request->all());
+            $validacio = Visites::make($request->all(), $reglesValidacio, $missatges);
+            if ($validacio->fails()) {
+                throw new \Illuminate\Validation\ValidationException($validacio);
+            }
 
-        return response()->json(['message' => 'Visita creada correctamente', 'visita' => $visita]);
+            $tupla = Visites::create($request->all());
+
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
+        } catch (\Illuminate\Validation\ValidationException $validationException) {
+            return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 
     /**
@@ -132,37 +192,56 @@ class VisitesController extends Controller
 
     /**
  * @OA\Get(
- *     path="/visites/{visita}",
- *     summary="Mostra una visita específica",
+ *     path="/api/visites/{id}",
  *     tags={"Visites"},
+ *     summary="Obté les dades d'una visita específica",
  *     @OA\Parameter(
- *         name="visita",
+ *         name="id",
  *         in="path",
  *         required=true,
- *         description="ID de la visita a mostrar",
- *         @OA\Schema(type="integer")
- *     ),
- *     @OA\Response(
- *         response=200,
- *         description="Retorna la visita específica",
- *         @OA\JsonContent(
- *             type="object",
- *             @OA\Property(property="visita", ref="#/components/schemas/Visita")
+ *         description="Identificador únic de la visita",
+ *         @OA\Schema(
+ *             type="integer"
  *         )
  *     ),
  *     @OA\Response(
- *         response=404,
+ *         response=200,
+ *         description="Dades de la visita trobades",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="correcto"),
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Visita")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=400,
  *         description="Visita no trobada",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="message", type="string", example="Visita no trobada")
+ *             @OA\Property(property="status", type="string", example="Usuaris no trobat")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Error intern del servidor",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string")
  *         )
  *     )
  * )
  */
-    public function show(Visites $visita)
+    public function show($id)
     {
-        return response()->json(['visita' => $visita]);
+        try {
+            $tupla = Visites::findOrFail($id);
+            return response()->json(['status' => 'correcto', 'data' => $tupla], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['status' => 'Usuaris no trobat'], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 
     /**
@@ -173,80 +252,99 @@ class VisitesController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-     /**
+   /**
  * @OA\Put(
- *     path="/visites/{visita}",
- *     summary="Actualitza una visita específica",
+ *     path="/api/visites/{id}",
  *     tags={"Visites"},
+ *     summary="Actualitza una visita existent",
  *     @OA\Parameter(
- *         name="visita",
+ *         name="id",
  *         in="path",
  *         required=true,
- *         description="ID de la visita a actualitzar",
- *         @OA\Schema(type="integer")
+ *         description="Identificador únic de la visita a actualitzar",
+ *         @OA\Schema(
+ *             type="integer"
+ *         )
  *     ),
  *     @OA\RequestBody(
  *         required=true,
- *         description="Dades per a actualitzar la visita",
+ *         description="Dades de la visita a actualitzar",
  *         @OA\JsonContent(
- *             required={"titol", "descripcio", "inscripcio_previa", "n_places", "data_inici", "data_fi", "horari", "espai_id"},
- *             @OA\Property(property="titol", type="string", example="Visita al Museu d'Art"),
- *             @OA\Property(property="descripcio", type="string", example="Descripció detallada de la visita"),
- *             @OA\Property(property="inscripcio_previa", type="boolean", example=true),
- *             @OA\Property(property="n_places", type="integer", example=30),
- *             @OA\Property(property="total_visitants", type="integer", example=150),
- *             @OA\Property(property="data_inici", type="string", format="date", example="2024-05-01"),
- *             @OA\Property(property="data_fi", type="string", format="date", example="2024-05-10"),
- *             @OA\Property(property="horari", type="string", example="De 10:00 a 14:00"),
- *             @OA\Property(property="data_baixa", type="string", format="date", example="null"),
- *             @OA\Property(property="espai_id", type="integer", example=1)
+ *             required={},
+ *             @OA\Property(property="titol", type="string", description="Títol de la visita", maxLength=255),
+ *             @OA\Property(property="descripcio", type="string", description="Descripció de la visita"),
+ *             @OA\Property(property="inscripcio_previa", type="boolean", description="Indica si la visita requereix inscripció prèvia"),
+ *             @OA\Property(property="n_places", type="integer", description="Nombre de places disponibles per a la visita"),
+ *             @OA\Property(property="total_visitants", type="integer", description="Total de visitants de la visita"),
+ *             @OA\Property(property="data_inici", type="string", format="date", description="Data d'inici de la visita"),
+ *             @OA\Property(property="data_fi", type="string", format="date", description="Data de fi de la visita"),
+ *             @OA\Property(property="horari", type="string", description="Horari de la visita"),
+ *             @OA\Property(property="espai_id", type="integer", description="Identificador de l'espai associat a la visita")
  *         )
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Visita actualitzada correctament",
+ *         description="Dades de la visita actualitzades correctament",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="message", type="string", example="Visita actualitzada correctament"),
- *             @OA\Property(property="visita", ref="#/components/schemas/Visita")
+ *             @OA\Property(property="status", type="string", example="success"),
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Visita")
  *         )
  *     ),
  *     @OA\Response(
  *         response=400,
- *         description="Dades invàlides",
+ *         description="Error en la validació de dades",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="errors", type="object")
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="data", type="object", additionalProperties={"type":"string"})
  *         )
  *     ),
  *     @OA\Response(
- *         response=404,
- *         description="Visita no trobada",
+ *         response=500,
+ *         description="Error intern del servidor",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="message", type="string", example="Visita no trobada")
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string")
  *         )
  *     )
  * )
  */
-    public function update(Request $request, Visites $visita)
+
+    public function update(Request $request, $id)
     {
-        $request->validate([
-            'titol' => 'required|string|max:255',
-            'descripcio' => 'required|string',
-            'inscripcio_previa' => 'required|boolean',
-            'n_places' => 'required|integer',
-            'total_visitants' => 'nullable|integer',
-            'data_inici' => 'required|date',
-            'data_fi' => 'required|date',
-            'horari' => 'required|string',
-            'data_baixa' => 'nullable|date',
-            'espai_id' => 'required|exists:espais,id',
-        ]);
+        try {
+            $tupla = Visites::findOrFail($id);
+            $reglesValidacio = [
+                'titol' => 'nullable|string|max:255',
+                'descripcio' => 'nullable|string',
+                'inscripcio_previa' => 'nullable|boolean',
+                'n_places' => 'nullable|integer',
+                'total_visitants' => 'nullable|integer',
+                'data_inici' => 'nullable|date',
+                'data_fi' => 'nullable|date',
+                'horari' => 'nullable|string',
+                'espai_id' => 'nullable|int',
+            ];
+            $missatges = [
+                'required' => 'El camp :attribute és obligatori.',
+                'max' => 'El :attribute ha de tenir màxim :max caràcters.'
+            ];
 
-        $visita->update($request->all());
+            $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
+            if ($validacio->fails()) {
+                throw new \Illuminate\Validation\ValidationException($validacio);
+            }
 
-        return response()->json(['message' => 'Visita actualizada correctamente', 'visita' => $visita]);
+            $tupla->update($request->all());
+
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
+        } catch (\Illuminate\Validation\ValidationException $validationException) {
+            return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 
     /**
@@ -256,40 +354,31 @@ class VisitesController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    /**
- * @OA\Delete(
- *     path="/visites/{visita}",
- *     summary="Elimina una visita específica",
- *     tags={"Visites"},
- *     @OA\Parameter(
- *         name="visita",
- *         in="path",
- *         required=true,
- *         description="ID de la visita a eliminar",
- *         @OA\Schema(type="integer")
- *     ),
- *     @OA\Response(
- *         response=200,
- *         description="Visita eliminada correctament",
- *         @OA\JsonContent(
- *             type="object",
- *             @OA\Property(property="message", type="string", example="Visita eliminada correctament")
- *         )
- *     ),
- *     @OA\Response(
- *         response=404,
- *         description="Visita no trobada",
- *         @OA\JsonContent(
- *             type="object",
- *             @OA\Property(property="message", type="string", example="Visita no trobada")
- *         )
- *     )
- * )
- */
-    public function destroy(Visites $visita)
-    {
-        $visita->delete();
 
-        return response()->json(['message' => 'Visita eliminada correctamente']);
+    public function destroy($id)
+    {
+        try {
+            $tupla = Visites::findOrFail($id);
+            $tupla->delete();
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['status' => 'Error'], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
+    }
+
+    public function delete($id)
+    {
+        try {
+            $visites = Visites::findOrFail($id);
+            $visites->data_baixa = now();
+            $visites->save();
+            return response()->json(['status' => 'success', 'data' => $visites], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['status' => 'Error'], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 }
