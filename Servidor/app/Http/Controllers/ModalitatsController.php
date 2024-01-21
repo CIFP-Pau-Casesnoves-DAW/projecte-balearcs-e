@@ -134,7 +134,8 @@ class ModalitatsController extends Controller
         return response()->json(['modalitat' => $modalitat], 200);
     }
 
-    /**
+
+/**
  * @OA\Put(
  *     path="/modalitats/{id}",
  *     summary="Actualitza una modalitat existent",
@@ -173,9 +174,17 @@ class ModalitatsController extends Controller
  *         description="Error en l'actualització de la modalitat",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="message", type="string", example="Error en l'actualització de la modalitat")
+ *             @OA\Property(property="message", type="string", example="Error en l´actualització de la modalitat")
  *         )
  *     )
+ * )
+ *  * @OA\Schema(
+ *     schema="StoreModalitatRequest",
+ *     type="object",
+ *     required={"nom", "altres_camps_necessaris"},
+ *     @OA\Property(property="nom", type="string", example="Nom de la modalitat"),
+ *     @OA\Property(property="altres_camps_necessaris", type="string")
+ *     
  * )
  */
 

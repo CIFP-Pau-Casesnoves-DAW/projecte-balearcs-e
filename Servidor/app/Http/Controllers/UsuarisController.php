@@ -14,19 +14,34 @@ use Carbon\Carbon;
  *     description="Operacions per a Usuaris"
  * )
  */
+
+     /**
+ * @OA\Schema(
+ *     schema="Usuari",
+ *     type="object",
+ *     @OA\Property(property="id", type="integer", example=1),
+ *     @OA\Property(property="nom", type="string", example="Pep"),
+ *     @OA\Property(property="llinatges", type="string", example="Garcia"),
+ *     @OA\Property(property="dni", type="string", example="12345678A"),
+ *     @OA\Property(property="mail", type="string", example="usuari@example.com"),
+ *     @OA\Property(property="contrasenya", type="string", example="123456"),
+ *     @OA\Property(property="rol", type="string", example="usuari"),
+ *     @OA\Property(property="data_baixa", type="string", format="date", example="2024-01-01")
+ * )
+ */
 class UsuarisController extends Controller
 {
-    /**
- * @OA\Get(
+
+  /**
+  * @OA\Get(
  *     path="/usuaris",
  *     summary="Llista tots els usuaris",
- *     tags={"Usuaris"},
+ *    tags={"Usuaris"},
  *     @OA\Response(
  *         response=200,
  *         description="Retorna una llista de tots els usuaris",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="status", type="string", example="correcto"),
  *             @OA\Property(
  *                 property="data",
  *                 type="array",
@@ -50,20 +65,8 @@ class UsuarisController extends Controller
  *         )
  *     )
  * )
- * @OA\Schema(
- *     schema="Usuari",
- *     type="object",
- *     @OA\Property(property="id", type="integer", example=1),
- *     @OA\Property(property="nom", type="string", example="Pep"),
- *     @OA\Property(property="llinatges", type="string", example="Garcia"),
- *     @OA\Property(property="dni", type="string", example="12345678A"),
- *     @OA\Property(property="mail", type="string", example="
- *     @OA\Property(property="contrasenya", type="string", example="123456"),
- *     @OA\Property(property="rol", type="string", example="usuari"),
- *     @OA\Property(property="data_baixa", type="string", format="date", example="2024-01-01")
- *     
- * )
  */
+
     public function index()
     {
         try {
@@ -74,7 +77,7 @@ class UsuarisController extends Controller
         }
     }
 
- /**
+/**
  * @OA\Post(
  *     path="/usuaris",
  *     summary="Crea un nou usuari",
@@ -89,7 +92,8 @@ class UsuarisController extends Controller
  *             @OA\Property(property="dni", type="string", example="12345678A"),
  *             @OA\Property(property="mail", type="string", format="email", example="joan@example.com"),
  *             @OA\Property(property="contrasenya", type="string", example="password123"),
- *             // Altres propietats si són necessàries
+ *             @OA\Property(property="rol", type="string", example="usuari"),
+ *             @OA\Property(property="data_baixa", type="string", format="date", example="2024-01-01")
  *         )
  *     ),
  *     @OA\Response(
@@ -117,20 +121,9 @@ class UsuarisController extends Controller
  *         )
  *     )
  * )
- * @OA\Schema(
- *     schema="Usuari",
- *     type="object",
- *     @OA\Property(property="id", type="integer", example=1),
- *     @OA\Property(property="nom", type="string", example="Pep"),
- *     @OA\Property(property="llinatges", type="string", example="Garcia"),
- *    @OA\Property(property="dni", type="string", example="12345678A"),
- *    @OA\Property(property="mail", type="string", example="
- *    @OA\Property(property="contrasenya", type="string", example="123456"),
- *    @OA\Property(property="rol", type="string", example="usuari"),
- *    @OA\Property(property="data_baixa", type="string", format="date", example="2024-01-01")
- *   
- * )
  */
+
+
     public function store(Request $request)
     {
         try {
@@ -177,21 +170,20 @@ class UsuarisController extends Controller
     /**
  * @OA\Get(
  *     path="/usuaris/{id}",
- *     summary="Mostra un usuari específic",
+ *     summary="Obté un usuari específic",
  *     tags={"Usuaris"},
  *     @OA\Parameter(
- *         name="id",
- *         in="path",
- *         required=true,
- *         description="ID de l'usuari a mostrar",
- *         @OA\Schema(type="integer")
- *     ),
+ *        name="id",
+ *        in="path",
+ *       required=true,
+ *       description="ID de l'usuari a obtenir",
+ *      @OA\Schema(type="integer")
+ *    ),
  *     @OA\Response(
  *         response=200,
  *         description="Usuari trobat",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="status", type="string", example="correcto"),
  *             @OA\Property(
  *                 property="data",
  *                 ref="#/components/schemas/Usuari"
@@ -207,17 +199,6 @@ class UsuarisController extends Controller
  *             @OA\Property(property="message", type="string", example="Usuaris no trobat")
  *         )
  *     )
- * )
- * @OA\Schema(
- *     schema="Usuari",
- *     type="object",
- *     @OA\Property(property="nom", type="string"),
- *     @OA\Property(property="llinatges", type="string"),
- *     @OA\Property(property="dni", type="string"),
- *     @OA\Property(property="mail", type="string"),
- *     @OA\Property(property="rol", type="string"),
- *     @OA\Property(property="data_baixa", type="string", format="date")
- *     
  * )
  */
     public function show(string $id)

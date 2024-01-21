@@ -136,7 +136,7 @@ class ArquitectesController extends Controller
         }
     }
 
-    /**
+   /**
  * @OA\Put(
  *     path="/arquitectes/{id}",
  *     summary="Actualitza un arquitecte existent",
@@ -153,9 +153,8 @@ class ArquitectesController extends Controller
  *         description="Dades per actualitzar l'arquitecte",
  *         @OA\JsonContent(
  *             required={"nom"},
- *             @OA\Property(property="nom", type="string", example="Antoni Gaudí")
+ *             @OA\Property(property="nom", type="string", example="Antoni Gaudí"),
  *             @OA\Property(property="data_baixa", type="string", format="date", example="2023-01-01", nullable=true)
- * 
  *         )
  *     ),
  *     @OA\Response(
@@ -186,6 +185,7 @@ class ArquitectesController extends Controller
  *     )
  * )
  */
+
     public function update(Request $request, $id)
     {
         // Defineix les regles de validació

@@ -134,28 +134,8 @@ class EspaisController extends Controller
  *         )
  *     )
  * )
- * @OA\Schema(
- *     schema="Espai",
- *     type="object",
- *     @OA\Property(property="id", type="integer", example=1),
- *     @OA\Property(property="nom", type="string", example="Museu d'Art Modern"),
- *     @OA\Property(property="descripcio", type="string", example="Museu dedicat a l'art del segle XX"),
- *     @OA\Property(property="carrer", type="string", example="Carrer de l'Exemple"),
- *     @OA\Property(property="numero", type="string", example="123"),
- *     @OA\Property(property="pis_porta", type="string", example="2n 1a", nullable=true),
- *     @OA\Property(property="web", type="string", example="https://www.exemple.com", nullable=true),
- *     @OA\Property(property="mail", type="string", format="email", example="contacte@exemple.com"),
- *     @OA\Property(property="grau_acc", type="string", example="alt", nullable=true),
- *     @OA\Property(property="arquitecte_id", type="integer", example=1),
- *     @OA\Property(property="gestor_id", type="integer", example=2),
- *     @OA\Property(property="tipus_id", type="integer", example=3),
- *     @OA\Property(property="municipi_id", type="integer", example=4),
- *     @OA\Property(property="destacat", type="boolean", example=false, nullable=true),
- *     @OA\Property(property="any_cons", type="integer", example=1990, nullable=true),
- *     @OA\Property(property="created_at", type="string", format="date-time", example="2023-01-01T00:00:00Z", nullable=true),
- *     @OA\Property(property="updated_at", type="string", format="date-time", example="2023-01-02T00:00:00Z", nullable=true)
- * )
  */
+
 
     public function store(Request $request)
     {
@@ -244,29 +224,8 @@ class EspaisController extends Controller
  *         )
  *     )
  * )
- * @OA\Schema(
- *     schema="Espai",
- *     type="object",
- *     @OA\Property(property="id", type="integer", example=1),
- *     @OA\Property(property="nom", type="string", example="Museu d'Art Modern"),
- *     @OA\Property(property="descripcio", type="string", example="Museu dedicat a l'art del segle XX"),
- *     @OA\Property(property="carrer", type="string", example="Carrer de l'Exemple"),
- *     @OA\Property(property="numero", type="string", example="123"),
- *     @OA\Property(property="pis_porta", type="string", example="2n 1a", nullable=true),
- *     @OA\Property(property="web", type="string", example="https://www.exemple.com", nullable=true),
- *     @OA\Property(property="mail", type="string", format="email", example="contacte@exemple.com"),
- *     @OA\Property(property="grau_acc", type="string", example="alt", nullable=true),
- *     @OA\Property(property="arquitecte_id", type="integer", example=1),
- *     @OA\Property(property="gestor_id", type="integer", example=2),
- *     @OA\Property(property="tipus_id", type="integer", example=3),
- *     @OA\Property(property="municipi_id", type="integer", example=4),
- *     @OA\Property(property="destacat", type="boolean", example=false, nullable=true),
- *     @OA\Property(property="any_cons", type="integer", example=1990, nullable=true),
- *     @OA\Property(property="created_at", type="string", format="date-time", example="2023-01-01T00:00:00Z", nullable=true),
- *     @OA\Property(property="updated_at", type="string", format="date-time", example="2023-01-02T00:00:00Z", nullable=true)
- *  
- * )
  */
+
     public function show($id)
     {
         try {
@@ -277,7 +236,7 @@ class EspaisController extends Controller
         }
     }
 
-   /**
+/**
  * @OA\Put(
  *     path="/espais/{id}",
  *     summary="Actualitza un espai existent",
@@ -295,13 +254,13 @@ class EspaisController extends Controller
  *             required={},
  *             @OA\Property(property="nom", type="string", example="Museu d'Art Contemporani"),
  *             @OA\Property(property="descripcio", type="string", example="Museu dedicat a l'art contemporani"),
- *             // Altres propietats amb nullable=true
  *             @OA\Property(property="arquitecte_id", type="integer", example=1, nullable=true),
  *             @OA\Property(property="gestor_id", type="integer", example=2, nullable=true),
  *             @OA\Property(property="tipus_id", type="integer", example=3, nullable=true),
  *             @OA\Property(property="municipi_id", type="integer", example=4, nullable=true),
- *             @OA\Property(property="destacat", type="boolean", example=false, nullable=true)
- *             
+ *             @OA\Property(property="destacat", type="boolean", example=false, nullable=true),
+ *             @OA\Property(property="any_cons", type="integer", example=1990, nullable=true)
+ * 
  *         )
  *     ),
  *     @OA\Response(
@@ -323,6 +282,8 @@ class EspaisController extends Controller
  *     )
  * )
  */
+
+
     public function update(Request $request, $id)
     {
         try {

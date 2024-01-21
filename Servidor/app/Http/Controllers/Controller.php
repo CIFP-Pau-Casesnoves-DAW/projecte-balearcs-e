@@ -10,7 +10,7 @@ use Illuminate\Routing\Controller as BaseController;
 * @OA\Info(
 * title="Projecte BALEARCS-E", version="1.0",
 * description="REST API. Projecte BALLEARCS-E. DAW Client i servidor.",
-* @OA\Contact( name="Joan Toni.",email="joanantoniramon@paucasesnovescifp.cat")
+* @OA\Contact( name="Aurora, Joan i Joan Toni.",email="joanantoniramon@paucasesnovescifp.cat")
 * )
 *
 * @OA\Server(url="http://balearcs.dawpaucasesnoves.com/balearcs/public")

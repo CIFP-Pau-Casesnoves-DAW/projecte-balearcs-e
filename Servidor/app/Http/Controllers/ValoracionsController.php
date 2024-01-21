@@ -12,6 +12,20 @@ use App\Models\Valoracions;
  *     description="Operacions per a Valoracions"
  * )
  */
+
+/**
+ * @OA\Schema(
+ *     schema="Valoracio",
+ *     type="object",
+ *     @OA\Property(property="id", type="integer", example="1"),
+ *     @OA\Property(property="puntuacio", type="integer", example="5"),
+ *     @OA\Property(property="comentari", type="string", example="Excel·lent servei!"),
+ *     @OA\Property(property="data_valoracio", type="string", format="date", example="2024-01-20"),
+ *     @OA\Property(property="usuari_id", type="integer", example="10"),
+ *     @OA\Property(property="espai_id", type="integer", example="15")
+ * )
+ * 
+ */
 class ValoracionsController extends Controller
 {
     /**
@@ -37,16 +51,6 @@ class ValoracionsController extends Controller
  *             )
  *         )
  *     )
- * )
- * @OA\Schema(
- *     schema="Valoracio",
- *     type="object",
- *     @OA\Property(property="id", type="integer", example="1"),
- *     @OA\Property(property="puntuacio", type="integer", example="5"),
- *     @OA\Property(property="comentari", type="string", example="Excel·lent servei!"),
- *     @OA\Property(property="data_valoracio", type="string", format="date", example="2024-01-20"),
- *     @OA\Property(property="usuari_id", type="integer", example="10"),
- *     @OA\Property(property="espai_id", type="integer", example="15")
  * )
  */
     public function index()
@@ -88,17 +92,6 @@ class ValoracionsController extends Controller
  *             @OA\Property(property="valoracio", ref="#/components/schemas/Valoracio")
  *         )
  *     )
- * )
- * @OA\Schema(
- *     schema="Valoracio",
- *     type="object",
- *     @OA\Property(property="id", type="integer", example="1"),
- *     @OA\Property(property="puntuacio", type="integer", example="5"),
- *     @OA\Property(property="data", type="string", format="date", example="2024-01-20"),
- *     @OA\Property(property="usuari_id", type="integer", example="10"),
- *     @OA\Property(property="espai_id", type="integer", example="15"),
- *     @OA\Property(property="data_baixa", type="string", format="date", example="2024-01-01")
- *     
  * )
  */
 
@@ -153,17 +146,6 @@ class ValoracionsController extends Controller
  *             @OA\Property(property="message", type="string", example="Valoració no trobada")
  *         )
  *     )
- * )
- * @OA\Schema(
- *     schema="Valoracio",
- *     type="object",
- *     @OA\Property(property="id", type="integer", example="1"),
- *     @OA\Property(property="puntuacio", type="integer", example="5"),
- *     @OA\Property(property="data", type="string", format="date", example="2024-01-20"),
- *     @OA\Property(property="usuari_id", type="integer", example="10"),
- *     @OA\Property(property="espai_id", type="integer", example="15"),
- *     @OA\Property(property="data_baixa", type="string", format="date", example="2024-01-01")
- *     
  * )
  */
 

@@ -43,7 +43,9 @@ class ServeisController extends Controller
  *     @OA\Property(property="id", type="integer"),
  *     @OA\Property(property="nom_servei", type="string"),
  *     @OA\Property(property="data_baixa", type="string", format="date", nullable=true),
- *     // Altres propietats del model Servei
+ *     @OA\Property(property="created_at", type="string", format="date-time"),
+ *     @OA\Property(property="updated_at", type="string", format="date-time")
+ * 
  * )
  */
 

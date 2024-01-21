@@ -35,7 +35,7 @@ class MunicipisController extends Controller
  *     @OA\Property(property="nom", type="string"),
  *     @OA\Property(property="illa_id", type="integer"),
  *     @OA\Property(property="data_baixa", type="string", format="date", nullable=true)
- *     // Altres propietats del model Municipi segons la teva base de dades
+ *     
  * )
  */
     public function index()
