@@ -10,10 +10,13 @@ class Serveis extends Model
     use HasFactory;
 
     protected $table = 'serveis';
-    protected $primaryKey = 'id';
 
     protected $fillable = [
         'nom_serveis',
+        'data_baixa',
+    ];
+
+    protected $dates = [
         'data_baixa',
     ];
 }

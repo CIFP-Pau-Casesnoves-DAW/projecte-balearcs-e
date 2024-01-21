@@ -20,7 +20,14 @@ class Visites extends Model
         'data_inici',
         'data_fi',
         'horari',
+        'data_baixa',
         'espai_id',
+    ];
+
+    protected $dates = [
+        'data_inici',
+        'data_fi',
+        'data_baixa',
     ];
 
     public function espai()
