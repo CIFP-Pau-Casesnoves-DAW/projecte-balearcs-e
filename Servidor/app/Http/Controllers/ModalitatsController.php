@@ -83,14 +83,6 @@ class ModalitatsController extends Controller
  *         )
  *     )
  * )
- * @OA\Schema(
- *     schema="Modalitat",
- *     type="object",
- *     @OA\Property(property="id", type="integer", example=1),
- *     @OA\Property(property="nom_modalitat", type="string", example="Escultura"),
- *     @OA\Property(property="descripcio", type="string", example="Escultura en fusta")
- *      
- * )
  */
     public function store(StoreModalitatRequest $request)
 {
@@ -133,14 +125,6 @@ class ModalitatsController extends Controller
  *             @OA\Property(property="message", type="string", example="Modalitat no trobada")
  *         )
  *     )
- * )
- * @OA\Schema(
- *     schema="Modalitat",
- *     type="object",
- *     @OA\Property(property="id", type="integer", example=1),
- *     @OA\Property(property="nom_modalitat", type="string", example="Escultura"),
- *     @OA\Property(property="descripcio", type="string", example="Escultura en fusta")
- *      
  * )
  */
 
@@ -192,13 +176,6 @@ class ModalitatsController extends Controller
  *             @OA\Property(property="message", type="string", example="Error en l'actualització de la modalitat")
  *         )
  *     )
- * )
- * @OA\Schema(
- *     schema="StoreModalitatRequest",
- *     type="object",
- *     @OA\Property(property="nom_modalitat", type="string", example="Fotografia"),
- *     @OA\Property(property="descripcio", type="string", example="Fotografia en blanc i negre")
- *      
  * )
  */
 

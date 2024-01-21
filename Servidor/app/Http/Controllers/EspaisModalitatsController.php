@@ -79,13 +79,6 @@ class EspaisModalitatsController extends Controller
  *         )
  *     )
  * )
- * @OA\Schema(
- *     schema="EspaiModalitat",
- *     type="object",
- *     @OA\Property(property="espai_id", type="integer", example=1),
- *     @OA\Property(property="modalitat_id", type="integer", example=2),
- *     @OA\Property(property="data_baixa", type="string", format="date", example="2023-01-01", nullable=true)
- * )
  */
     public function store(Request $request)
     {
@@ -141,13 +134,6 @@ class EspaisModalitatsController extends Controller
  *             @OA\Property(property="message", type="string", example="Associació no trobada")
  *         )
  *     )
- * )
- * @OA\Schema(
- *     schema="EspaiModalitat",
- *     type="object",
- *     @OA\Property(property="espai_id", type="integer", example=1),
- *     @OA\Property(property="modalitat_id", type="integer", example=2),
- *     @OA\Property(property="data_baixa", type="string", format="date", example="2023-01-01", nullable=true)
  * )
  */
 public function show($espai_id, $modalitat_id)

@@ -75,14 +75,6 @@ class EspaisIdiomesController extends Controller
  *         )
  *     )
  * )
- * @OA\Schema(
- *     schema="EspaiIdioma",
- *     type="object",
- *     @OA\Property(property="idioma_id", type="integer", example=1),
- *     @OA\Property(property="espai_id", type="integer", example=2),
- *     @OA\Property(property="traduccio", type="string", example="Descripció traduïda de l'espai"),
- *     @OA\Property(property="data_baixa", type="string", format="date", example="2023-01-01", nullable=true)
- * )
  */
     public function store(Request $request)
     {
@@ -137,14 +129,6 @@ class EspaisIdiomesController extends Controller
  *             @OA\Property(property="message", type="string", example="Traducció no trobada")
  *         )
  *     )
- * )
- * @OA\Schema(
- *     schema="EspaiIdioma",
- *     type="object",
- *     @OA\Property(property="idioma_id", type="integer", example=1),
- *     @OA\Property(property="espai_id", type="integer", example=2),
- *     @OA\Property(property="traduccio", type="string", example="Descripció traduïda de l'espai"),
- *     @OA\Property(property="data_baixa", type="string", format="date", example="2023-01-01", nullable=true)
  * )
  */
     public function show($idioma_id, $espai_id)
@@ -210,14 +194,6 @@ class EspaisIdiomesController extends Controller
  *         )
  *     )
  * )
- * @OA\Schema(
- *     schema="EspaiIdioma",
- *     type="object",
- *     @OA\Property(property="idioma_id", type="integer", example=1),
- *     @OA\Property(property="espai_id", type="integer", example=2),
- *     @OA\Property(property="traduccio", type="string", example="Nova descripció traduïda de l'espai"),
- *     @OA\Property(property="data_baixa", type="string", format="date", example="2023-01-02", nullable=true)
- * )
  */
 public function update(Request $request, $idioma_id, $espai_id)
 {
@@ -275,14 +251,6 @@ public function update(Request $request, $idioma_id, $espai_id)
  *             @OA\Property(property="message", type="string", example="Traducció no trobada")
  *         )
  *     )
- * )
- * @OA\Schema(
- *     schema="EspaiIdioma",
- *     type="object",
- *     @OA\Property(property="idioma_id", type="integer", example=1),
- *     @OA\Property(property="espai_id", type="integer", example=2),
- *     @OA\Property(property="traduccio", type="string", example="Descripció traduïda de l'espai"),
- *     @OA\Property(property="data_baixa", type="string", format="date", example="2023-01-02", nullable=true)
  * )
  */
 public function destroy($idioma_id, $espai_id)

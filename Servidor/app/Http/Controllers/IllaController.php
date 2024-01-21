@@ -85,15 +85,6 @@ class IllaController extends Controller
  *         )
  *     )
  * )
- * @OA\Schema(
- *     schema="Illa",
- *     type="object",
- *     @OA\Property(property="id", type="integer", example=2),
- *     @OA\Property(property="nom", type="string", example="Menorca"),
- *     @OA\Property(property="zona", type="string", example="Balears"),
- *     @OA\Property(property="data_baixa", type="string", format="date", example="2023-01-01")
- *     
- * )
  */
     public function store(Request $request)
     {
@@ -135,15 +126,6 @@ class IllaController extends Controller
  *             @OA\Property(property="illa", type="object", ref="#/components/schemas/Illa")
  *         )
  *     )
- * )
- * @OA\Schema(
- *     schema="Illa",
- *     type="object",
- *     @OA\Property(property="id", type="integer", example=1),
- *     @OA\Property(property="nom", type="string", example="Mallorca"),
- *     @OA\Property(property="zona", type="string", example="Balears")
- *      
- *     
  * )
  */
 
@@ -193,15 +175,6 @@ class IllaController extends Controller
  *             @OA\Property(property="illa", type="object", ref="#/components/schemas/Illa")
  *         )
  *     )
- * )
- * @OA\Schema(
- *     schema="Illa",
- *     type="object",
- *     @OA\Property(property="id", type="integer", example=2),
- *     @OA\Property(property="nom", type="string", example="Eivissa"),
- *     @OA\Property(property="zona", type="string", example="Balears"),
- *     @OA\Property(property="data_baixa", type="string", format="date", example="2024-01-01")
- *      
  * )
  */
 

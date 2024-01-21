@@ -44,7 +44,6 @@ class PuntsInteresController extends Controller
  *     @OA\Property(property="id", type="integer"),
  *     @OA\Property(property="titol", type="string"),
  *     @OA\Property(property="descripcio", type="string"),
- *     // Afegeix aquí altres propietats del model PuntInteres
  *     @OA\Property(property="data_baixa", type="string", format="date", example="2024-01-01"),
  *     @OA\Property(property="espai_id", type="integer", example=1)
  * )
@@ -100,14 +99,6 @@ class PuntsInteresController extends Controller
  *         description="Error intern del servidor"
  *     )
  * )
- * @OA\Schema(
- *     schema="PuntInteres",
- *     type="object",
- *     @OA\Property(property="titol", type="string"),
- *     @OA\Property(property="descripcio", type="string"),
- *     @OA\Property(property="data_baixa", type="string", format="date"),
- *     @OA\Property(property="espai_id", type="integer")
- * )
  */
     public function store(Request $request)
     {
@@ -158,15 +149,6 @@ class PuntsInteresController extends Controller
  *             @OA\Property(property="message", type="string", example="Punto de interés no encontrado")
  *         )
  *     )
- * )
- * @OA\Schema(
- *     schema="PuntInteres",
- *     type="object",
- *     @OA\Property(property="id", type="integer"),
- *     @OA\Property(property="titol", type="string"),
- *     @OA\Property(property="descripcio", type="string"),
- *     @OA\Property(property="data_baixa", type="string", format="date"),
- *     @OA\Property(property="espai_id", type="integer")
  * )
  */
     public function show(PuntsInteres $puntInteres)
@@ -230,15 +212,6 @@ class PuntsInteresController extends Controller
  *             @OA\Property(property="message", type="string", example="Punto de interés no encontrado")
  *         )
  *     )
- * )
- * * @OA\Schema(
- *     schema="PuntInteres",
- *     type="object",
- *     @OA\Property(property="id", type="integer", example=1),
- *     @OA\Property(property="titol", type="string", example="Títol del punt d'interès"),
- *     @OA\Property(property="descripcio", type="string", example="Descripció detallada del punt d'interès"),
- *     @OA\Property(property="data_baixa", type="string", format="date", example="2024-01-01"),
- *     @OA\Property(property="espai_id", type="integer", example=1)
  * )
  */
 

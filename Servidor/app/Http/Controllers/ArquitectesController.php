@@ -77,13 +77,6 @@ class ArquitectesController extends Controller
  *         )
  *     )
  * )
- * @OA\Schema(
- *     schema="Arquitecte",
- *     type="object",
- *     @OA\Property(property="nom", type="string", example="Joan Miró"),
- *     @OA\Property(property="data_baixa", type="string", format="date", example="2023-01-01", nullable=true)
- *     
- * )
  */
     public function store(Request $request)
     {
@@ -131,13 +124,6 @@ class ArquitectesController extends Controller
  *             @OA\Property(property="status", type="string", example="Arquitecte no trobat")
  *         )
  *     )
- * )
- * @OA\Schema(
- *     schema="Arquitecte",
- *     type="object",
- *     @OA\Property(property="nom", type="string", example="Joan Miró"),
- *     @OA\Property(property="data_baixa", type="string", format="date", example="2023-01-01", nullable=true)
- *     
  * )
  */
     public function show($id)
@@ -198,13 +184,6 @@ class ArquitectesController extends Controller
  *             @OA\Property(property="status", type="string", example="Arquitecte no trobat")
  *         )
  *     )
- * )
- * @OA\Schema(
- *     schema="Arquitecte",
- *     type="object",
- *     @OA\Property(property="nom", type="string", example="Antoni Gaudí"),
- *     @OA\Property(property="data_baixa", type="string", format="date", example="2023-01-01", nullable=true)
- * 
  * )
  */
     public function update(Request $request, $id)

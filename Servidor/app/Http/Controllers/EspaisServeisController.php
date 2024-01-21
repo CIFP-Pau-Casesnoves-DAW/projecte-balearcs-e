@@ -80,15 +80,6 @@ class EspaisServeisController extends Controller
  *         )
  *     )
  * )
- * @OA\Schema(
- *     schema="EspaiServei",
- *     type="object",
- *     @OA\Property(property="servei_id", type="integer", example=1),
- *     @OA\Property(property="espai_id", type="integer", example=2),
- *     @OA\Property(property="data_baixa", type="string", format="date", example="2023-01-01", nullable=true)
- * 
- *     
- * )
  */
 
     public function store(Request $request)
@@ -144,15 +135,6 @@ class EspaisServeisController extends Controller
  *         )
  *     )
  * )
- * @OA\Schema(
- *     schema="EspaiServei",
- *     type="object",
- *     @OA\Property(property="servei_id", type="integer", example=1),
- *     @OA\Property(property="espai_id", type="integer", example=2),
- *     @OA\Property(property="data_baixa", type="string", format="date", example="2023-01-01", nullable=true)
- * 
- *     
- * )
  */
 public function show($servei_id, $espai_id)
 {
@@ -200,14 +182,6 @@ public function show($servei_id, $espai_id)
  *             @OA\Property(property="message", type="string", example="Associació no trobada")
  *         )
  *     )
- * )
- * @OA\Schema(
- *     schema="EspaiServei",
- *     type="object",
- *     @OA\Property(property="servei_id", type="integer", example=1),
- *     @OA\Property(property="espai_id", type="integer", example=2),
- *     @OA\Property(property="data_baixa", type="string", format="date", example="2023-01-01", nullable=true)
- *     // Aquí es poden afegir altres propietats del model EspaiServei.
  * )
  */
 public function destroy($servei_id, $espai_id)

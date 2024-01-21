@@ -93,16 +93,6 @@ class FotosController extends Controller
  *         )
  *     )
  * )
- * @OA\Schema(
- *     schema="Foto",
- *     type="object",
- *     @OA\Property(property="id", type="integer", example=1),
- *     @OA\Property(property="url", type="string", example="http://exemple.com/foto.jpg"),
- *     @OA\Property(property="punt_interes_id", type="integer", example=1),
- *     @OA\Property(property="espai_id", type="integer", example=2),
- *     @OA\Property(property="comentari", type="string", example="Comentari sobre la foto"),
- *     @OA\Property(property="data_baixa", type="string", format="date", example="2023-01-01", nullable=true)
- *  
  *     
  * )
  */
@@ -188,17 +178,6 @@ class FotosController extends Controller
  *         )
  *     )
  * )
- * @OA\Schema(
- *     schema="Foto",
- *     type="object",
- *     @OA\Property(property="id", type="integer", example=1),
- *     @OA\Property(property="url", type="string", example="http://exemple.com/foto.jpg"),
- *     @OA\Property(property="punt_interes_id", type="integer", example=1),
- *     @OA\Property(property="espai_id", type="integer", example=2),
- *     @OA\Property(property="comentari", type="string", example="Comentari sobre la foto"),
- *     @OA\Property(property="data_baixa", type="string", format="date", example="2023-01-01", nullable=true)
- *     
- * )
  */
 public function update(Request $request, $id)
 {
@@ -255,17 +234,6 @@ public function update(Request $request, $id)
  *             @OA\Property(property="message", type="string", example="Foto no trobada")
  *         )
  *     )
- * )
- * @OA\Schema(
- *     schema="Foto",
- *     type="object",
- *     @OA\Property(property="id", type="integer", example=1),
- *     @OA\Property(property="url", type="string", example="http://exemple.com/foto.jpg"),
- *     @OA\Property(property="punt_interes_id", type="integer", example=1),
- *     @OA\Property(property="espai_id", type="integer", example=2),
- *     @OA\Property(property="comentari", type="string", example="Comentari sobre la foto"),
- *     @OA\Property(property="data_baixa", type="string", format="date", example="2023-01-01", nullable=true)
- *     
  * )
  */
 public function show($id)

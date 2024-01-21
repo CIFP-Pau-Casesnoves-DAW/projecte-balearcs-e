@@ -20,27 +20,49 @@ class VisitesPuntsInteresController extends Controller
      * @return \Illuminate\Http\Response
      */
 
+  
      /**
-     * @OA\Get(
-     *     path="/api/visites/{visitaId}/puntsinteres",
-     *     tags={"VisitesPuntsInteres"},
-     *     summary="Llista tots els punts d'interès d'una visita",
-     *     @OA\Parameter(
-     *         name="visitaId",
-     *         in="path",
-     *         required=true,
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Retorna un llistat de punts d'interès per a la visita especificada",
-     *         @OA\JsonContent(
-     *             type="array",
-     *             @OA\Items(ref="#/components/schemas/VisitesPuntsInteres")
-     *         )
-     *     )
-     * )
-     */
+ * @OA\Get(
+ *     path="/visitespuntsinteres/{visitaId}",
+ *     summary="Llista tots els punts d'interès d'una visita específica",
+ *     tags={"VisitesPuntsInteres"},
+ *     @OA\Parameter(
+ *         name="visitaId",
+ *         in="path",
+ *         required=true,
+ *         description="ID de la visita",
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Retorna un llistat de tots els punts d'interès associats amb la visita",
+ *         @OA\JsonContent(
+ *             type="array",
+ *             @OA\Items(ref="#/components/schemas/VisitesPuntsInteres")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Visita no trobada",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="message", type="string", example="Visita no encontrada")
+ *         )
+ *     )
+ * )
+ * 
+ * @OA\Schema(
+ *    schema="VisitesPuntsInteres",
+ *    type="object",
+ *    @OA\Property(property="id", type="integer"),
+ *    @OA\Property(property="visita_id", type="integer"),
+ *    @OA\Property(property="punts_interes_id", type="integer"),
+ *    @OA\Property(property="ordre", type="integer"),
+ *    @OA\Property(property="data_baixa", type="string", format="date", nullable=true),
+ *    
+ * )
+ */
+
     public function index($visitaId)
     {
         $puntsInteres = VisitesPuntsInteres::where('visita_id', $visitaId)->get();
@@ -54,21 +76,42 @@ class VisitesPuntsInteresController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-     /**
-     * @OA\Post(
-     *     path="/api/visitespuntsinteres",
-     *     tags={"VisitesPuntsInteres"},
-     *     summary="Crea una nova associació entre una visita i un punt d'interès",
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/VisitesPuntsInteres")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Associació entre la visita i el punt d'interès creada correctament"
-     *     )
-     * )
-     */
+    /**
+ * @OA\Post(
+ *     path="/visitespuntsinteres",
+ *     summary="Associa un punt d'interès amb una visita",
+ *     tags={"VisitesPuntsInteres"},
+ *     @OA\RequestBody(
+ *         required=true,
+ *         description="Dades necessàries per a associar el punt d'interès amb la visita",
+ *         @OA\JsonContent(
+ *             required={"punts_interes_id", "visita_id", "ordre"},
+ *             @OA\Property(property="punts_interes_id", type="integer", example=1),
+ *             @OA\Property(property="visita_id", type="integer", example=2),
+ *             @OA\Property(property="ordre", type="integer", example=3),
+ *             @OA\Property(property="data_baixa", type="string", format="date", example="2024-01-01")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Punt d'interès associat a la visita correctament",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="message", type="string", example="Punto de interés asociado a la visita correctamente"),
+ *             @OA\Property(property="visita_punt_interes", ref="#/components/schemas/VisitesPuntsInteres")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Dades invàlides",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="errors", type="object")
+ *         )
+ *     )
+ * )
+ */
+
     public function store(Request $request)
     {
         $request->validate([
@@ -92,29 +135,42 @@ class VisitesPuntsInteresController extends Controller
      */
 
      /**
-     * @OA\Get(
-     *     path="/api/visites/{visitaId}/puntsinteres/{puntInteresId}",
-     *     tags={"VisitesPuntsInteres"},
-     *     summary="Mostra una associació específica entre una visita i un punt d'interès",
-     *     @OA\Parameter(
-     *         name="visitaId",
-     *         in="path",
-     *         required=true,
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Parameter(
-     *         name="puntInteresId",
-     *         in="path",
-     *         required=true,
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Retorna l'associació específica entre la visita i el punt d'interès",
-     *         @OA\JsonContent(ref="#/components/schemas/VisitesPuntsInteres")
-     *     )
-     * )
-     */
+ * @OA\Get(
+ *     path="/visitespuntsinteres/{visitaId}/{puntInteresId}",
+ *     summary="Obté informació d'una associació específica entre un punt d'interès i una visita",
+ *     tags={"VisitesPuntsInteres"},
+ *     @OA\Parameter(
+ *         name="visitaId",
+ *         in="path",
+ *         required=true,
+ *         description="ID de la visita",
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\Parameter(
+ *         name="puntInteresId",
+ *         in="path",
+ *         required=true,
+ *         description="ID del punt d'interès",
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Informació de l'associació entre el punt d'interès i la visita",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="visita_punt_interes", ref="#/components/schemas/VisitesPuntsInteres")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Associació no trobada",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="message", type="string", example="Associació no trobada")
+ *         )
+ *     )
+ * )
+ */
     public function show($visitaId, $puntInteresId)
     {
         $visitaPuntInteres = VisitesPuntsInteres::where('visita_id', $visitaId)->where('punts_interes_id', $puntInteresId)->first();
@@ -129,29 +185,43 @@ class VisitesPuntsInteresController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-     /**
-     * @OA\Delete(
-     *     path="/api/visites/{visitaId}/puntsinteres/{puntInteresId}",
-     *     tags={"VisitesPuntsInteres"},
-     *     summary="Elimina una associació específica entre una visita i un punt d'interès",
-     *     @OA\Parameter(
-     *         name="visitaId",
-     *         in="path",
-     *         required=true,
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Parameter(
-     *         name="puntInteresId",
-     *         in="path",
-     *         required=true,
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Associació entre la visita i el punt d'interès eliminada correctament"
-     *     )
-     * )
-     */
+   /**
+ * @OA\Delete(
+ *     path="/visitespuntsinteres/{visitaId}/{puntInteresId}",
+ *     summary="Elimina una associació entre un punt d'interès i una visita",
+ *     tags={"VisitesPuntsInteres"},
+ *     @OA\Parameter(
+ *         name="visitaId",
+ *         in="path",
+ *         required=true,
+ *         description="ID de la visita",
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\Parameter(
+ *         name="puntInteresId",
+ *         in="path",
+ *         required=true,
+ *         description="ID del punt d'interès",
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Punto de interés desasociado de la visita correctamente",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="message", type="string", example="Punto de interés desasociado de la visita correctamente")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="No se encontró la asociación de punto de interés con la visita",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="message", type="string", example="No se encontró la asociación de punto de interés con la visita")
+ *         )
+ *     )
+ * )
+ */
     public function destroy($visitaId, $puntInteresId)
     {
         $visitaPuntInteres = VisitesPuntsInteres::where('visita_id', $visitaId)->where('punts_interes_id', $puntInteresId)->first();

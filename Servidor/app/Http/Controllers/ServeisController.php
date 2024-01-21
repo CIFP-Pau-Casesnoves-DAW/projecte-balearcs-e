@@ -92,12 +92,6 @@ class ServeisController extends Controller
  *         )
  *     )
  * )
- * @OA\Schema(
- *     schema="Servei",
- *     type="object",
- *     @OA\Property(property="nom_servei", type="string"),
- *     @OA\Property(property="data_baixa", type="string", format="date", nullable=true)
- * )
  */
     public function store(Request $request)
     {
@@ -146,13 +140,6 @@ class ServeisController extends Controller
  *             @OA\Property(property="message", type="string", example="Servei no trobat")
  *         )
  *     )
- * )
- *   @OA\Schema(
- *     schema="Servei",
- *     type="object",
- *     @OA\Property(property="id", type="integer", example=1),
- *     @OA\Property(property="nom_serveis", type="string", example="Wifi"),
- *     @OA\Property(property="data_baixa", type="string", format="date", example="2024-01-01")
  * )
  */
     public function show(Serveis $servei)
@@ -214,13 +201,6 @@ class ServeisController extends Controller
  *             @OA\Property(property="message", type="string", example="Servei no trobat")
  *         )
  *     )
- * )
- * @OA\Schema(
- *     schema="Servei",
- *     type="object",
- *     @OA\Property(property="id", type="integer"),
- *     @OA\Property(property="nom_serveis", type="string"),
- *     @OA\Property(property="data_baixa", type="string", format="date")
  * )
  */
     public function update(Request $request, Serveis $servei)

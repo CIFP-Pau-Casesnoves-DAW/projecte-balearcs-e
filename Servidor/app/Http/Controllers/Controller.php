@@ -8,12 +8,12 @@ use Illuminate\Routing\Controller as BaseController;
 
 /**
 * @OA\Info(
-* title="Projecte ETV", version="1.0",
-* description="REST API. Projecte ETV. DAW Client i servidor.",
-* @OA\Contact( name="Tomeu Campaner.",email="cfb@paucasesnovescifp.cat")
+* title="Projecte BALEARCS-E", version="1.0",
+* description="REST API. Projecte BALLEARCS-E. DAW Client i servidor.",
+* @OA\Contact( name="Joan Toni.",email="joanantoniramon@paucasesnovescifp.cat")
 * )
 *
-* @OA\Server(url="http://etv.dawpaucasesnoves.com/etvServidor/public")
+* @OA\Server(url="http://balearcs.dawpaucasesnoves.com/balearcs/public")
 *
 * @OAS\SecurityScheme(
 * securityScheme="bearerAuth",

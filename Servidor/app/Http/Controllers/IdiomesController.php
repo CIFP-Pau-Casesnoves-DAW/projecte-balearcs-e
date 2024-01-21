@@ -81,13 +81,6 @@ class IdiomesController extends Controller
  *         )
  *     )
  * )
- * @OA\Schema(
- *     schema="Idioma",
- *     type="object",
- *     @OA\Property(property="id", type="integer", example=2),
- *     @OA\Property(property="nom", type="string", example="Francès")
- *     
- * )
  */
     public function store(Request $request)
     {
@@ -132,13 +125,6 @@ class IdiomesController extends Controller
  *             @OA\Property(property="message", type="string", example="Idioma no trobat")
  *         )
  *     )
- * )
- * @OA\Schema(
- *     schema="Idioma",
- *     type="object",
- *     @OA\Property(property="id", type="integer", example=1),
- *     @OA\Property(property="nom", type="string", example="Català")
- *     // Afegir altres propietats del model Idioma si són necessàries.
  * )
  */
     public function show($id)
@@ -204,14 +190,6 @@ class IdiomesController extends Controller
  *             @OA\Property(property="message", type="string", example="Error desconegut")
  *         )
  *     )
- * )
- * @OA\Schema(
- *     schema="Idioma",
- *     type="object",
- *     @OA\Property(property="id", type="integer", example=2),
- *     @OA\Property(property="nom", type="string", example="Anglès")
- * 
- *     
  * )
  */
     public function update(Request $request, $id)

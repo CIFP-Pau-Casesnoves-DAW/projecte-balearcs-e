@@ -77,13 +77,6 @@ class MunicipisController extends Controller
  *         )
  *     )
  * )
- * @OA\Schema(
- *     schema="Municipi",
- *     type="object",
- *     @OA\Property(property="nom", type="string"),
- *     @OA\Property(property="illa_id", type="integer"),
- *     @OA\Property(property="data_baixa", type="string", format="date", nullable=true)
- * )
  */
 
     public function store(Request $request)
@@ -128,13 +121,6 @@ class MunicipisController extends Controller
  *             @OA\Property(property="message", type="string", example="Municipi no trobat")
  *         )
  *     )
- * )
- * @OA\Schema(
- *     schema="Municipi",
- *     type="object",
- *     @OA\Property(property="nom", type="string"),
- *     @OA\Property(property="illa_id", type="integer"),
- *     @OA\Property(property="data_baixa", type="string", format="date", nullable=true)
  * )
  */
 
@@ -190,13 +176,6 @@ class MunicipisController extends Controller
  *             @OA\Property(property="message", type="string", example="Municipi no trobat")
  *         )
  *     )
- * )
- * @OA\Schema(
- *     schema="Municipi",
- *     type="object",
- *     @OA\Property(property="nom", type="string"),
- *     @OA\Property(property="illa_id", type="integer"),
- *     @OA\Property(property="data_baixa", type="string", format="date", nullable=true)
  * )
  */
     public function update(Request $request, Municipis $municipi)

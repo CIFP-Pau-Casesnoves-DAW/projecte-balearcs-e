@@ -132,16 +132,6 @@ class ModalitatsIdiomesController extends Controller
  *         )
  *     )
  * )
- * @OA\Schema(
- *     schema="ModalitatIdioma",
- *     type="object",
- *     @OA\Property(property="idioma_id", type="integer", example="1"),
- *     @OA\Property(property="modalitat_id", type="integer", example="1"),
- *     @OA\Property(property="traduccio", type="string", example="Fotografia"),
- *     @OA\Property(property="data_baixa", type="string", format="date", example="2024-01-01")
- *      
- *     
- * )
  */
     public function show(ModalitatsIdiomes $modalitat_idioma)
     {
@@ -196,15 +186,6 @@ class ModalitatsIdiomesController extends Controller
  *             @OA\Property(property="message", type="string", example="Modalitat d'idioma no trobada")
  *         )
  *     )
- * )
- *   @OA\Schema(
- *     schema="ModalitatIdioma",
- *     type="object",
- *     @OA\Property(property="id", type="integer", example=1),
- *     @OA\Property(property="idioma_id", type="string", example="1"),
- *     @OA\Property(property="modalitat_id", type="string", example="1"),
- *     @OA\Property(property="traduccio", type="string", example="Fotografia"),
- *     @OA\Property(property="data_baixa", type="string", format="date", example="2024-01-01")
  * )
  */
 
