@@ -14,12 +14,6 @@ use App\Models\ServeisIdiomes;
 class ServeisIdiomesController extends Controller
 {
     /**
-     * Muestra una lista de todas las traducciones de servicios.
-     *
-     * @return \Illuminate\Http\Response
-     */
-
-     /**
      * @OA\Get(
      *     path="/api/serveisidiomes",
      *     tags={"ServeisIdiomes"},
@@ -32,7 +26,6 @@ class ServeisIdiomesController extends Controller
      *             @OA\Items(ref="#/components/schemas/ServeisIdiomes")
      *         )
      *     )
-     * )
      */
     public function index()
     {
@@ -41,13 +34,6 @@ class ServeisIdiomesController extends Controller
     }
 
     /**
-     * Almacena una nueva traducción de servicio en la base de datos.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-
-     /**
      * @OA\Post(
      *     path="/api/serveisidiomes",
      *     tags={"ServeisIdiomes"},
@@ -60,7 +46,6 @@ class ServeisIdiomesController extends Controller
      *         response=200,
      *         description="Traducció de servei creada correctament"
      *     )
-     * )
      */
     public function store(Request $request)
     {
@@ -75,13 +60,6 @@ class ServeisIdiomesController extends Controller
 
         return response()->json(['message' => 'Traducción de servicio creada correctamente', 'servei_idioma' => $serveiIdioma]);
     }
-
-    /**
-     * Muestra la traducción de servicio especificada.
-     *
-     * @param  \App\Models\ServeisIdiomes  $serveisIdioma
-     * @return \Illuminate\Http\Response
-     */
 
     /**
      * @OA\Get(
@@ -101,7 +79,6 @@ class ServeisIdiomesController extends Controller
      *         description="Retorna la traducció de servei especificada",
      *         @OA\JsonContent(ref="#/components/schemas/ServeisIdiomes")
      *     )
-     * )
      */
     public function show(ServeisIdiomes $serveisIdioma)
     {
@@ -109,14 +86,6 @@ class ServeisIdiomesController extends Controller
     }
 
     /**
-     * Actualiza la traducción de servicio especificada en la base de datos.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\ServeisIdiomes  $serveisIdioma
-     * @return \Illuminate\Http\Response
-     */
-
-     /**
      * @OA\Put(
      *     path="/api/serveisidiomes/{id}",
      *     tags={"ServeisIdiomes"},
@@ -137,7 +106,6 @@ class ServeisIdiomesController extends Controller
      *         response=200,
      *         description="Traducció de servei actualitzada correctament"
      *     )
-     * )
      */
     public function update(Request $request, ServeisIdiomes $serveisIdioma)
     {
@@ -154,13 +122,6 @@ class ServeisIdiomesController extends Controller
     }
 
     /**
-     * Elimina la traducción de servicio especificada de la base de datos.
-     *
-     * @param  \App\Models\ServeisIdiomes  $serveisIdioma
-     * @return \Illuminate\Http\Response
-     */
-
-     /**
      * @OA\Delete(
      *     path="/api/serveisidiomes/{id}",
      *     tags={"ServeisIdiomes"},
@@ -177,7 +138,6 @@ class ServeisIdiomesController extends Controller
      *         response=200,
      *         description="Traducció de servei eliminada correctament"
      *     )
-     * )
      */
     public function destroy(ServeisIdiomes $serveisIdioma)
     {

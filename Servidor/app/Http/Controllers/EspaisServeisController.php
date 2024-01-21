@@ -80,92 +80,144 @@ class EspaisServeisController extends Controller
         return response()->json(['espai_servei' => $espaiServei], 200);
     }
 
-    // Continuació de EspaisServeisController
-
-/**
- * @OA\Get(
- *     path="/api/espais-serveis/{servei_id}/{espai_id}",
- *     tags={"EspaiServei"},
- *     summary="Mostra una associació específica entre espai i servei",
- *     @OA\Parameter(
- *         name="servei_id",
- *         in="path",
- *         required=true,
- *         @OA\Schema(type="integer")
- *     ),
- *     @OA\Parameter(
- *         name="espai_id",
- *         in="path",
- *         required=true,
- *         @OA\Schema(type="integer")
- *     ),
- *     @OA\Response(
- *         response=200,
- *         description="Retorna la associació específica",
- *         @OA\JsonContent(ref="#/components/schemas/EspaiServei")
- *     ),
- *     @OA\Response(
- *         response=404,
- *         description="Associació no trobada",
- *         @OA\JsonContent(
- *             @OA\Property(property="message", type="string", example="Associació no trobada")
- *         )
- *     )
- * )
- */
-public function show($servei_id, $espai_id)
-{
-    $espaiServei = EspaisServeis::where('servei_id', $servei_id)->where('espai_id', $espai_id)->first();
-    if (!$espaiServei) {
-        return response()->json(['message' => 'Associació no trobada'], 404);
-    }
-    return response()->json(['espai_servei' => $espaiServei], 200);
-}
-
-// Com que l'associació entre un espai i un servei no sol requerir actualitzacions, no implementarem el mètode update.
-
-/**
- * @OA\Delete(
- *     path="/api/espais-serveis/{servei_id}/{espai_id}",
- *     tags={"EspaiServei"},
- *     summary="Elimina una associació específica entre espai i servei",
- *     @OA\Parameter(
- *         name="servei_id",
- *         in="path",
- *         required=true,
- *         @OA\Schema(type="integer")
- *     ),
- *     @OA\Parameter(
- *         name="espai_id",
- *         in="path",
- *         required=true,
- *         @OA\Schema(type="integer")
- *     ),
- *     @OA\Response(
- *         response=200,
- *         description="Associació eliminada correctament",
- *         @OA\JsonContent(
- *             @OA\Property(property="message", type="string", example="Associació eliminada correctament")
- *         )
- *     ),
- *     @OA\Response(
- *         response=404,
- *         description="Associació no trobada",
- *         @OA\JsonContent(
- *             @OA\Property(property="message", type="string", example="Associació no trobada")
- *         )
- *     )
- * )
- */
-public function destroy($servei_id, $espai_id)
-{
-    $espaiServei = EspaisServeis::where('servei_id', $servei_id)->where('espai_id', $espai_id)->first();
-    if (!$espaiServei) {
-        return response()->json(['message' => 'Associació no trobada'], 404);
+    /**
+     * @OA\Get(
+     *     path="/api/espais-serveis/{servei_id}/{espai_id}",
+     *     tags={"EspaiServei"},
+     *     summary="Mostra una associació específica entre espai i servei",
+     *     @OA\Parameter(
+     *         name="servei_id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Parameter(
+     *         name="espai_id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Retorna la associació específica",
+     *         @OA\JsonContent(ref="#/components/schemas/EspaiServei")
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Associació no trobada",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Associació no trobada")
+     *         )
+     *     )
+     * )
+     */
+    public function show($servei_id, $espai_id)
+    {
+        $espaiServei = EspaisServeis::where('servei_id', $servei_id)->where('espai_id', $espai_id)->first();
+        if (!$espaiServei) {
+            return response()->json(['message' => 'Associació no trobada'], 404);
+        }
+        return response()->json(['espai_servei' => $espaiServei], 200);
     }
 
-    $espaiServei->delete();
-    return response()->json(['message' => 'Associació eliminada correctament'], 200);
-}
-}
+    /**
+     * @OA\Put(
+     *     path="/api/espais-serveis/{servei_id}/{espai_id}",
+     *     tags={"EspaiServei"},
+     *     summary="Actualitza una associació específica entre espai i servei",
+     *     @OA\Parameter(
+     *         name="servei_id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Parameter(
+     *         name="espai_id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="data_baixa", type="string", format="date", example="2023-01-01", nullable=true)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Associació actualitzada correctament",
+     *         @OA\JsonContent(ref="#/components/schemas/EspaiServei")
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Associació no trobada",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Associació no trobada")
+     *         )
+     *     )
+     * )
+     */
+    public function update(Request $request, $servei_id, $espai_id)
+    {
+        $reglesValidacio = [
+            'data_baixa' => 'nullable|date',
+        ];
 
+        $validacio = Validator::make($request->all(), $reglesValidacio);
+        if ($validacio->fails()) {
+            return response()->json(['errors' => $validacio->errors()], 400);
+        }
+
+        $espaiServei = EspaisServeis::where('servei_id', $servei_id)->where('espai_id', $espai_id)->first();
+        if (!$espaiServei) {
+            return response()->json(['message' => 'Associació no trobada'], 404);
+        }
+
+        $espaiServei->update($request->all());
+        return response()->json(['espai_servei' => $espaiServei], 200);
+    }
+
+    /**
+     * @OA\Delete(
+     *     path="/api/espais-serveis/{servei_id}/{espai_id}",
+     *     tags={"EspaiServei"},
+     *     summary="Elimina una associació específica entre espai i servei",
+     *     @OA\Parameter(
+     *         name="servei_id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Parameter(
+     *         name="espai_id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Associació eliminada correctament",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Associació eliminada correctament")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Associació no trobada",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Associació no trobada")
+     *         )
+     *     )
+     * )
+     */
+    public function destroy($servei_id, $espai_id)
+    {
+        $espaiServei = EspaisServeis::where('servei_id', $servei_id)->where('espai_id', $espai_id)->first();
+        if (!$espaiServei) {
+            return response()->json(['message' => 'Associació no trobada'], 404);
+        }
+
+        $espaiServei->delete();
+        return response()->json(['message' => 'Associació eliminada correctament'], 200);
+    }
+}

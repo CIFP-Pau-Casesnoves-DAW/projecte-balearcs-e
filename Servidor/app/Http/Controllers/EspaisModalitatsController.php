@@ -168,5 +168,60 @@ public function destroy($espai_id, $modalitat_id)
     return response()->json(['message' => 'Associació eliminada correctament'], 200);
 }
 
-}
+    /**
+     * @OA\Put(
+     *     path="/api/espais-modalitats/{espai_id}/{modalitat_id}",
+     *     tags={"EspaiModalitat"},
+     *     summary="Actualitza una associació específica entre espai i modalitat",
+     *     @OA\Parameter(
+     *         name="espai_id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Parameter(
+     *         name="modalitat_id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="data_baixa", type="string", format="date", example="2023-01-01", nullable=true)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Associació actualitzada correctament",
+     *         @OA\JsonContent(ref="#/components/schemas/EspaiModalitat")
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Associació no trobada",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Associació no trobada")
+     *         )
+     *     )
+     * )
+     */
+    public function update(Request $request, $espai_id, $modalitat_id)
+    {
+        $reglesValidacio = [
+            'data_baixa' => 'nullable|date',
+        ];
 
+        $validacio = Validator::make($request->all(), $reglesValidacio);
+        if ($validacio->fails()) {
+            return response()->json(['errors' => $validacio->errors()], 400);
+        }
+
+        $espaiModalitat = EspaisModalitats::where('espai_id', $espai_id)->where('modalitat_id', $modalitat_id)->first();
+        if (!$espaiModalitat) {
+            return response()->json(['message' => 'Associació no trobada'], 404);
+        }
+
+        $espaiModalitat->update($request->all());
+        return response()->json(['espai_modalitat' => $espaiModalitat], 200);
+    }
+}

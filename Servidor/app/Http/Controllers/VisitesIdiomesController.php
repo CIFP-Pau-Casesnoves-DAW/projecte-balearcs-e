@@ -14,12 +14,6 @@ use App\Models\VisitesIdiomes;
 class VisitesIdiomesController extends Controller
 {
     /**
-     * Muestra una lista de todas las traducciones de visitas.
-     *
-     * @return \Illuminate\Http\Response
-     */
-
-     /**
      * @OA\Get(
      *     path="/api/visitesidiomes",
      *     tags={"VisitesIdiomes"},
@@ -32,7 +26,6 @@ class VisitesIdiomesController extends Controller
      *             @OA\Items(ref="#/components/schemas/VisitesIdiomes")
      *         )
      *     )
-     * )
      */
     public function index()
     {
@@ -41,13 +34,6 @@ class VisitesIdiomesController extends Controller
     }
 
     /**
-     * Almacena una nueva traducción de visita en la base de datos.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-
-     /**
      * @OA\Post(
      *     path="/api/visitesidiomes",
      *     tags={"VisitesIdiomes"},
@@ -60,7 +46,6 @@ class VisitesIdiomesController extends Controller
      *         response=200,
      *         description="Traducció de visita creada correctament"
      *     )
-     * )
      */
     public function store(Request $request)
     {
@@ -77,13 +62,6 @@ class VisitesIdiomesController extends Controller
     }
 
     /**
-     * Muestra la traducción de visita especificada.
-     *
-     * @param  \App\Models\VisitesIdiomes  $visitaIdioma
-     * @return \Illuminate\Http\Response
-     */
-
-     /**
      * @OA\Get(
      *     path="/api/visitesidiomes/{id}",
      *     tags={"VisitesIdiomes"},
@@ -101,7 +79,6 @@ class VisitesIdiomesController extends Controller
      *         description="Retorna la traducció de visita especificada",
      *         @OA\JsonContent(ref="#/components/schemas/VisitesIdiomes")
      *     )
-     * )
      */
     public function show(VisitesIdiomes $visitaIdioma)
     {
@@ -109,14 +86,6 @@ class VisitesIdiomesController extends Controller
     }
 
     /**
-     * Actualiza la traducción de visita especificada en la base de datos.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\VisitesIdiomes  $visitaIdioma
-     * @return \Illuminate\Http\Response
-     */
-
-     /**
      * @OA\Put(
      *     path="/api/visitesidiomes/{id}",
      *     tags={"VisitesIdiomes"},
@@ -137,7 +106,6 @@ class VisitesIdiomesController extends Controller
      *         response=200,
      *         description="Traducció de visita actualitzada correctament"
      *     )
-     * )
      */
     public function update(Request $request, VisitesIdiomes $visitaIdioma)
     {
@@ -154,13 +122,6 @@ class VisitesIdiomesController extends Controller
     }
 
     /**
-     * Elimina la traducción de visita especificada de la base de datos.
-     *
-     * @param  \App\Models\VisitesIdiomes  $visitaIdioma
-     * @return \Illuminate\Http\Response
-     */
-
-     /**
      * @OA\Delete(
      *     path="/api/visitesidiomes/{id}",
      *     tags={"VisitesIdiomes"},
@@ -177,7 +138,6 @@ class VisitesIdiomesController extends Controller
      *         response=200,
      *         description="Traducció de visita eliminada correctament"
      *     )
-     * )
      */
     public function destroy(VisitesIdiomes $visitaIdioma)
     {
