@@ -148,8 +148,35 @@ INSERT INTO `visites_punts_interes` (`punts_interes_id`, `visita_id`, `ordre`, `
 (9, 9, 1, NULL, '2023-12-20 10:00:00', '2023-12-20 10:00:00'),
 (10, 10, 1, NULL, '2023-12-20 12:30:00', '2023-12-20 12:30:00');
 
+-- Inserts EspaisServeis
 
+-- Inserció 1
+INSERT INTO espais_serveis (servei_id, espai_id, data_baixa) VALUES (1, 2, '2022-01-01');
 
+-- Inserció 2
+INSERT INTO espais_serveis (servei_id, espai_id, data_baixa) VALUES (2, 4, '2022-02-01');
 
+-- Inserció 3
+INSERT INTO espais_serveis (servei_id, espai_id, data_baixa) VALUES (3, 3, '2022-03-01');
 
+-- Inserts EspaisModalitats
 
+-- Inserció 1
+INSERT INTO espais_modalitats (espai_id, modalitat_id, data_baixa) VALUES (2, 1, '2022-01-01');
+
+-- Inserció 2
+INSERT INTO espais_modalitats (espai_id, modalitat_id, data_baixa) VALUES (3, 2, '2022-02-01');
+
+-- Inserció 3
+INSERT INTO espais_modalitats (espai_id, modalitat_id, data_baixa) VALUES (4, 3, '2022-03-01');
+
+-- Inserts VisitesIdiomes
+
+-- Inserció 1
+INSERT INTO visites_idiomes (idioma_id, visita_id, traduccio, data_baixa) VALUES (1, 3, 'Traducció 1', '2022-01-01');
+
+-- Inserció 2
+INSERT INTO visites_idiomes (idioma_id, visita_id, traduccio, data_baixa) VALUES (2, 2, 'Traducció 2', '2022-02-01');
+
+-- Inserció 3
+INSERT INTO visites_idiomes (idioma_id, visita_id, traduccio, data_baixa) VALUES (3, 4, 'Traducció 3', '2022-03-01');
