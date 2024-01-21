@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Validator;
 
 /**
  * @OA\Tag(
- *     name="EspaiModalitat",
+ *     name="EspaisModalitats",
  *     description="Operacions per a Modalitats d'Espais"
  * )
  */
@@ -18,7 +18,7 @@ class EspaisModalitatsController extends Controller
  * @OA\Get(
  *     path="/espais-modalitats",
  *     summary="Llista totes les associacions d'espais i modalitats",
- *     tags={"EspaiModalitat"},
+ *     tags={"EspaisModalitats"},
  *     @OA\Response(
  *         response=200,
  *         description="Llista d'associacions d'espais i modalitats",
@@ -27,13 +27,13 @@ class EspaisModalitatsController extends Controller
  *             @OA\Property(
  *                 property="espais_modalitats",
  *                 type="array",
- *                 @OA\Items(ref="#/components/schemas/EspaiModalitat")
+ *                 @OA\Items(ref="#/components/schemas/EspaisModalitats")
  *             )
  *         )
  *     )
  * )
  * @OA\Schema(
- *     schema="EspaiModalitat",
+ *     schema="EspaisModalitats",
  *     type="object",
  *     @OA\Property(property="espai_id", type="integer", example=1),
  *     @OA\Property(property="modalitat_id", type="integer", example=2),
@@ -51,7 +51,7 @@ class EspaisModalitatsController extends Controller
  * @OA\Post(
  *     path="/espais-modalitats",
  *     summary="Crea una nova associació entre un espai i una modalitat",
- *     tags={"EspaiModalitat"},
+ *     tags={"EspaisModalitats"},
  *     @OA\RequestBody(
  *         required=true,
  *         description="Dades necessàries per a crear una nova associació",
@@ -67,7 +67,7 @@ class EspaisModalitatsController extends Controller
  *         description="Associació creada correctament",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="espai_modalitat", type="object", ref="#/components/schemas/EspaiModalitat")
+ *             @OA\Property(property="espais_modalitats", type="object", ref="#/components/schemas/EspaisModalitats")
  *         )
  *     ),
  *     @OA\Response(
@@ -103,7 +103,7 @@ class EspaisModalitatsController extends Controller
  * @OA\Get(
  *     path="/espais-modalitats/{espai_id}/{modalitat_id}",
  *     summary="Obté una associació específica entre un espai i una modalitat",
- *     tags={"EspaiModalitat"},
+ *     tags={"EspaisModalitats"},
  *     @OA\Parameter(
  *         name="espai_id",
  *         in="path",
@@ -123,7 +123,7 @@ class EspaisModalitatsController extends Controller
  *         description="Associació trobada amb èxit",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="espai_modalitat", type="object", ref="#/components/schemas/EspaiModalitat")
+ *             @OA\Property(property="espais_modalitats", type="object", ref="#/components/schemas/EspaisModalitats")
  *         )
  *     ),
  *     @OA\Response(
@@ -149,7 +149,7 @@ public function show($espai_id, $modalitat_id)
  * @OA\Delete(
  *     path="/espais-modalitats/{espai_id}/{modalitat_id}",
  *     summary="Elimina una associació entre un espai i una modalitat",
- *     tags={"EspaiModalitat"},
+ *     tags={"EspaisModalitats"},
  *     @OA\Parameter(
  *         name="espai_id",
  *         in="path",

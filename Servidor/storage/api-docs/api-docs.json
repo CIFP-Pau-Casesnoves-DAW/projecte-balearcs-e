@@ -31,7 +31,7 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "$ref": "#/components/schemas/Arquitecte"
+                                        "$ref": "#/components/schemas/Arquitectes"
                                     }
                                 }
                             }
@@ -129,7 +129,7 @@
                                             "example": "success"
                                         },
                                         "data": {
-                                            "$ref": "#/components/schemas/Arquitecte"
+                                            "$ref": "#/components/schemas/Arquitectes"
                                         }
                                     },
                                     "type": "object"
@@ -211,7 +211,7 @@
                                             "example": "correcto"
                                         },
                                         "data": {
-                                            "$ref": "#/components/schemas/Arquitecte"
+                                            "$ref": "#/components/schemas/Arquitectes"
                                         }
                                     },
                                     "type": "object"
@@ -310,7 +310,7 @@
                                             "example": "success"
                                         },
                                         "data": {
-                                            "$ref": "#/components/schemas/Arquitecte"
+                                            "$ref": "#/components/schemas/Arquitectes"
                                         }
                                     },
                                     "type": "object"
@@ -390,7 +390,7 @@
                                             "example": "success"
                                         },
                                         "data": {
-                                            "$ref": "#/components/schemas/Arquitecte"
+                                            "$ref": "#/components/schemas/Arquitectes"
                                         }
                                     },
                                     "type": "object"
@@ -457,7 +457,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/components/schemas/Audio"
+                                                "$ref": "#/components/schemas/Audios"
                                             }
                                         }
                                     },
@@ -550,7 +550,7 @@
                                             "example": "success"
                                         },
                                         "data": {
-                                            "$ref": "#/components/schemas/Audio"
+                                            "$ref": "#/components/schemas/Audios"
                                         }
                                     },
                                     "type": "object"
@@ -629,7 +629,7 @@
                                             "example": "correcto"
                                         },
                                         "data": {
-                                            "$ref": "#/components/schemas/Audio"
+                                            "$ref": "#/components/schemas/Audios"
                                         }
                                     },
                                     "type": "object"
@@ -726,7 +726,7 @@
                                             "example": "success"
                                         },
                                         "data": {
-                                            "$ref": "#/components/schemas/Audio"
+                                            "$ref": "#/components/schemas/Audios"
                                         }
                                     },
                                     "type": "object"
@@ -806,7 +806,7 @@
                                             "example": "success"
                                         },
                                         "data": {
-                                            "$ref": "#/components/schemas/Audio"
+                                            "$ref": "#/components/schemas/Audios"
                                         }
                                     },
                                     "type": "object"
@@ -873,7 +873,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/components/schemas/Comentari"
+                                                "$ref": "#/components/schemas/Comentaris"
                                             }
                                         }
                                     },
@@ -948,7 +948,7 @@
                                             "example": "correcte"
                                         },
                                         "data": {
-                                            "$ref": "#/components/schemas/Comentari"
+                                            "$ref": "#/components/schemas/Comentaris"
                                         }
                                     },
                                     "type": "object"
@@ -1030,7 +1030,7 @@
                                             "example": "correcto"
                                         },
                                         "data": {
-                                            "$ref": "#/components/schemas/Comentari"
+                                            "$ref": "#/components/schemas/Comentaris"
                                         }
                                     },
                                     "type": "object"
@@ -1116,7 +1116,7 @@
                                             "example": "success"
                                         },
                                         "data": {
-                                            "$ref": "#/components/schemas/Comentari"
+                                            "$ref": "#/components/schemas/Comentaris"
                                         }
                                     },
                                     "type": "object"
@@ -1196,7 +1196,7 @@
                                             "example": "success"
                                         },
                                         "data": {
-                                            "$ref": "#/components/schemas/Comentari"
+                                            "$ref": "#/components/schemas/Comentaris"
                                         }
                                     },
                                     "type": "object"
@@ -1263,7 +1263,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/components/schemas/Espai"
+                                                "$ref": "#/components/schemas/Espais"
                                             }
                                         }
                                     },
@@ -1402,7 +1402,7 @@
                                             "example": "correcte"
                                         },
                                         "data": {
-                                            "$ref": "#/components/schemas/Espai"
+                                            "$ref": "#/components/schemas/Espais"
                                         }
                                     },
                                     "type": "object"
@@ -1484,7 +1484,7 @@
                                             "example": "correcto"
                                         },
                                         "data": {
-                                            "$ref": "#/components/schemas/Espai"
+                                            "$ref": "#/components/schemas/Espais"
                                         }
                                     },
                                     "type": "object"
@@ -1624,7 +1624,7 @@
                                             "example": "success"
                                         },
                                         "data": {
-                                            "$ref": "#/components/schemas/Espai"
+                                            "$ref": "#/components/schemas/Espais"
                                         }
                                     },
                                     "type": "object"
@@ -1704,7 +1704,7 @@
                                             "example": "success"
                                         },
                                         "data": {
-                                            "$ref": "#/components/schemas/Espai"
+                                            "$ref": "#/components/schemas/Espais"
                                         }
                                     },
                                     "type": "object"
@@ -1780,7 +1780,7 @@
                                             "example": "success"
                                         },
                                         "data": {
-                                            "$ref": "#/components/schemas/Espai"
+                                            "$ref": "#/components/schemas/Espais"
                                         }
                                     },
                                     "type": "object"
@@ -1829,7 +1829,7 @@
         "/espais-idiomes": {
             "get": {
                 "tags": [
-                    "EspaiIdioma"
+                    "EspaisIdiomes"
                 ],
                 "summary": "Llista totes les traduccions dels espais",
                 "operationId": "e213de3c339ceb01fb92042415c9f788",
@@ -1841,7 +1841,7 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "$ref": "#/components/schemas/EspaiIdioma"
+                                        "$ref": "#/components/schemas/EspaisIdiomes"
                                     }
                                 }
                             }
@@ -1851,7 +1851,7 @@
             },
             "post": {
                 "tags": [
-                    "EspaiIdioma"
+                    "EspaisIdiomes"
                 ],
                 "summary": "Crea una nova traducció per un espai",
                 "operationId": "528c978f7f3d79b372e0147ee3ce86d0",
@@ -1897,8 +1897,8 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "espai_idioma": {
-                                            "$ref": "#/components/schemas/EspaiIdioma"
+                                        "espais_idiomes": {
+                                            "$ref": "#/components/schemas/EspaisIdiomes"
                                         }
                                     },
                                     "type": "object"
@@ -1927,7 +1927,7 @@
         "/espais-idiomes/{idioma_id}/{espai_id}": {
             "get": {
                 "tags": [
-                    "EspaiIdioma"
+                    "EspaisIdiomes"
                 ],
                 "summary": "Obté una traducció específica d'un espai",
                 "operationId": "8f62d2f8d59bbd072c3a59cfdf588a00",
@@ -1959,7 +1959,7 @@
                                 "schema": {
                                     "properties": {
                                         "espai_idioma": {
-                                            "$ref": "#/components/schemas/EspaiIdioma"
+                                            "$ref": "#/components/schemas/EspaisIdiomes"
                                         }
                                     },
                                     "type": "object"
@@ -1987,7 +1987,7 @@
             },
             "put": {
                 "tags": [
-                    "EspaiIdioma"
+                    "EspaisIdiomes"
                 ],
                 "summary": "Actualitza una traducció d'un espai",
                 "operationId": "5fe4dbd540d12d839e802fdf1b419c4b",
@@ -2044,7 +2044,7 @@
                                 "schema": {
                                     "properties": {
                                         "espai_idioma": {
-                                            "$ref": "#/components/schemas/EspaiIdioma"
+                                            "$ref": "#/components/schemas/EspaisIdiomes"
                                         }
                                     },
                                     "type": "object"
@@ -2087,7 +2087,7 @@
             },
             "delete": {
                 "tags": [
-                    "EspaiIdioma"
+                    "EspaisIdiomes"
                 ],
                 "summary": "Elimina una traducció d'un espai",
                 "operationId": "dd76e75b3675f7d478fbd2f479cdf6d1",
@@ -2150,7 +2150,7 @@
         "/espais-modalitats": {
             "get": {
                 "tags": [
-                    "EspaiModalitat"
+                    "EspaisModalitats"
                 ],
                 "summary": "Llista totes les associacions d'espais i modalitats",
                 "operationId": "22499f5aaff79e7601966fa8aca8618e",
@@ -2164,7 +2164,7 @@
                                         "espais_modalitats": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/components/schemas/EspaiModalitat"
+                                                "$ref": "#/components/schemas/EspaisModalitats"
                                             }
                                         }
                                     },
@@ -2177,7 +2177,7 @@
             },
             "post": {
                 "tags": [
-                    "EspaiModalitat"
+                    "EspaisModalitats"
                 ],
                 "summary": "Crea una nova associació entre un espai i una modalitat",
                 "operationId": "7922f9aa37dd0c9b3f34304effdec01f",
@@ -2219,8 +2219,8 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "espai_modalitat": {
-                                            "$ref": "#/components/schemas/EspaiModalitat"
+                                        "espais_modalitats": {
+                                            "$ref": "#/components/schemas/EspaisModalitats"
                                         }
                                     },
                                     "type": "object"
@@ -2249,7 +2249,7 @@
         "/espais-modalitats/{espai_id}/{modalitat_id}": {
             "get": {
                 "tags": [
-                    "EspaiModalitat"
+                    "EspaisModalitats"
                 ],
                 "summary": "Obté una associació específica entre un espai i una modalitat",
                 "operationId": "d9d16826f29a16423a08fff243625627",
@@ -2280,8 +2280,8 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "espai_modalitat": {
-                                            "$ref": "#/components/schemas/EspaiModalitat"
+                                        "espais_modalitats": {
+                                            "$ref": "#/components/schemas/EspaisModalitats"
                                         }
                                     },
                                     "type": "object"
@@ -2309,7 +2309,7 @@
             },
             "delete": {
                 "tags": [
-                    "EspaiModalitat"
+                    "EspaisModalitats"
                 ],
                 "summary": "Elimina una associació entre un espai i una modalitat",
                 "operationId": "6d5ddb54a4e6000cef77967b7c8cf60c",
@@ -2612,7 +2612,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/components/schemas/Foto"
+                                                "$ref": "#/components/schemas/Fotos"
                                             }
                                         }
                                     },
@@ -2715,7 +2715,7 @@
                                             "example": "success"
                                         },
                                         "data": {
-                                            "$ref": "#/components/schemas/Foto"
+                                            "$ref": "#/components/schemas/Fotos"
                                         }
                                     },
                                     "type": "object"
@@ -2797,7 +2797,7 @@
                                             "example": "correcto"
                                         },
                                         "data": {
-                                            "$ref": "#/components/schemas/Foto"
+                                            "$ref": "#/components/schemas/Fotos"
                                         }
                                     },
                                     "type": "object"
@@ -2901,7 +2901,7 @@
                                             "example": "success"
                                         },
                                         "data": {
-                                            "$ref": "#/components/schemas/Foto"
+                                            "$ref": "#/components/schemas/Fotos"
                                         }
                                     },
                                     "type": "object"
@@ -2981,7 +2981,7 @@
                                             "example": "success"
                                         },
                                         "data": {
-                                            "$ref": "#/components/schemas/Foto"
+                                            "$ref": "#/components/schemas/Fotos"
                                         }
                                     },
                                     "type": "object"
@@ -3057,7 +3057,7 @@
                                             "example": "success"
                                         },
                                         "data": {
-                                            "$ref": "#/components/schemas/Foto"
+                                            "$ref": "#/components/schemas/Fotos"
                                         }
                                     },
                                     "type": "object"
@@ -3124,7 +3124,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/components/schemas/Idioma"
+                                                "$ref": "#/components/schemas/Idiomes"
                                             }
                                         }
                                     },
@@ -3218,7 +3218,7 @@
                                             "example": "success"
                                         },
                                         "data": {
-                                            "$ref": "#/components/schemas/Idioma"
+                                            "$ref": "#/components/schemas/Idiomes"
                                         }
                                     },
                                     "type": "object"
@@ -3300,7 +3300,7 @@
                                             "example": "correcto"
                                         },
                                         "data": {
-                                            "$ref": "#/components/schemas/Idioma"
+                                            "$ref": "#/components/schemas/Idiomes"
                                         }
                                     },
                                     "type": "object"
@@ -3404,7 +3404,7 @@
                                             "example": "success"
                                         },
                                         "data": {
-                                            "$ref": "#/components/schemas/Idioma"
+                                            "$ref": "#/components/schemas/Idiomes"
                                         }
                                     },
                                     "type": "object"
@@ -3484,7 +3484,7 @@
                                             "example": "success"
                                         },
                                         "data": {
-                                            "$ref": "#/components/schemas/Idioma"
+                                            "$ref": "#/components/schemas/Idiomes"
                                         }
                                     },
                                     "type": "object"
@@ -4013,7 +4013,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/components/schemas/Modalitat"
+                                                "$ref": "#/components/schemas/Modalitats"
                                             }
                                         }
                                     },
@@ -4110,7 +4110,7 @@
                                             "example": "success"
                                         },
                                         "data": {
-                                            "$ref": "#/components/schemas/Modalitat"
+                                            "$ref": "#/components/schemas/Modalitats"
                                         }
                                     },
                                     "type": "object"
@@ -4197,7 +4197,7 @@
                                             "example": "correcto"
                                         },
                                         "data": {
-                                            "$ref": "#/components/schemas/Modalitat"
+                                            "$ref": "#/components/schemas/Modalitats"
                                         }
                                     },
                                     "type": "object"
@@ -4293,7 +4293,7 @@
                                             "example": "success"
                                         },
                                         "data": {
-                                            "$ref": "#/components/schemas/Modalitat"
+                                            "$ref": "#/components/schemas/Modalitats"
                                         }
                                     },
                                     "type": "object"
@@ -4378,7 +4378,7 @@
                                             "example": "success"
                                         },
                                         "data": {
-                                            "$ref": "#/components/schemas/Modalitat"
+                                            "$ref": "#/components/schemas/Modalitats"
                                         }
                                     },
                                     "type": "object"
@@ -4445,7 +4445,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/components/schemas/ModalitatIdioma"
+                                                "$ref": "#/components/schemas/Modalitats Idiomes"
                                             }
                                         }
                                     },
@@ -4542,7 +4542,7 @@
                                             "example": "success"
                                         },
                                         "data": {
-                                            "$ref": "#/components/schemas/ModalitatIdioma"
+                                            "$ref": "#/components/schemas/Modalitats Idiomes"
                                         }
                                     },
                                     "type": "object"
@@ -4637,7 +4637,7 @@
                                 "schema": {
                                     "properties": {
                                         "modalitat_idioma": {
-                                            "$ref": "#/components/schemas/ModalitatIdioma"
+                                            "$ref": "#/components/schemas/Modalitats Idiomes"
                                         }
                                     },
                                     "type": "object"
@@ -4738,7 +4738,7 @@
                                 "schema": {
                                     "properties": {
                                         "modalitat_idioma": {
-                                            "$ref": "#/components/schemas/ModalitatIdioma"
+                                            "$ref": "#/components/schemas/Modalitats Idiomes"
                                         }
                                     },
                                     "type": "object"
@@ -5306,7 +5306,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/components/schemas/PuntInteres"
+                                                "$ref": "#/components/schemas/Punts d'Interès"
                                             }
                                         }
                                     },
@@ -5398,7 +5398,7 @@
                                             "example": "success"
                                         },
                                         "data": {
-                                            "$ref": "#/components/schemas/PuntInteres"
+                                            "$ref": "#/components/schemas/Punts d'Interès"
                                         }
                                     },
                                     "type": "object"
@@ -5477,7 +5477,7 @@
                                             "example": "correcto"
                                         },
                                         "data": {
-                                            "$ref": "#/components/schemas/PuntInteres"
+                                            "$ref": "#/components/schemas/Punts d'Interès"
                                         }
                                     },
                                     "type": "object"
@@ -5576,7 +5576,7 @@
                                             "example": "correcto"
                                         },
                                         "data": {
-                                            "$ref": "#/components/schemas/PuntInteres"
+                                            "$ref": "#/components/schemas/Punts d'Interès"
                                         }
                                     },
                                     "type": "object"
@@ -9175,7 +9175,7 @@
     },
     "components": {
         "schemas": {
-            "Arquitecte": {
+            "Arquitectes": {
                 "properties": {
                     "nom": {
                         "type": "string"
@@ -9187,7 +9187,7 @@
                 },
                 "type": "object"
             },
-            "Audio": {
+            "Audios": {
                 "properties": {
                     "url": {
                         "description": "URL de l'audio",
@@ -9200,7 +9200,7 @@
                 },
                 "type": "object"
             },
-            "Comentari": {
+            "Comentaris": {
                 "properties": {
                     "id": {
                         "description": "Identificador únic del comentari",
@@ -9226,7 +9226,7 @@
                 },
                 "type": "object"
             },
-            "Espai": {
+            "Espais": {
                 "properties": {
                     "nom": {
                         "description": "Nom de l'espai",
@@ -9272,7 +9272,7 @@
                 },
                 "type": "object"
             },
-            "EspaiIdioma": {
+            "EspaisIdiomes": {
                 "properties": {
                     "idioma_id": {
                         "type": "integer",
@@ -9295,7 +9295,7 @@
                 },
                 "type": "object"
             },
-            "EspaiModalitat": {
+            "EspaisModalitats": {
                 "properties": {
                     "espai_id": {
                         "type": "integer",
@@ -9333,7 +9333,7 @@
                 },
                 "type": "object"
             },
-            "Foto": {
+            "Fotos": {
                 "properties": {
                     "id": {
                         "description": "Identificador únic de la foto",
@@ -9365,7 +9365,7 @@
                 },
                 "type": "object"
             },
-            "Idioma": {
+            "Idiomes": {
                 "properties": {
                     "id": {
                         "description": "Identificador únic de l'idioma",
@@ -9410,7 +9410,7 @@
                 },
                 "type": "object"
             },
-            "Modalitat": {
+            "Modalitats": {
                 "properties": {
                     "id": {
                         "description": "Identificador únic de la modalitat",
@@ -9433,7 +9433,7 @@
                 },
                 "type": "object"
             },
-            "ModalitatIdioma": {
+            "Modalitats Idiomes": {
                 "properties": {
                     "id": {
                         "description": "Identificador únic de l'associació",
@@ -9485,7 +9485,7 @@
                 },
                 "type": "object"
             },
-            "PuntInteres": {
+            "Punts d'Interès": {
                 "properties": {
                     "id": {
                         "description": "Identificador únic del punt d'interès",
@@ -9755,27 +9755,27 @@
     },
     "tags": [
         {
-            "name": "Arquitecte",
+            "name": "Arquitectes",
             "description": "Operacions per a Arquitectes"
         },
         {
-            "name": "Audio",
+            "name": "Audios",
             "description": "Operacions per a Audios"
         },
         {
-            "name": "Comentari",
+            "name": "Comentaris",
             "description": "Operacions per a Comentaris"
         },
         {
-            "name": "Espai",
+            "name": "Espais",
             "description": "Operacions per a Espais"
         },
         {
-            "name": "EspaiIdioma",
+            "name": "EspaisIdiomes",
             "description": "Operacions per a Traduccions d'Espais en Diferents Idiomes"
         },
         {
-            "name": "EspaiModalitat",
+            "name": "EspaisModalitats",
             "description": "Operacions per a Modalitats d'Espais"
         },
         {
@@ -9783,11 +9783,11 @@
             "description": "Operacions per a Serveis d'Espais"
         },
         {
-            "name": "Foto",
+            "name": "Fotos",
             "description": "Operacions per a Fotos d'Espais i Punts d'Interès"
         },
         {
-            "name": "Idioma",
+            "name": "Idiomes",
             "description": "Operacions per a Idiomes"
         },
         {
@@ -9795,11 +9795,11 @@
             "description": "Operacions relacionades amb les Illes"
         },
         {
-            "name": "Modalitat",
+            "name": "Modalitats",
             "description": "Operacions per a Modalitats"
         },
         {
-            "name": "ModalitatsIdiomes",
+            "name": "Modalitats Idiomes",
             "description": "Operacions per a les modalitats d'idiomes"
         },
         {
@@ -9807,7 +9807,7 @@
             "description": "Operacions per a Municipis"
         },
         {
-            "name": "PuntsInteres",
+            "name": "Punts d'Interès",
             "description": "Operacions per a Punts d'Interès"
         },
         {

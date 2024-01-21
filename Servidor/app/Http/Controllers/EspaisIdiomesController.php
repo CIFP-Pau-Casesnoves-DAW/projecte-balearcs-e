@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Validator;
 
 /**
  * @OA\Tag(
- *     name="EspaiIdioma",
+ *     name="EspaisIdiomes",
  *     description="Operacions per a Traduccions d'Espais en Diferents Idiomes"
  * )
  */
@@ -18,18 +18,18 @@ class EspaisIdiomesController extends Controller
  * @OA\Get(
  *     path="/espais-idiomes",
  *     summary="Llista totes les traduccions dels espais",
- *     tags={"EspaiIdioma"},
+ *     tags={"EspaisIdiomes"},
  *     @OA\Response(
  *         response=200,
  *         description="Llista de totes les traduccions dels espais",
  *         @OA\JsonContent(
  *             type="array",
- *             @OA\Items(ref="#/components/schemas/EspaiIdioma")
+ *             @OA\Items(ref="#/components/schemas/EspaisIdiomes")
  *         )
  *     )
  * )
  * @OA\Schema(
- *     schema="EspaiIdioma",
+ *     schema="EspaisIdiomes",
  *     type="object",
  *     @OA\Property(property="idioma_id", type="integer", example=1),
  *     @OA\Property(property="espai_id", type="integer", example=2),
@@ -47,7 +47,7 @@ class EspaisIdiomesController extends Controller
  * @OA\Post(
  *     path="/espais-idiomes",
  *     summary="Crea una nova traducció per un espai",
- *     tags={"EspaiIdioma"},
+ *     tags={"EspaisIdiomes"},
  *     @OA\RequestBody(
  *         required=true,
  *         @OA\JsonContent(
@@ -63,7 +63,7 @@ class EspaisIdiomesController extends Controller
  *         description="Traducció creada correctament",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="espai_idioma", type="object", ref="#/components/schemas/EspaiIdioma")
+ *             @OA\Property(property="espais_idiomes", type="object", ref="#/components/schemas/EspaisIdiomes")
  *         )
  *     ),
  *     @OA\Response(
@@ -98,7 +98,7 @@ class EspaisIdiomesController extends Controller
  * @OA\Get(
  *     path="/espais-idiomes/{idioma_id}/{espai_id}",
  *     summary="Obté una traducció específica d'un espai",
- *     tags={"EspaiIdioma"},
+ *     tags={"EspaisIdiomes"},
  *     @OA\Parameter(
  *         name="idioma_id",
  *         in="path",
@@ -118,7 +118,7 @@ class EspaisIdiomesController extends Controller
  *         description="Traducció trobada",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="espai_idioma", type="object", ref="#/components/schemas/EspaiIdioma")
+ *             @OA\Property(property="espai_idioma", type="object", ref="#/components/schemas/EspaisIdiomes")
  *         )
  *     ),
  *     @OA\Response(
@@ -146,7 +146,7 @@ class EspaisIdiomesController extends Controller
  * @OA\Put(
  *     path="/espais-idiomes/{idioma_id}/{espai_id}",
  *     summary="Actualitza una traducció d'un espai",
- *     tags={"EspaiIdioma"},
+ *     tags={"EspaisIdiomes"},
  *     @OA\Parameter(
  *         name="idioma_id",
  *         in="path",
@@ -174,7 +174,7 @@ class EspaisIdiomesController extends Controller
  *         description="Traducció actualitzada amb èxit",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="espai_idioma", type="object", ref="#/components/schemas/EspaiIdioma")
+ *             @OA\Property(property="espai_idioma", type="object", ref="#/components/schemas/EspaisIdiomes")
  *         )
  *     ),
  *     @OA\Response(
@@ -220,7 +220,7 @@ public function update(Request $request, $idioma_id, $espai_id)
  * @OA\Delete(
  *     path="/espais-idiomes/{idioma_id}/{espai_id}",
  *     summary="Elimina una traducció d'un espai",
- *     tags={"EspaiIdioma"},
+ *     tags={"EspaisIdiomes"},
  *     @OA\Parameter(
  *         name="idioma_id",
  *         in="path",

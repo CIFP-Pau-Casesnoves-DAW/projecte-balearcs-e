@@ -10,7 +10,7 @@ use App\Models\Usuaris;
 
 /**
  * @OA\Tag(
- *     name="Espai",
+ *     name="Espais",
  *     description="Operacions per a Espais"
  * )
  */
@@ -30,7 +30,7 @@ class EspaisController extends Controller
  *             @OA\Property(
  *                 property="data",
  *                 type="array",
- *                 @OA\Items(ref="#/components/schemas/Espai")
+ *                 @OA\Items(ref="#/components/schemas/Espais")
  *             )
  *         )
  *     ),
@@ -54,7 +54,7 @@ class EspaisController extends Controller
  *     )
  * )
  * @OA\Schema(
- *     schema="Espai",
+ *     schema="Espais",
  *     type="object",
  *     @OA\Property(property="nom", type="string", description="Nom de l'espai"),
  *     @OA\Property(property="descripcio", type="string", description="Descripció de l'espai"),
@@ -109,7 +109,7 @@ class EspaisController extends Controller
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="correcte"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Espai")
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Espais")
  *         )
  *     ),
  *     @OA\Response(
@@ -204,7 +204,7 @@ class EspaisController extends Controller
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="correcto"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Espai")
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Espais")
  *         )
  *     ),
  *     @OA\Response(
@@ -276,7 +276,7 @@ class EspaisController extends Controller
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="success"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Espai")
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Espais")
  *         )
  *     ),
  *     @OA\Response(
@@ -402,7 +402,7 @@ class EspaisController extends Controller
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="success"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Espai")
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Espais")
  *         )
  *     ),
  *     @OA\Response(
@@ -457,7 +457,7 @@ class EspaisController extends Controller
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="success"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Espai")
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Espais")
  *         )
  *     ),
  *     @OA\Response(

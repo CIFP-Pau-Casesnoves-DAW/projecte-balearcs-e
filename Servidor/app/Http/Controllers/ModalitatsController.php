@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Validator;
 
 /**
  * @OA\Tag(
- *     name="Modalitat",
+ *     name="Modalitats",
  *     description="Operacions per a Modalitats"
  * )
  */
@@ -28,7 +28,7 @@ class ModalitatsController extends Controller
  *             @OA\Property(
  *                 property="data",
  *                 type="array",
- *                 @OA\Items(ref="#/components/schemas/Modalitat")
+ *                 @OA\Items(ref="#/components/schemas/Modalitats")
  *             )
  *         )
  *     ),
@@ -55,7 +55,7 @@ class ModalitatsController extends Controller
  *     )
  * )
  * @OA\Schema(
- *     schema="Modalitat",
+ *     schema="Modalitats",
  *     type="object",
  *     @OA\Property(property="id", type="integer", description="Identificador únic de la modalitat"),
  *     @OA\Property(property="nom", type="string", description="Nom de la modalitat"),
@@ -94,7 +94,7 @@ class ModalitatsController extends Controller
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="success"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Modalitat")
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Modalitats")
  *         )
  *     ),
  *     @OA\Response(
@@ -169,7 +169,7 @@ class ModalitatsController extends Controller
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="correcto"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Modalitat")
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Modalitats")
  *         )
  *     ),
  *     @OA\Response(
@@ -232,7 +232,7 @@ class ModalitatsController extends Controller
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="success"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Modalitat")
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Modalitats")
  *         )
  *     ),
  *     @OA\Response(
@@ -308,7 +308,7 @@ class ModalitatsController extends Controller
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="success"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Modalitat")
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Modalitats")
  *         )
  *     ),
  *     @OA\Response(

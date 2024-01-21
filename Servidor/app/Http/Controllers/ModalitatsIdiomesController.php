@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Validator;
 
 /**
  * @OA\Tag(
- *     name="ModalitatsIdiomes",
+ *     name="Modalitats Idiomes",
  *     description="Operacions per a les modalitats d'idiomes"
  * )
  */
@@ -29,7 +29,7 @@ class ModalitatsIdiomesController extends Controller
  *             @OA\Property(
  *                 property="data",
  *                 type="array",
- *                 @OA\Items(ref="#/components/schemas/ModalitatIdioma")
+ *                 @OA\Items(ref="#/components/schemas/Modalitats Idiomes")
  *             )
  *         )
  *     ),
@@ -53,7 +53,7 @@ class ModalitatsIdiomesController extends Controller
  *     )
  * )
  * @OA\Schema(
- *     schema="ModalitatIdioma",
+ *     schema="Modalitats Idiomes",
  *     type="object",
  *     @OA\Property(property="id", type="integer", description="Identificador únic de l'associació"),
  *     @OA\Property(property="modalitat_id", type="integer", description="Identificador de la modalitat associada"),
@@ -94,7 +94,7 @@ class ModalitatsIdiomesController extends Controller
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="success"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/ModalitatIdioma")
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Modalitats Idiomes")
  *         )
  *     ),
  *     @OA\Response(
@@ -179,7 +179,7 @@ class ModalitatsIdiomesController extends Controller
  *         description="Associació trobada amb èxit",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="modalitat_idioma", type="object", ref="#/components/schemas/ModalitatIdioma")
+ *             @OA\Property(property="modalitat_idioma", type="object", ref="#/components/schemas/Modalitats Idiomes")
  *         )
  *     ),
  *     @OA\Response(
@@ -251,7 +251,7 @@ class ModalitatsIdiomesController extends Controller
  *         description="Associació actualitzada amb èxit",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="modalitat_idioma", type="object", ref="#/components/schemas/ModalitatIdioma")
+ *             @OA\Property(property="modalitat_idioma", type="object", ref="#/components/schemas/Modalitats Idiomes")
  *         )
  *     ),
  *     @OA\Response(

@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Validator;
 
 /**
  * @OA\Tag(
- *     name="Audio",
+ *     name="Audios",
  *     description="Operacions per a Audios"
  * )
  */
@@ -28,7 +28,7 @@ class AudiosController extends Controller
  *             @OA\Property(
  *                 property="data",
  *                 type="array",
- *                 @OA\Items(ref="#/components/schemas/Audio")
+ *                 @OA\Items(ref="#/components/schemas/Audios")
  *             )
  *         )
  *     ),
@@ -52,7 +52,7 @@ class AudiosController extends Controller
  *     )
  * )
  * @OA\Schema(
- *     schema="Audio",
+ *     schema="Audios",
  *     type="object",
  *     @OA\Property(property="url", type="string", description="URL de l'audio"),
  *     @OA\Property(property="punt_interes_id", type="integer", description="Identificador del punt d'interès associat a l'audio")
@@ -91,7 +91,7 @@ class AudiosController extends Controller
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="success"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Audio")
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Audios")
  *         )
  *     ),
  *     @OA\Response(
@@ -162,7 +162,7 @@ public function store(Request $request)
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="correcto"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Audio")
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Audios")
  *         )
  *     ),
  *     @OA\Response(
@@ -225,7 +225,7 @@ public function store(Request $request)
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="success"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Audio")
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Audios")
  *         )
  *     ),
  *     @OA\Response(
@@ -299,7 +299,7 @@ public function update(Request $request, $id)
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="success"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Audio")
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Audios")
  *         )
  *     ),
  *     @OA\Response(

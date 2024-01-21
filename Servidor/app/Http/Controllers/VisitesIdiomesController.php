@@ -13,11 +13,7 @@ use App\Models\VisitesIdiomes;
  */
 class VisitesIdiomesController extends Controller
 {
-    /**
-     * Muestra una lista de todas las traducciones de visitas.
-     *
-     * @return \Illuminate\Http\Response
-     */
+   
 
     /**
  * @OA\Get(
@@ -49,12 +45,7 @@ class VisitesIdiomesController extends Controller
         return response()->json(['visites_idiomes' => $visitesIdiomes]);
     }
 
-    /**
-     * Almacena una nueva traducción de visita en la base de datos.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+   
 
     /**
  * @OA\Post(
@@ -105,12 +96,7 @@ class VisitesIdiomesController extends Controller
         return response()->json(['message' => 'Traducción de visita creada correctamente', 'visita_idioma' => $visitaIdioma]);
     }
 
-    /**
-     * Muestra la traducción de visita especificada.
-     *
-     * @param  \App\Models\VisitesIdiomes  $visitaIdioma
-     * @return \Illuminate\Http\Response
-     */
+   
 
     /**
  * @OA\Get(
@@ -148,13 +134,7 @@ class VisitesIdiomesController extends Controller
         return response()->json(['visita_idioma' => $visitaIdioma]);
     }
 
-    /**
-     * Actualiza la traducción de visita especificada en la base de datos.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\VisitesIdiomes  $visitaIdioma
-     * @return \Illuminate\Http\Response
-     */
+   
 
   
      /**
@@ -221,12 +201,7 @@ class VisitesIdiomesController extends Controller
         return response()->json(['message' => 'Traducción de visita actualizada correctamente', 'visita_idioma' => $visitaIdioma]);
     }
 
-    /**
-     * Elimina la traducción de visita especificada de la base de datos.
-     *
-     * @param  \App\Models\VisitesIdiomes  $visitaIdioma
-     * @return \Illuminate\Http\Response
-     */
+    
 
     /**
  * @OA\Delete(

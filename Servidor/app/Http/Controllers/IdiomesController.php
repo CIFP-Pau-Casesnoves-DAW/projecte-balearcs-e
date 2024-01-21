@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Validator;
 
 /**
  * @OA\Tag(
- *     name="Idioma",
+ *     name="Idiomes",
  *     description="Operacions per a Idiomes"
  * )
  */
@@ -28,7 +28,7 @@ class IdiomesController extends Controller
  *             @OA\Property(
  *                 property="data",
  *                 type="array",
- *                 @OA\Items(ref="#/components/schemas/Idioma")
+ *                 @OA\Items(ref="#/components/schemas/Idiomes")
  *             )
  *         )
  *     ),
@@ -52,7 +52,7 @@ class IdiomesController extends Controller
  *     )
  * )
  * @OA\Schema(
- *     schema="Idioma",
+ *     schema="Idiomes",
  *     type="object",
  *     @OA\Property(property="id", type="integer", description="Identificador únic de l'idioma"),
  *     @OA\Property(property="nom", type="string", description="Nom de l'idioma"),
@@ -95,7 +95,7 @@ class IdiomesController extends Controller
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="success"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Idioma")
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Idiomes")
  *         )
  *     ),
  *     @OA\Response(
@@ -169,7 +169,7 @@ class IdiomesController extends Controller
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="correcto"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Idioma")
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Idiomes")
  *         )
  *     ),
  *     @OA\Response(
@@ -234,7 +234,7 @@ class IdiomesController extends Controller
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="success"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Idioma")
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Idiomes")
  *         )
  *     ),
  *     @OA\Response(
@@ -307,7 +307,7 @@ class IdiomesController extends Controller
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="success"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Idioma")
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Idiomes")
  *         )
  *     ),
  *     @OA\Response(

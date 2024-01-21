@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Validator;
 
 /**
  * @OA\Tag(
- *     name="PuntsInteres",
+ *     name="Punts d'Interès",
  *     description="Operacions per a Punts d'Interès"
  * )
  */
@@ -34,7 +34,7 @@ class PuntsInteresController extends Controller
  *             @OA\Property(
  *                 property="data",
  *                 type="array",
- *                 @OA\Items(ref="#/components/schemas/PuntInteres")
+ *                 @OA\Items(ref="#/components/schemas/Punts d'Interès")
  *             )
  *         )
  *     ),
@@ -59,7 +59,7 @@ class PuntsInteresController extends Controller
  * )
  * 
  *   @OA\Schema(
- *     schema="PuntInteres",
+ *     schema="Punts d'Interès",
  *     type="object",
  *     @OA\Property(property="id", type="integer", description="Identificador únic del punt d'interès"),
  *     @OA\Property(property="nom", type="string", description="Nom del punt d'interès"),
@@ -109,7 +109,7 @@ class PuntsInteresController extends Controller
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="success"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/PuntInteres")
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Punts d'Interès")
  *         )
  *     ),
  *     @OA\Response(
@@ -187,7 +187,7 @@ class PuntsInteresController extends Controller
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="correcto"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/PuntInteres")
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Punts d'Interès")
  *         )
  *     ),
  *     @OA\Response(
@@ -258,7 +258,7 @@ class PuntsInteresController extends Controller
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="correcto"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/PuntInteres")
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Punts d'Interès")
  *         )
  *     ),
  *     @OA\Response(

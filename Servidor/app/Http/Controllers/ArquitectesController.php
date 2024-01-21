@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Validator;
 
 /**
  * @OA\Tag(
- *     name="Arquitecte",
+ *     name="Arquitectes",
  *     description="Operacions per a Arquitectes"
  * )
  */
@@ -28,7 +28,7 @@ class ArquitectesController extends Controller
      *          description="Llista d'arquitectes",
      *          @OA\JsonContent(
      *              type="array",
-     *              @OA\Items(ref="#/components/schemas/Arquitecte")
+     *              @OA\Items(ref="#/components/schemas/Arquitectes")
      *          )
      *      ),
      *      @OA\Response(
@@ -51,7 +51,7 @@ class ArquitectesController extends Controller
      *      )
      * )
      * @OA\Schema(
-     * schema="Arquitecte",
+     * schema="Arquitectes",
      *     type="object",
      *                 @OA\Property(property="nom", type="string"),
      *                 @OA\Property(property="data_baixa", type="string", format="date"),
@@ -90,7 +90,7 @@ class ArquitectesController extends Controller
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="success"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Arquitecte")
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Arquitectes")
  *         )
  *     ),
  *     @OA\Response(
@@ -160,7 +160,7 @@ public function store(Request $request)
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="correcto"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Arquitecte")
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Arquitectes")
  *         )
  *     ),
  *     @OA\Response(
@@ -223,7 +223,7 @@ public function show($id)
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="success"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Arquitecte")
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Arquitectes")
  *         )
  *     ),
  *     @OA\Response(
@@ -297,7 +297,7 @@ public function show($id)
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="success"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Arquitecte")
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Arquitectes")
  *         )
  *     ),
  *     @OA\Response(

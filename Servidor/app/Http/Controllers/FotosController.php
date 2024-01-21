@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Validator;
 
 /**
  * @OA\Tag(
- *     name="Foto",
+ *     name="Fotos",
  *     description="Operacions per a Fotos d'Espais i Punts d'Interès"
  * )
  */
@@ -28,7 +28,7 @@ class FotosController extends Controller
  *             @OA\Property(
  *                 property="data",
  *                 type="array",
- *                 @OA\Items(ref="#/components/schemas/Foto")
+ *                 @OA\Items(ref="#/components/schemas/Fotos")
  *             )
  *         )
  *     ),
@@ -52,7 +52,7 @@ class FotosController extends Controller
  *     )
  * )
  * @OA\Schema(
- *     schema="Foto",
+ *     schema="Fotos",
  *     type="object",
  *     @OA\Property(property="id", type="integer", description="Identificador únic de la foto"),
  *     @OA\Property(property="url", type="string", description="URL de la foto"),
@@ -98,7 +98,7 @@ class FotosController extends Controller
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="success"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Foto")
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Fotos")
  *         )
  *     ),
  *     @OA\Response(
@@ -173,7 +173,7 @@ class FotosController extends Controller
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="correcto"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Foto")
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Fotos")
  *         )
  *     ),
  *     @OA\Response(
@@ -237,7 +237,7 @@ class FotosController extends Controller
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="success"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Foto")
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Fotos")
  *         )
  *     ),
  *     @OA\Response(
@@ -309,7 +309,7 @@ class FotosController extends Controller
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="success"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Foto")
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Fotos")
  *         )
  *     ),
  *     @OA\Response(
@@ -366,7 +366,7 @@ class FotosController extends Controller
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="success"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Foto")
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Fotos")
  *         )
  *     ),
  *     @OA\Response(

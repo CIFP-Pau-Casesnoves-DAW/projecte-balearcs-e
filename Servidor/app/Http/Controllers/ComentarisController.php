@@ -9,7 +9,7 @@ use Carbon\Carbon;
 
 /**
      * @OA\Tag(
-     *    name="Comentari",
+     *    name="Comentaris",
      *   description="Operacions per a Comentaris"
      * )
      */
@@ -30,7 +30,7 @@ class ComentarisController extends Controller
  *             @OA\Property(
  *                 property="data",
  *                 type="array",
- *                 @OA\Items(ref="#/components/schemas/Comentari")
+ *                 @OA\Items(ref="#/components/schemas/Comentaris")
  *             )
  *         )
  *     ),
@@ -44,7 +44,7 @@ class ComentarisController extends Controller
  *     )
  * )
  * @OA\Schema(
- *     schema="Comentari",
+ *     schema="Comentaris",
  *     type="object",
  *     @OA\Property(property="id", type="integer", description="Identificador únic del comentari"),
  *     @OA\Property(property="text", type="string", description="Text del comentari"),
@@ -85,7 +85,7 @@ class ComentarisController extends Controller
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="correcte"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Comentari")
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Comentaris")
  *         )
  *     ),
  *     @OA\Response(
@@ -162,7 +162,7 @@ class ComentarisController extends Controller
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="correcto"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Comentari")
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Comentaris")
  *         )
  *     ),
  *     @OA\Response(
@@ -216,7 +216,7 @@ class ComentarisController extends Controller
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="success"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Comentari")
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Comentaris")
  *         )
  *     ),
  *     @OA\Response(
@@ -307,7 +307,7 @@ class ComentarisController extends Controller
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="success"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Comentari")
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Comentaris")
  *         )
  *     ),
  *     @OA\Response(
