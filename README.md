@@ -131,6 +131,12 @@ Executa les migracions per crear la base de dades:
 S'han creat els Middlewares següents:
 
 -  ControlaAdministrador
+-  ControlaDadesAudios
+-  ControlaDadesComentaris
+-  ControlaDadesFotos
+-  ControlaDadesPuntsInteres
+-  ControlaDadesValoracions
+-  ControlaDadesVisites
 -  ControlaDadesEspais
 -  ControlaDadesUsuaris
 -  ControlaRegistreUsuaris
