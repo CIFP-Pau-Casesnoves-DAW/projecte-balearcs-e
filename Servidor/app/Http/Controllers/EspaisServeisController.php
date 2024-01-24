@@ -16,156 +16,185 @@ class EspaisServeisController extends Controller
 {
     /**
      * @OA\Get(
-     *     path="/api/espais-serveis",
-     *     tags={"EspaiServei"},
-     *     summary="Llista totes les associacions entre espais i serveis",
+     *     path="/api/EspaisServeis",
+     *     tags={"EspaisServeis"},
+     *     summary="Llista totes les modalitats d'idiomes",
      *     @OA\Response(
      *         response=200,
-     *         description="Retorna un llistat de totes les associacions entre espais i serveis",
+     *         description="Retorna un llistat de modalitats d'idiomes",
      *         @OA\JsonContent(
      *             type="array",
-     *             @OA\Items(ref="#/components/schemas/EspaiServei")
+     *             @OA\Items(ref="#/components/schemas/EspaisServeis")
      *         )
      *     )
      * )
      */
     public function index()
     {
-        $espaisServeis = EspaisServeis::all();
-        return response()->json(['espais_serveis' => $espaisServeis], 200);
+        try {
+            $tuples = EspaisServeis::all();
+            return response()->json(['status' => 'correcto', 'data' => $tuples], 200);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json(['status' => 'error', 'data' => $e->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 
     /**
      * @OA\Post(
-     *     path="/api/espais-serveis",
-     *     tags={"EspaiServei"},
-     *     summary="Crea una nova associació entre un espai i un servei",
+     *     path="/api/EspaisServeis",
+     *     tags={"EspaisServeis"},
+     *     summary="Crea una nova modalitat-idioma",
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(
-     *             required={"servei_id", "espai_id"},
-     *             @OA\Property(property="servei_id", type="integer", example=1),
-     *             @OA\Property(property="espai_id", type="integer", example=1),
-     *             @OA\Property(property="data_baixa", type="string", format="date", example="2023-01-01", nullable=true)
-     *         )
+     *         @OA\JsonContent(ref="#/components/schemas/EspaisServeis")
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Associació creada correctament",
-     *         @OA\JsonContent(ref="#/components/schemas/EspaiServei")
-     *     ),
-     *     @OA\Response(
-     *         response=400,
-     *         description="Error de validació",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="errors", type="object")
-     *         )
+     *         description="Modalitat-idioma creada correctament"
      *     )
      * )
      */
     public function store(Request $request)
     {
-        $reglesValidacio = [
-            'servei_id' => 'required|exists:serveis,id',
-            'espai_id' => 'required|exists:espais,id',
-            'data_baixa' => 'nullable|date',
-        ];
+        try {
+            $reglesValidacio = [
+                'servei_id' => 'required|int',
+                'espai_id' => 'required|int',
+            ];
+            $missatges = [
+                'required' => 'El camp :attribute és obligatori.',
+                'max' => 'El :attribute ha de tenir màxim :max caràcters.'
+            ];
 
-        $validacio = Validator::make($request->all(), $reglesValidacio);
-        if ($validacio->fails()) {
-            return response()->json(['errors' => $validacio->errors()], 400);
+            $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
+            if ($validacio->fails()) {
+                throw new \Illuminate\Validation\ValidationException($validacio);
+            }
+
+            $tupla = EspaisServeis::create($request->all());
+
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
+        } catch (\Illuminate\Validation\ValidationException $validationException) {
+            return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
         }
-
-        $espaiServei = EspaisServeis::create($request->all());
-        return response()->json(['espai_servei' => $espaiServei], 200);
     }
 
-    // Continuació de EspaisServeisController
-
-/**
- * @OA\Get(
- *     path="/api/espais-serveis/{servei_id}/{espai_id}",
- *     tags={"EspaiServei"},
- *     summary="Mostra una associació específica entre espai i servei",
- *     @OA\Parameter(
- *         name="servei_id",
- *         in="path",
- *         required=true,
- *         @OA\Schema(type="integer")
- *     ),
- *     @OA\Parameter(
- *         name="espai_id",
- *         in="path",
- *         required=true,
- *         @OA\Schema(type="integer")
- *     ),
- *     @OA\Response(
- *         response=200,
- *         description="Retorna la associació específica",
- *         @OA\JsonContent(ref="#/components/schemas/EspaiServei")
- *     ),
- *     @OA\Response(
- *         response=404,
- *         description="Associació no trobada",
- *         @OA\JsonContent(
- *             @OA\Property(property="message", type="string", example="Associació no trobada")
- *         )
- *     )
- * )
- */
-public function show($servei_id, $espai_id)
-{
-    $espaiServei = EspaisServeis::where('servei_id', $servei_id)->where('espai_id', $espai_id)->first();
-    if (!$espaiServei) {
-        return response()->json(['message' => 'Associació no trobada'], 404);
-    }
-    return response()->json(['espai_servei' => $espaiServei], 200);
-}
-
-// Com que l'associació entre un espai i un servei no sol requerir actualitzacions, no implementarem el mètode update.
-
-/**
- * @OA\Delete(
- *     path="/api/espais-serveis/{servei_id}/{espai_id}",
- *     tags={"EspaiServei"},
- *     summary="Elimina una associació específica entre espai i servei",
- *     @OA\Parameter(
- *         name="servei_id",
- *         in="path",
- *         required=true,
- *         @OA\Schema(type="integer")
- *     ),
- *     @OA\Parameter(
- *         name="espai_id",
- *         in="path",
- *         required=true,
- *         @OA\Schema(type="integer")
- *     ),
- *     @OA\Response(
- *         response=200,
- *         description="Associació eliminada correctament",
- *         @OA\JsonContent(
- *             @OA\Property(property="message", type="string", example="Associació eliminada correctament")
- *         )
- *     ),
- *     @OA\Response(
- *         response=404,
- *         description="Associació no trobada",
- *         @OA\JsonContent(
- *             @OA\Property(property="message", type="string", example="Associació no trobada")
- *         )
- *     )
- * )
- */
-public function destroy($servei_id, $espai_id)
-{
-    $espaiServei = EspaisServeis::where('servei_id', $servei_id)->where('espai_id', $espai_id)->first();
-    if (!$espaiServei) {
-        return response()->json(['message' => 'Associació no trobada'], 404);
+    /**
+     * @OA\Get(
+     *     path="/api/EspaisServeis/{id}",
+     *     tags={"EspaisServeis"},
+     *     summary="Mostra una modalitat-idioma específica",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Retorna la modalitat-idioma especificada",
+     *         @OA\JsonContent(ref="#/components/schemas/EspaisServeis")
+     *     )
+     * )
+     */
+    public function show($espai_id, $servei_id)
+    {
+        try {
+            $espaisservei = EspaisServeis::where('espai_id', $espai_id)->where('servei_id', $servei_id)->first();
+            if (!$espaisservei) {
+                return response()->json(['message' => 'No trobat'], 404);
+            }
+            return response()->json(['servei_idioma' => $espaisservei], 200);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 
-    $espaiServei->delete();
-    return response()->json(['message' => 'Associació eliminada correctament'], 200);
-}
-}
+    /**
+     * @OA\Put(
+     *     path="/api/EspaisServeis/{id}",
+     *     tags={"EspaisServeis"},
+     *     summary="Actualitza una modalitat-idioma específica",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/EspaisServeis")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Modalitat-idioma actualitzada correctament"
+     *     )
+     * )
+     */
+    public function update(Request $request, $espai_id, $servei_id)
+    {
+        try {
+            $reglesValidacio = [
+                'servei_id' => 'nullable|int',
+                'espai_id' => 'nullable|int',
+            ];
 
+            $validacio = Validator::make($request->all(), $reglesValidacio);
+            if ($validacio->fails()) {
+                return response()->json(['errors' => $validacio->errors()], 400);
+            }
+
+            $espaisservei = EspaisServeis::where('espai_id', $espai_id)->where('servei_id', $servei_id)->first();
+            if (!$espaisservei) {
+                return response()->json(['message' => 'No trobat'], 404);
+            }
+
+            $espaisservei->update($request->all());
+            return response()->json(['servei_idioma' => $espaisservei], 200);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
+    }
+
+    /**
+     * @OA\Delete(
+     *     path="/api/EspaisServeis/{id}",
+     *     tags={"EspaisServeis"},
+     *     summary="Elimina una modalitat-idioma específica",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Modalitat-idioma eliminada correctament"
+     *     )
+     * )
+     */
+    public function destroy($espai_id, $servei_id)
+    {
+        try {
+            $espaisservei = EspaisServeis::where('espai_id', $espai_id)->where('servei_id', $servei_id)->first();
+            if (!$espaisservei) {
+                return response()->json(['message' => 'No trobat'], 404);
+            }
+
+            $espaisservei->delete();
+            return response()->json(['message' => 'Eliminat correctament'], 200);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
+    }
+}

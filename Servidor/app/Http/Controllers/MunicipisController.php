@@ -63,7 +63,6 @@ class MunicipisController extends Controller
             $reglesValidacio = [
                 'nom' => 'required|string|max:255',
                 'illa_id' => 'required|int',
-                'data_baixa' => 'nullable|date',
             ];
             $missatges = [
                 'required' => 'El camp :attribute és obligatori.',
@@ -74,6 +73,12 @@ class MunicipisController extends Controller
             $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
             if ($validacio->fails()) {
                 throw new \Illuminate\Validation\ValidationException($validacio);
+            }
+
+            if (!empty($request->data_baixa)) {
+                $request->merge(['data_baixa' => now()]);
+            } else if (empty($request->data_baixa)) {
+                $request->merge(['data_baixa' => NULL]);
             }
 
             $tupla = Municipis::create($request->all());
@@ -112,7 +117,9 @@ class MunicipisController extends Controller
             $tupla = Municipis::findOrFail($id);
             return response()->json(['status' => 'correcto', 'data' => $tupla], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json(['status' => 'Usuaris no trobat'], 400);
+            return response()->json(['status' => 'No trobat'], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
         }
     }
 
@@ -146,7 +153,6 @@ class MunicipisController extends Controller
             $reglesValidacio = [
                 'nom' => 'nullable|string|max:255',
                 'illa_id' => 'nullable|int',
-                'data_baixa' => 'nullable|date',
             ];
             $missatges = [
                 'required' => 'El camp :attribute és obligatori.',
@@ -157,6 +163,12 @@ class MunicipisController extends Controller
             $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
             if ($validacio->fails()) {
                 throw new \Illuminate\Validation\ValidationException($validacio);
+            }
+
+            if (!empty($request->data_baixa)) {
+                $request->merge(['data_baixa' => now()]);
+            } else if (empty($request->data_baixa)) {
+                $request->merge(['data_baixa' => NULL]);
             }
 
             $tupla->update($request->all());

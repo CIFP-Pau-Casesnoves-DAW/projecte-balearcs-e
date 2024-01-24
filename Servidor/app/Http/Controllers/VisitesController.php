@@ -89,7 +89,7 @@ class VisitesController extends Controller
                 'max' => 'El :attribute ha de tenir màxim :max caràcters.'
             ];
 
-            $validacio = Visites::make($request->all(), $reglesValidacio, $missatges);
+            $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
             if ($validacio->fails()) {
                 throw new \Illuminate\Validation\ValidationException($validacio);
             }
@@ -137,7 +137,7 @@ class VisitesController extends Controller
             $tupla = Visites::findOrFail($id);
             return response()->json(['status' => 'correcto', 'data' => $tupla], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json(['status' => 'Usuaris no trobat'], 400);
+            return response()->json(['status' => 'No trobat'], 400);
         } catch (\Exception $exception) {
             return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
         }
@@ -197,6 +197,16 @@ class VisitesController extends Controller
             $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
             if ($validacio->fails()) {
                 throw new \Illuminate\Validation\ValidationException($validacio);
+            }
+
+            $mdRol = $request->md_rol;
+            if (empty($request->data_baixa) && $mdRol == 'administrador') {
+                $tupla->data_baixa = NULL;
+                $tupla->save();
+            }
+
+            if (!empty($request->espai_id) && $mdRol == 'administrador') {
+                $request->merge(['espai_id' => $request->espai_id]);
             }
 
             $tupla->update($request->all());

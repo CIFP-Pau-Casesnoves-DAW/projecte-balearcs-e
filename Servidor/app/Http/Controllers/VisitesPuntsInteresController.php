@@ -80,9 +80,9 @@ class VisitesPuntsInteresController extends Controller
     {
         try {
             $reglesValidacio = [
-                'punts_interes_id' => 'required|exists:punts_interes,id',
-                'visita_id' => 'required|exists:visites,id',
-                'ordre' => 'required|integer',
+                'punt_interes_id' => 'required|int',
+                'visita_id' => 'required|int',
+                'ordre' => 'required|int',
             ];
             $missatges = [
                 'required' => 'El camp :attribute és obligatori.',
@@ -108,13 +108,13 @@ class VisitesPuntsInteresController extends Controller
      * Muestra la asociación de punto de interés específica.
      *
      * @param  int  $visita_id
-     * @param  int  $punts_interes_id
+     * @param  int  $punt_interes_id
      * @return \Illuminate\Http\Response
      */
 
     /**
      * @OA\Get(
-     *     path="/api/visites/{visita_id}/puntsinteres/{punts_interes_id}",
+     *     path="/api/visites/{visita_id}/puntsinteres/{punt_interes_id}",
      *     tags={"VisitesPuntsInteres"},
      *     summary="Mostra una associació específica entre una visita i un punt d'interès",
      *     @OA\Parameter(
@@ -124,7 +124,7 @@ class VisitesPuntsInteresController extends Controller
      *         @OA\Schema(type="integer")
      *     ),
      *     @OA\Parameter(
-     *         name="punts_interes_id",
+     *         name="punt_interes_id",
      *         in="path",
      *         required=true,
      *         @OA\Schema(type="integer")
@@ -136,46 +136,81 @@ class VisitesPuntsInteresController extends Controller
      *     )
      * )
      */
-    public function show($visita_id, $punts_interes_id)
+    public function show($visita_id, $punt_interes_id)
     {
         try {
-            $visitapuntinteres = VisitesPuntsInteres::where('visita_id', $visita_id)->where('punts_interes_id', $punts_interes_id)->first();
+            $visitapuntinteres = VisitesPuntsInteres::where('visita_id', $visita_id)->where('punt_interes_id', $punt_interes_id)->first();
             if (!$visitapuntinteres) {
-                return response()->json(['message' => 'Traducció no trobada'], 404);
+                return response()->json(['message' => 'No trobat'], 404);
             }
-            return response()->json(['punts_interes_idioma' => $visitapuntinteres], 200);
+            return response()->json(['punt_interes_idioma' => $visitapuntinteres], 200);
         } catch (\Exception $exception) {
             return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
         }
     }
 
-    public function update(Request $request, $visita_id, $punts_interes_id)
+    // public function update(Request $request, $visita_id, $punt_interes_id)
+    // {
+    //     try {
+    //         $reglesValidacio = [
+    //             'punt_interes_id' => 'nullable|exists:punts_interes,id',
+    //             'visita_id' => 'nullable|exists:visites,id',
+    //             'ordre' => 'nullable|integer',
+    //         ];
+    //         $missatges = [
+    //             'required' => 'El camp :attribute és obligatori.',
+    //             'max' => 'El :attribute ha de tenir màxim :max caràcters.'
+    //         ];
+
+    //         $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
+    //         if ($validacio->fails()) {
+    //             return response()->json(['errors' => $validacio->errors()], 400);
+    //         }
+
+    //         $visitapuntinteres = VisitesPuntsInteres::where('visita_id', $visita_id)->where('punt_interes_id', $punt_interes_id)->first();
+    //         if (!$visitapuntinteres) {
+    //             return response()->json(['message' => 'Traducció no trobada'], 404);
+    //         }
+
+    //         $visitapuntinteres->update($request->all());
+    //         return response()->json(['punt_interes_idioma' => $visitapuntinteres], 200);
+    //     } catch (\Exception $exception) {
+    //         return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+    //     }
+    // }
+    public function update(Request $request, $visita_id, $punt_interes_id)
     {
-        try {
-            $reglesValidacio = [
-                'punts_interes_id' => 'nullable|exists:punts_interes,id',
-                'visita_id' => 'nullable|exists:visites,id',
-                'ordre' => 'nullable|integer',
-            ];
-            $missatges = [
-                'required' => 'El camp :attribute és obligatori.',
-                'max' => 'El :attribute ha de tenir màxim :max caràcters.'
-            ];
+        $reglesValidacio = [
+            'punt_interes_id' => 'nullable|int',
+            'visita_id' => 'nullable|int',
+            'ordre' => 'nullable|int',
+        ];
+        $missatges = [
+            'required' => 'El camp :attribute és obligatori.',
+            'max' => 'El :attribute ha de tenir màxim :max caràcters.'
+        ];
 
-            $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
-            if ($validacio->fails()) {
-                return response()->json(['errors' => $validacio->errors()], 400);
+        $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
+        if ($validacio->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'errors' => $validacio->errors()
+            ], 400);
+        } else {
+            try {
+                $visita_punt_interes = VisitesPuntsInteres::where('punt_interes_id', $punt_interes_id)->where('visita_id', $visita_id);
+
+                $visita_punt_interes->update($request->all());
+                return response()->json([
+                    'status' => 'success',
+                    'data' => $visita_punt_interes
+                ], 200);
+            } catch (\Exception $e) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'La traduccio de la visita amb la id ' . $visita_id . 'amb punt interes ' . $punt_interes_id . 'no existeix'
+                ], 404);
             }
-
-            $visitapuntinteres = VisitesPuntsInteres::where('visita_id', $visita_id)->where('punts_interes_id', $punts_interes_id)->first();
-            if (!$visitapuntinteres) {
-                return response()->json(['message' => 'Traducció no trobada'], 404);
-            }
-
-            $visitapuntinteres->update($request->all());
-            return response()->json(['punts_interes_idioma' => $visitapuntinteres], 200);
-        } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
         }
     }
 
@@ -183,13 +218,13 @@ class VisitesPuntsInteresController extends Controller
      * Desasocia un punto de interés de una visita.
      *
      * @param  int  $visita_id
-     * @param  int  $punts_interes_id
+     * @param  int  $punt_interes_id
      * @return \Illuminate\Http\Response
      */
 
     /**
      * @OA\Delete(
-     *     path="/api/visites/{visita_id}/puntsinteres/{punts_interes_id}",
+     *     path="/api/visites/{visita_id}/puntsinteres/{punt_interes_id}",
      *     tags={"VisitesPuntsInteres"},
      *     summary="Elimina una associació específica entre una visita i un punt d'interès",
      *     @OA\Parameter(
@@ -199,7 +234,7 @@ class VisitesPuntsInteresController extends Controller
      *         @OA\Schema(type="integer")
      *     ),
      *     @OA\Parameter(
-     *         name="punts_interes_id",
+     *         name="punt_interes_id",
      *         in="path",
      *         required=true,
      *         @OA\Schema(type="integer")
@@ -210,16 +245,17 @@ class VisitesPuntsInteresController extends Controller
      *     )
      * )
      */
-    public function destroy($visita_id, $punts_interes_id)
+    public function destroy($visita_id, $punt_interes_id)
     {
         try {
-            $visitapuntinteres = VisitesPuntsInteres::where('visita_id', $visita_id)->where('punts_interes_id', $punts_interes_id)->first();
-            if (!$visitapuntinteres) {
-                return response()->json(['message' => 'No trobat'], 404);
-            }
+            $punt_interes_visita = VisitesPuntsInteres::where('punt_interes_id', $punt_interes_id)->where('visita_id', $visita_id);
+            $punt_interes_visita->delete();
 
-            $visitapuntinteres->delete();
-            return response()->json(['message' => 'Eliminat correctament'], 200);
+            if ($punt_interes_visita) {
+                return response()->json(['status' => ' Esborrat correctament'], 200);
+            } else {
+                return response()->json(['status' => 'No trobat'], 404);
+            }
         } catch (\Exception $exception) {
             return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
         }

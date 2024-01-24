@@ -74,7 +74,7 @@ class AudiosController extends Controller
     {
         try {
             $reglesValidacio = [
-                'url' => 'required|url',
+                'url' => 'required|string',
                 'punt_interes_id' => 'required|exists:punts_interes,id',
             ];
             $missatges = [
@@ -82,7 +82,7 @@ class AudiosController extends Controller
                 'max' => 'El :attribute ha de tenir màxim :max caràcters.'
             ];
 
-            $validacio = Audios::make($request->all(), $reglesValidacio, $missatges);
+            $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
             if ($validacio->fails()) {
                 throw new \Illuminate\Validation\ValidationException($validacio);
             }
@@ -124,7 +124,7 @@ class AudiosController extends Controller
             $tupla = Audios::findOrFail($id);
             return response()->json(['status' => 'correcto', 'data' => $tupla], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json(['status' => 'Usuaris no trobat'], 400);
+            return response()->json(['status' => 'No trobat'], 400);
         } catch (\Exception $exception) {
             return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
         }
@@ -177,7 +177,7 @@ class AudiosController extends Controller
         try {
             $tupla = Audios::findOrFail($id);
             $reglesValidacio = [
-                'url' => 'nullable|url',
+                'url' => 'nullable|string',
                 'punt_interes_id' => 'nullable|exists:punts_interes,id',
             ];
             $missatges = [
@@ -188,6 +188,12 @@ class AudiosController extends Controller
             $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
             if ($validacio->fails()) {
                 throw new \Illuminate\Validation\ValidationException($validacio);
+            }
+
+            $mdRol = $request->md_rol;
+            if (empty($request->data_baixa) && $mdRol == 'administrador') {
+                $tupla->data_baixa = NULL;
+                $tupla->save();
             }
 
             $tupla->update($request->all());

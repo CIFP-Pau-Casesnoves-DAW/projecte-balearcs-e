@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\VisitesIdiomes;
+use Illuminate\Support\Facades\Validator;
 
 /**
  * @OA\Tag(
@@ -14,175 +15,268 @@ use App\Models\VisitesIdiomes;
 class VisitesIdiomesController extends Controller
 {
     /**
-     * Muestra una lista de todas las traducciones de visitas.
-     *
-     * @return \Illuminate\Http\Response
-     */
-
-     /**
      * @OA\Get(
-     *     path="/api/visitesidiomes",
-     *     tags={"VisitesIdiomes"},
-     *     summary="Llista totes les traduccions de visites",
+     *     path="/api/espais-idiomes",
+     *     tags={"visitaIdioma"},
+     *     summary="Llista totes les traduccions d'espais",
      *     @OA\Response(
      *         response=200,
-     *         description="Retorna un llistat de les traduccions de visites",
+     *         description="Retorna un llistat de totes les traduccions d'espais",
      *         @OA\JsonContent(
      *             type="array",
-     *             @OA\Items(ref="#/components/schemas/VisitesIdiomes")
+     *             @OA\Items(ref="#/components/schemas/visitaIdioma")
      *         )
      *     )
      * )
      */
     public function index()
     {
-        $visitesIdiomes = VisitesIdiomes::all();
-        return response()->json(['visites_idiomes' => $visitesIdiomes]);
+        try {
+            $tuples = VisitesIdiomes::all();
+            return response()->json(['status' => 'correcto', 'data' => $tuples], 200);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json(['status' => 'error', 'data' => $e->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 
     /**
-     * Almacena una nueva traducción de visita en la base de datos.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-
-     /**
      * @OA\Post(
-     *     path="/api/visitesidiomes",
-     *     tags={"VisitesIdiomes"},
-     *     summary="Crea una nova traducció de visita",
+     *     path="/api/espais-idiomes",
+     *     tags={"visitaIdioma"},
+     *     summary="Crea una nova traducció per un espai",
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/VisitesIdiomes")
+     *         @OA\JsonContent(
+     *             required={"idioma_id", "visita_id", "traduccio"},
+     *             @OA\Property(property="idioma_id", type="integer", example=1),
+     *             @OA\Property(property="visita_id", type="integer", example=1),
+     *             @OA\Property(property="traduccio", type="string", example="Descripció de l'espai en un idioma específic"),
+     *             @OA\Property(property="data_baixa", type="string", format="date", example="2023-01-01", nullable=true)
+     *         )
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Traducció de visita creada correctament"
+     *         description="Traducció creada correctament",
+     *         @OA\JsonContent(ref="#/components/schemas/visitaIdioma")
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Error de validació",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="errors", type="object")
+     *         )
      *     )
      * )
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'idioma_id' => 'required|exists:idiomes,id',
-            'visita_id' => 'required|exists:visites,id',
-            'traduccio' => 'required|string',
-            'data_baixa' => 'nullable|date',
-        ]);
+        try {
+            $reglesValidacio = [
+                'idioma_id' => 'required|int',
+                'visita_id' => 'required|int',
+                'traduccio' => 'required|string|max:255',
+                'data_baixa' => 'nullable|date',
+            ];
+            $missatges = [
+                'required' => 'El camp :attribute és obligatori.',
+                'max' => 'El :attribute ha de tenir màxim :max caràcters.'
+            ];
 
-        $visitaIdioma = VisitesIdiomes::create($request->all());
+            $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
+            if ($validacio->fails()) {
+                throw new \Illuminate\Validation\ValidationException($validacio);
+            }
 
-        return response()->json(['message' => 'Traducción de visita creada correctamente', 'visita_idioma' => $visitaIdioma]);
+            $tupla = VisitesIdiomes::create($request->all());
+
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
+        } catch (\Illuminate\Validation\ValidationException $validationException) {
+            return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 
     /**
-     * Muestra la traducción de visita especificada.
-     *
-     * @param  \App\Models\VisitesIdiomes  $visitaIdioma
-     * @return \Illuminate\Http\Response
-     */
-
-     /**
      * @OA\Get(
-     *     path="/api/visitesidiomes/{id}",
-     *     tags={"VisitesIdiomes"},
-     *     summary="Mostra una traducció de visita específica",
+     *     path="/api/espais-idiomes/{idioma_id}/{visita_id}",
+     *     tags={"visitaIdioma"},
+     *     summary="Mostra una traducció específica d'un espai",
      *     @OA\Parameter(
-     *         name="id",
+     *         name="idioma_id",
      *         in="path",
      *         required=true,
-     *         @OA\Schema(
-     *             type="integer"
-     *         )
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Parameter(
+     *         name="visita_id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Retorna la traducció de visita especificada",
-     *         @OA\JsonContent(ref="#/components/schemas/VisitesIdiomes")
+     *         description="Retorna la traducció específica",
+     *         @OA\JsonContent(ref="#/components/schemas/visitaIdioma")
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Traducció no trobada",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Traducció no trobada")
+     *         )
      *     )
      * )
      */
-    public function show(VisitesIdiomes $visitaIdioma)
+    public function show($idioma_id, $visita_id)
     {
-        return response()->json(['visita_idioma' => $visitaIdioma]);
+        try {
+            $visitaIdioma = VisitesIdiomes::where('idioma_id', $idioma_id)->where('visita_id', $visita_id)->first();
+            if (!$visitaIdioma) {
+                return response()->json(['message' => 'Traducció no trobada'], 404);
+            }
+            return response()->json(['visita_idioma' => $visitaIdioma], 200);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 
-    /**
-     * Actualiza la traducción de visita especificada en la base de datos.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\VisitesIdiomes  $visitaIdioma
-     * @return \Illuminate\Http\Response
-     */
 
-     /**
+
+    /**
      * @OA\Put(
-     *     path="/api/visitesidiomes/{id}",
-     *     tags={"VisitesIdiomes"},
-     *     summary="Actualitza una traducció de visita específica",
+     *     path="/api/espais-idiomes/{idioma_id}/{visita_id}",
+     *     tags={"visitaIdioma"},
+     *     summary="Actualitza la traducció d'un espai específic",
      *     @OA\Parameter(
-     *         name="id",
+     *         name="idioma_id",
      *         in="path",
      *         required=true,
-     *         @OA\Schema(
-     *             type="integer"
-     *         )
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Parameter(
+     *         name="visita_id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
      *     ),
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/VisitesIdiomes")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Traducció de visita actualitzada correctament"
-     *     )
-     * )
-     */
-    public function update(Request $request, VisitesIdiomes $visitaIdioma)
-    {
-        $request->validate([
-            'idioma_id' => 'nullable|exists:idiomes,id',
-            'visita_id' => 'nullable|exists:visites,id',
-            'traduccio' => 'nullable|string',
-            'data_baixa' => 'nullable|date',
-        ]);
-
-        $visitaIdioma->update($request->all());
-
-        return response()->json(['message' => 'Traducción de visita actualizada correctamente', 'visita_idioma' => $visitaIdioma]);
-    }
-
-    /**
-     * Elimina la traducción de visita especificada de la base de datos.
-     *
-     * @param  \App\Models\VisitesIdiomes  $visitaIdioma
-     * @return \Illuminate\Http\Response
-     */
-
-     /**
-     * @OA\Delete(
-     *     path="/api/visitesidiomes/{id}",
-     *     tags={"VisitesIdiomes"},
-     *     summary="Elimina una traducció de visita específica",
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         @OA\Schema(
-     *             type="integer"
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="traduccio", type="string", example="Nova descripció de l'espai en un idioma específic"),
+     *             @OA\Property(property="data_baixa", type="string", format="date", example="2023-01-01", nullable=true)
      *         )
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Traducció de visita eliminada correctament"
+     *         description="Traducció actualitzada correctament",
+     *         @OA\JsonContent(ref="#/components/schemas/visitaIdioma")
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Error de validació",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="errors", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Traducció no trobada",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Traducció no trobada")
+     *         )
      *     )
      * )
      */
-    public function destroy(VisitesIdiomes $visitaIdioma)
+    public function update(Request $request, $idioma_id, $visita_id)
     {
-        $visitaIdioma->delete();
+        $reglesValidacio = [
+            'traduccio' => 'nullable|string|max:255',
+        ];
+        $missatges = [
+            'required' => 'El camp :attribute és obligatori.',
+            'max' => 'El :attribute ha de tenir màxim :max caràcters.'
+        ];
 
-        return response()->json(['message' => 'Traducción de visita eliminada correctamente']);
+        $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
+        if ($validacio->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'errors' => $validacio->errors()
+            ], 400);
+        } else {
+            try {
+                $traduccio_visita = VisitesIdiomes::where('idioma_id', $idioma_id)->where('visita_id', $visita_id);
+                if (!empty($request->data_baixa)) {
+                    $request->merge(['data_baixa' => now()]);
+                } else if (empty($request->data_baixa)) {
+                    $request->merge(['data_baixa' => NULL]);
+                }
+
+                $traduccio_visita->update($request->all());
+                return response()->json([
+                    'status' => 'success',
+                    'data' => $traduccio_visita
+                ], 200);
+            } catch (\Exception $e) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'La traduccio de la visita amb la id ' . $visita_id . 'amb idioma' . $idioma_id . 'no existeix'
+                ], 404);
+            }
+        }
+    }
+
+    /**
+     * @OA\Delete(
+     *     path="/api/espais-idiomes/{idioma_id}/{visita_id}",
+     *     tags={"espaiIdioma"},
+     *     summary="Elimina la traducció d'un espai específic",
+     *     @OA\Parameter(
+     *         name="idioma_id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Parameter(
+     *         name="visita_id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Traducció eliminada correctament",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Traducció eliminada correctament")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Traducció no trobada",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Traducció no trobada")
+     *         )
+     *     )
+     * )
+     */
+    //funciona
+    public function destroy($idioma_id, $visita_id)
+    {
+        try {
+            $traduccio_visita = VisitesIdiomes::where('idioma_id', $idioma_id)->where('visita_id', $visita_id);
+            $traduccio_visita->delete();
+
+            if ($traduccio_visita) {
+                return response()->json(['status' => ' Esborrat correctament'], 200);
+            } else {
+                return response()->json(['status' => 'No trobat'], 404);
+            }
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 }

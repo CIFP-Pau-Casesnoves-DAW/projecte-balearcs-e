@@ -11,9 +11,8 @@ class EspaisIdiomes extends Pivot
     use HasFactory;
 
     protected $table = 'espais_idiomes';
-
-    public $incrementing = true; // Si tens una clau primària autoincrementada
-    protected $primaryKey = ['idioma_id', 'espai_id']; // Defineix la clau primària composta
+    public $incrementing = false;
+    protected $primaryKey = ['idioma_id', 'espai_id']; 
 
     protected $fillable = [
         'idioma_id',

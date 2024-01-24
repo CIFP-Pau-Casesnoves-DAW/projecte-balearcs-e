@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use App\Models\Espais;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
-use App\Models\Usuaris;
 
 /**
  * @OA\Tag(
@@ -287,6 +286,11 @@ class EspaisController extends Controller
                 $espai = Espais::find($id);
                 $espai->destacat = $request->input('destacat');
                 $espai->save();
+            }
+
+            if (empty($request->data_baixa) && $mdRol == 'administrador') {
+                $tupla->data_baixa = NULL;
+                $tupla->save();
             }
 
             $tupla->update($request->all());

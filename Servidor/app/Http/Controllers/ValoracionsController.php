@@ -78,10 +78,7 @@ class ValoracionsController extends Controller
 
             $reglesValidacio = [
                 'puntuacio' => 'required|integer',
-                'data' => 'required|date',
-                'usuari_id' => 'required|integer',
                 'espai_id' => 'required|integer',
-                'data_baixa' => 'nullable|date',
             ];
 
             $missatges = [
@@ -138,7 +135,7 @@ class ValoracionsController extends Controller
             $tupla = Valoracions::findOrFail($id);
             return response()->json(['status' => 'correcto', 'data' => $tupla], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json(['status' => 'Usuaris no trobat'], 400);
+            return response()->json(['status' => 'No trobat'], 400);
         }
     }
 
@@ -180,10 +177,7 @@ class ValoracionsController extends Controller
 
             $reglesValidacio = [
                 'puntuacio' => 'nullable|integer',
-                'data' => 'nullable|date',
-                'usuari_id' => 'nullable|integer',
                 'espai_id' => 'nullable|integer',
-                'data_baixa' => 'nullable|date',
             ];
 
             $missatges = [
@@ -209,6 +203,14 @@ class ValoracionsController extends Controller
                 $valoracio = Valoracions::find($id);
                 $valoracio->usuari_id = $request->input('usuari_id');
                 $valoracio->save();
+            }
+
+            if (empty($request->data_baixa) && $mdRol == 'administrador') {
+                $tupla->data_baixa = NULL;
+                $tupla->save();
+            } else if (!empty($request->data_baixa) && $mdRol == 'administrador') {
+                $tupla->data_baixa = now();
+                $tupla->save();
             }
 
             $request->merge(['data' => Carbon::now()]);

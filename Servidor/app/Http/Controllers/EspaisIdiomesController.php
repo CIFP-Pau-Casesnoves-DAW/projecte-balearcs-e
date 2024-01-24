@@ -31,8 +31,14 @@ class EspaisIdiomesController extends Controller
      */
     public function index()
     {
-        $espaisIdiomes = EspaisIdiomes::all();
-        return response()->json(['espais_idiomes' => $espaisIdiomes], 200);
+        try {
+            $tuples = EspaisIdiomes::all();
+            return response()->json(['status' => 'correcto', 'data' => $tuples], 200);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json(['status' => 'error', 'data' => $e->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 
     /**
@@ -66,20 +72,36 @@ class EspaisIdiomesController extends Controller
      */
     public function store(Request $request)
     {
-        $reglesValidacio = [
-            'idioma_id' => 'required|exists:idiomes,id',
-            'espai_id' => 'required|exists:espais,id',
-            'traduccio' => 'required|string',
-            'data_baixa' => 'nullable|date',
-        ];
+        try {
+            $reglesValidacio = [
+                'idioma_id' => 'required|int',
+                'espai_id' => 'required|int',
+                'traduccio' => 'required|string|max:255',
+            ];
+            $missatges = [
+                'required' => 'El camp :attribute és obligatori.',
+                'max' => 'El :attribute ha de tenir màxim :max caràcters.'
+            ];
 
-        $validacio = Validator::make($request->all(), $reglesValidacio);
-        if ($validacio->fails()) {
-            return response()->json(['errors' => $validacio->errors()], 400);
+            $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
+            if ($validacio->fails()) {
+                throw new \Illuminate\Validation\ValidationException($validacio);
+            }
+
+            if (!empty($request->data_baixa)) {
+                $request->merge(['data_baixa' => now()]);
+            } else if (empty($request->data_baixa)) {
+                $request->merge(['data_baixa' => NULL]);
+            }
+
+            $tupla = EspaisIdiomes::create($request->all());
+
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
+        } catch (\Illuminate\Validation\ValidationException $validationException) {
+            return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
         }
-
-        $espaiIdioma = EspaisIdiomes::create($request->all());
-        return response()->json(['espai_idioma' => $espaiIdioma], 200);
     }
 
     /**
@@ -115,11 +137,15 @@ class EspaisIdiomesController extends Controller
      */
     public function show($idioma_id, $espai_id)
     {
-        $espaiIdioma = EspaisIdiomes::where('idioma_id', $idioma_id)->where('espai_id', $espai_id)->first();
-        if (!$espaiIdioma) {
-            return response()->json(['message' => 'Traducció no trobada'], 404);
+        try {
+            $espaiIdioma = EspaisIdiomes::where('idioma_id', $idioma_id)->where('espai_id', $espai_id)->first();
+            if (!$espaiIdioma) {
+                return response()->json(['message' => 'Traducció no trobada'], 404);
+            }
+            return response()->json(['espai_idioma' => $espaiIdioma], 200);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
         }
-        return response()->json(['espai_idioma' => $espaiIdioma], 200);
     }
 
 
@@ -173,28 +199,46 @@ class EspaisIdiomesController extends Controller
     public function update(Request $request, $idioma_id, $espai_id)
     {
         $reglesValidacio = [
-            'traduccio' => 'nullable|string',
-            'data_baixa' => 'nullable|date',
+            'traduccio' => 'nullable|string|max:255',
+        ];
+        $missatges = [
+            'required' => 'El camp :attribute és obligatori.',
+            'max' => 'El :attribute ha de tenir màxim :max caràcters.'
         ];
 
-        $validacio = Validator::make($request->all(), $reglesValidacio);
+        $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
         if ($validacio->fails()) {
-            return response()->json(['errors' => $validacio->errors()], 400);
-        }
+            return response()->json([
+                'status' => 'error',
+                'errors' => $validacio->errors()
+            ], 400);
+        } else {
+            try {
+                $traduccio_espai = EspaisIdiomes::where('idioma_id', $idioma_id)->where('espai_id', $espai_id);
+                if (!empty($request->data_baixa)) {
+                    $request->merge(['data_baixa' => now()]);
+                } else if (empty($request->data_baixa)) {
+                    $request->merge(['data_baixa' => NULL]);
+                }
 
-        $espaiIdioma = EspaisIdiomes::where('idioma_id', $idioma_id)->where('espai_id', $espai_id)->first();
-        if (!$espaiIdioma) {
-            return response()->json(['message' => 'Traducció no trobada'], 404);
+                $traduccio_espai->update($request->all());
+                return response()->json([
+                    'status' => 'success',
+                    'data' => $traduccio_espai
+                ], 200);
+            } catch (\Exception $e) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'La traduccio del espai amb la id ' . $espai_id . 'amb idioma' . $idioma_id . 'no existeix'
+                ], 404);
+            }
         }
-
-        $espaiIdioma->update($request->all());
-        return response()->json(['espai_idioma' => $espaiIdioma], 200);
     }
 
     /**
      * @OA\Delete(
      *     path="/api/espais-idiomes/{idioma_id}/{espai_id}",
-     *     tags={"EspaiIdioma"},
+     *     tags={"espaiIdioma"},
      *     summary="Elimina la traducció d'un espai específic",
      *     @OA\Parameter(
      *         name="idioma_id",
@@ -224,14 +268,20 @@ class EspaisIdiomesController extends Controller
      *     )
      * )
      */
+    //funciona
     public function destroy($idioma_id, $espai_id)
     {
-        $espaiIdioma = EspaisIdiomes::where('idioma_id', $idioma_id)->where('espai_id', $espai_id)->first();
-        if (!$espaiIdioma) {
-            return response()->json(['message' => 'Traducció no trobada'], 404);
-        }
+        try {
+            $traduccio_espai = EspaisIdiomes::where('idioma_id', $idioma_id)->where('espai_id', $espai_id);
+            $traduccio_espai->delete();
 
-        $espaiIdioma->delete();
-        return response()->json(['message' => 'Traducció eliminada correctament'], 200);
+            if ($traduccio_espai) {
+                return response()->json(['status' => ' Esborrat correctament'], 200);
+            } else {
+                return response()->json(['status' => 'No trobat'], 404);
+            }
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 }

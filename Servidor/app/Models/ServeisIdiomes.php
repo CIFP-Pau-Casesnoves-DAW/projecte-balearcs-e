@@ -4,24 +4,21 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Idiomes;
+use App\Models\Serveis;
 
 class ServeisIdiomes extends Model
 {
     use HasFactory;
 
     protected $table = 'serveis_idiomes';
+    protected $primaryKey = ['idioma_id', 'servei_id'];
+    public $incrementing = false;
 
     protected $fillable = [
         'idioma_id',
         'servei_id',
         'traduccio',
-        'data_baixa',
-    ];
-
-    protected $primaryKey = ['idioma_id', 'servei_id'];
-    public $incrementing = false;
-
-    protected $dates = [
         'data_baixa',
     ];
 

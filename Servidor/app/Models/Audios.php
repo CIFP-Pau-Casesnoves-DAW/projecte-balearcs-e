@@ -11,7 +11,6 @@ class Audios extends Model
 
     protected $table = 'audios';
     
-
     protected $fillable = [
         'url',
         'punt_interes_id'
