@@ -80,37 +80,36 @@ class TipusController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    /**
+/**
  * @OA\Post(
- *     path="/api/tipus",
- *     operationId="storeTipus",
+ *     path="/tipus",
+ *     summary="Crea un nou tipus",
  *     tags={"Tipus"},
- *     summary="Crear un nou tipus",
- *     description="Crea un nou tipus amb les dades proporcionades",
  *     @OA\RequestBody(
  *         required=true,
- *         description="Dades del tipus a crear",
+ *         description="Dades necessàries per a crear un nou tipus",
  *         @OA\JsonContent(
- *             @OA\Property(property="nom_tipus", type="string"),
- *             @OA\Property(property="data_baixa", type="string", format="date"),
+ *             required={"nom_tipus"},
+ *             @OA\Property(property="nom_tipus", type="string", example="Museu"),
+ *             @OA\Property(property="data_baixa", type="string", format="date", example="2024-01-21", nullable=true)
  *         )
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Tipus creat amb èxit",
+ *         description="Tipus creat correctament",
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="success"),
- *             @OA\Property(property="data", ref="#/components/schemas/Tipus"),
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Tipus")
  *         )
  *     ),
  *     @OA\Response(
  *         response=400,
- *         description="Error de validació",
+ *         description="Error en la validació de dades",
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="error"),
- *             @OA\Property(property="data", type="object", example={"field_name": {"Missatge d'error"}})
+ *             @OA\Property(property="data", type="object", additionalProperties={"type":"string"})
  *         )
  *     ),
  *     @OA\Response(
@@ -119,7 +118,7 @@ class TipusController extends Controller
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="error"),
- *             @OA\Property(property="message", type="string", example="Missatge d'error intern del servidor")
+ *             @OA\Property(property="message", type="string")
  *         )
  *     )
  * )
@@ -129,7 +128,7 @@ class TipusController extends Controller
         try {
             $reglesValidacio = [
                 'nom_tipus' => 'required|string|max:255',
-                'data_baixa' => 'nullable|date',
+                
             ];
             $missatges = [
                 'required' => 'El camp :attribute és obligatori.',
@@ -139,6 +138,11 @@ class TipusController extends Controller
             $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
             if ($validacio->fails()) {
                 throw new \Illuminate\Validation\ValidationException($validacio);
+            }
+            if (!empty($request->data_baixa)) {
+                $request->merge(['data_baixa' => now()]);
+            } else if (empty($request->data_baixa)) {
+                $request->merge(['data_baixa' => NULL]);
             }
 
             $tupla = Tipus::create($request->all());
@@ -209,7 +213,7 @@ class TipusController extends Controller
             $tupla = Tipus::findOrFail($id);
             return response()->json(['status' => 'correcto', 'data' => $tupla], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json(['status' => 'Usuaris no trobat'], 400);
+            return response()->json(['status' => 'No trobat'], 400);
         } catch (\Exception $exception) {
             return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
         }
@@ -223,43 +227,52 @@ class TipusController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    /**
+/**
  * @OA\Put(
- *     path="/api/tipus/{id}",
- *     operationId="updateTipus",
+ *     path="/tipus/{id}",
+ *     summary="Actualitza un tipus d'espai per ID",
  *     tags={"Tipus"},
- *     summary="Actualitzar un tipus per ID",
- *     description="Actualitza un tipus específic basat en l'ID proporcionat",
  *     @OA\Parameter(
  *         name="id",
  *         in="path",
  *         required=true,
- *         description="ID del tipus a actualitzar",
- *         @OA\Schema(
- *             type="integer"
- *         )
+ *         description="ID del tipus d'espai a actualitzar",
+ *         @OA\Schema(type="integer")
  *     ),
  *     @OA\RequestBody(
  *         required=true,
- *         description="Dades del tipus a actualitzar",
- *         @OA\JsonContent(ref="#/components/schemas/Tipus")
+ *         description="Dades necessàries per a actualitzar el tipus d'espai",
+ *         @OA\JsonContent(
+ *             required={"nom_tipus"},
+ *             @OA\Property(property="nom_tipus", type="string", example="Museu"),
+ *             @OA\Property(property="data_baixa", type="string", format="date", example="2024-01-21", nullable=true)
+ *         )
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Dades actualitzades del tipus",
+ *         description="Tipus d'espai actualitzat correctament",
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="success"),
- *             @OA\Property(property="data", ref="#/components/schemas/Tipus"),
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Tipus")
  *         )
  *     ),
  *     @OA\Response(
  *         response=400,
- *         description="Error de validació",
+ *         description="Error en la validació de dades",
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="error"),
- *             @OA\Property(property="data", type="object", example={"field_name": {"Error message"}})
+ *             @OA\Property(property="data", type="object", additionalProperties={"type":"string"})
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Tipus d'espai no trobat",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string", example="Tipus d'espai no trobat")
  *         )
  *     ),
  *     @OA\Response(
@@ -268,7 +281,7 @@ class TipusController extends Controller
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="error"),
- *             @OA\Property(property="message", type="string", example="Missatge d'error intern del servidor"),
+ *             @OA\Property(property="message", type="string")
  *         )
  *     )
  * )
@@ -279,7 +292,7 @@ class TipusController extends Controller
             $tupla = Tipus::findOrFail($id);
             $reglesValidacio = [
                 'nom_tipus' => 'nullable|string|max:255',
-                'data_baixa' => 'nullable|date',
+                
             ];
             $missatges = [
                 'required' => 'El camp :attribute és obligatori.',
@@ -289,6 +302,12 @@ class TipusController extends Controller
             $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
             if ($validacio->fails()) {
                 throw new \Illuminate\Validation\ValidationException($validacio);
+            }
+
+            if (!empty($request->data_baixa)) {
+                $request->merge(['data_baixa' => now()]);
+            } else if (empty($request->data_baixa)) {
+                $request->merge(['data_baixa' => NULL]);
             }
 
             $tupla->update($request->all());

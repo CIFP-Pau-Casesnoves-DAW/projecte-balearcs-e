@@ -86,60 +86,59 @@ class ServeisController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    /**
+/**
  * @OA\Post(
- *     path="/api/serveis",
+ *     path="/serveis",
+ *     operationId="storeServeis",
  *     tags={"Serveis"},
- *     summary="Crea un nou servei",
+ *     summary="Afegeix un nou servei",
+ *     description="Crea un nou servei a la base de dades.",
  *     @OA\RequestBody(
  *         required=true,
- *         description="Dades del servei a crear",
+ *         description="Dades del nou servei",
  *         @OA\JsonContent(
- *             type="object",
- *             @OA\Property(property="nom_serveis", type="string", description="Nom del servei"),
- *             @OA\Property(property="data_baixa", type="string", format="date", description="Data de baixa del servei", nullable=true)
+ *             required={"nom_serveis"},
+ *             @OA\Property(property="nom_serveis", type="string", maxLength=255, example="Servei Exemple"),
+ *             @OA\Property(property="data_baixa", type="string", format="date", example="2023-01-01")
  *         )
  *     ),
  *     @OA\Response(
  *         response=200,
  *         description="Servei creat amb èxit",
  *         @OA\JsonContent(
- *             type="object",
  *             @OA\Property(property="status", type="string", example="success"),
  *             @OA\Property(
  *                 property="data",
  *                 type="object",
- *                  ref="#/components/schemas/Servei"
- * 
+ *                 ref="#/components/schemas/Servei"
  *             )
  *         )
  *     ),
  *     @OA\Response(
  *         response=400,
- *         description="Error en la sol·licitud",
+ *         description="Error de validació",
  *         @OA\JsonContent(
- *             type="object",
  *             @OA\Property(property="status", type="string", example="error"),
  *             @OA\Property(property="data", type="object")
  *         )
  *     ),
  *     @OA\Response(
  *         response=500,
- *         description="Error intern del servidor",
+ *         description="Error del servidor",
  *         @OA\JsonContent(
- *             type="object",
  *             @OA\Property(property="status", type="string", example="error"),
  *             @OA\Property(property="message", type="string")
  *         )
- *     )
+ *    )
  * )
- */
+ * 
+ */ 
     public function store(Request $request)
     {
         try {
             $reglesValidacio = [
                 'nom_serveis' => 'required|string|max:255',
-                'data_baixa' => 'nullable|date',
+                
             ];
             $missatges = [
                 'required' => 'El camp :attribute és obligatori.',
@@ -151,6 +150,11 @@ class ServeisController extends Controller
                 throw new \Illuminate\Validation\ValidationException($validacio);
             }
 
+            if (!empty($request->data_baixa)) {
+                $request->merge(['data_baixa' => now()]);
+            } else if (empty($request->data_baixa)) {
+                $request->merge(['data_baixa' => NULL]);
+            }
             $tupla = Serveis::create($request->all());
 
             return response()->json(['status' => 'success', 'data' => $tupla], 200);
@@ -219,7 +223,7 @@ class ServeisController extends Controller
             $tupla = Serveis::findOrFail($id);
             return response()->json(['status' => 'correcto', 'data' => $tupla], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json(['status' => 'Usuaris no trobat'], 400);
+            return response()->json(['status' => 'No trobat'], 400);
         } catch (\Exception $exception) {
             return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
         }
@@ -235,54 +239,52 @@ class ServeisController extends Controller
 
     /**
  * @OA\Put(
- *     path="/api/serveis/{id}",
- *     tags={"Serveis"},
- *     summary="Actualitza un servei existent",
+ *     path="/serveis/{id}",
+ *     summary="Actualitza un servei",
+ *     description="Actualitza les dades d'un servei existent segons l'ID proporcionat.",
+ *     operationId="updateServei",
+ *     tags={"serveis"},
  *     @OA\Parameter(
  *         name="id",
  *         in="path",
  *         required=true,
- *         description="ID del servei",
- *         @OA\Schema(type="integer")
+ *         description="ID del servei a actualitzar",
+ *         @OA\Schema(
+ *             type="integer"
+ *         )
  *     ),
  *     @OA\RequestBody(
  *         required=true,
- *         description="Dades a actualitzar del servei",
+ *         description="Dades del servei per actualitzar",
  *         @OA\JsonContent(
- *             @OA\Property(property="nom_serveis", type="string", example="Servei actualitzat"),
- *             @OA\Property(property="data_baixa", type="string", format="date", example="2024-01-21")
+ *             required={"nom_serveis"},
+ *             @OA\Property(property="nom_serveis", type="string", example="Servei Actualitzat"),
+ *             @OA\Property(property="data_baixa", type="string", format="date-time", example="2024-01-24T15:00:00Z")
  *         )
  *     ),
  *     @OA\Response(
  *         response=200,
  *         description="Servei actualitzat amb èxit",
  *         @OA\JsonContent(
- *             type="object",
- *             @OA\Property(property="status", type="string", example="correcto"),
- *             @OA\Property(
- *                 property="data",
- *                 type="object",
- *                 ref="#/components/schemas/Servei"
- *             )
+ *             @OA\Property(property="status", type="string", example="success"),
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Servei")
  *         )
  *     ),
  *     @OA\Response(
  *         response=400,
- *         description="Error en la sol·licitud",
+ *         description="Error de validació",
  *         @OA\JsonContent(
- *             type="object",
  *             @OA\Property(property="status", type="string", example="error"),
  *             @OA\Property(property="data", type="object")
  *         )
  *     ),
  *     @OA\Response(
+ *         response=404,
+ *         description="Servei no trobat"
+ *     ),
+ *     @OA\Response(
  *         response=500,
- *         description="Error intern del servidor",
- *         @OA\JsonContent(
- *             type="object",
- *             @OA\Property(property="status", type="string", example="error"),
- *             @OA\Property(property="message", type="string")
- *         )
+ *         description="Error intern del servidor"
  *     )
  * )
  */
@@ -292,7 +294,7 @@ class ServeisController extends Controller
             $tupla = Serveis::findOrFail($id);
             $reglesValidacio = [
                 'nom_serveis' => 'nullable|string|max:255',
-                'data_baixa' => 'nullable|date',
+                
             ];
             $missatges = [
                 'required' => 'El camp :attribute és obligatori.',
@@ -302,6 +304,11 @@ class ServeisController extends Controller
             $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
             if ($validacio->fails()) {
                 throw new \Illuminate\Validation\ValidationException($validacio);
+            }
+            if (!empty($request->data_baixa)) {
+                $request->merge(['data_baixa' => now()]);
+            } else if (empty($request->data_baixa)) {
+                $request->merge(['data_baixa' => NULL]);
             }
 
             $tupla->update($request->all());

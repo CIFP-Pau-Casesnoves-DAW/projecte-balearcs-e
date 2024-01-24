@@ -168,7 +168,7 @@ class VisitesController extends Controller
                 'max' => 'El :attribute ha de tenir màxim :max caràcters.'
             ];
 
-            $validacio = Visites::make($request->all(), $reglesValidacio, $missatges);
+            $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
             if ($validacio->fails()) {
                 throw new \Illuminate\Validation\ValidationException($validacio);
             }
@@ -218,7 +218,7 @@ class VisitesController extends Controller
  *         description="Visita no trobada",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="status", type="string", example="Usuaris no trobat")
+ *             @OA\Property(property="status", type="string", example="No trobat")
  *         )
  *     ),
  *     @OA\Response(
@@ -238,7 +238,7 @@ class VisitesController extends Controller
             $tupla = Visites::findOrFail($id);
             return response()->json(['status' => 'correcto', 'data' => $tupla], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json(['status' => 'Usuaris no trobat'], 400);
+            return response()->json(['status' => 'No trobat'], 400);
         } catch (\Exception $exception) {
             return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
         }
@@ -272,19 +272,19 @@ class VisitesController extends Controller
  *         @OA\JsonContent(
  *             required={},
  *             @OA\Property(property="titol", type="string", description="Títol de la visita", maxLength=255),
- *             @OA\Property(property="descripcio", type="string", description="Descripció de la visita"),
+ *             @OA\Property(property="descripcio", type="string", description="Descripció detallada de la visita"),
  *             @OA\Property(property="inscripcio_previa", type="boolean", description="Indica si la visita requereix inscripció prèvia"),
  *             @OA\Property(property="n_places", type="integer", description="Nombre de places disponibles per a la visita"),
- *             @OA\Property(property="total_visitants", type="integer", description="Total de visitants de la visita"),
+ *             @OA\Property(property="total_visitants", type="integer", description="Nombre total de visitants de la visita"),
  *             @OA\Property(property="data_inici", type="string", format="date", description="Data d'inici de la visita"),
  *             @OA\Property(property="data_fi", type="string", format="date", description="Data de fi de la visita"),
- *             @OA\Property(property="horari", type="string", description="Horari de la visita"),
- *             @OA\Property(property="espai_id", type="integer", description="Identificador de l'espai associat a la visita")
+ *             @OA\Property(property="horari", type="string", description="Horari de realització de la visita"),
+ *             @OA\Property(property="espai_id", type="integer", description="Identificador de l'espai on es realitza la visita")
  *         )
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Dades de la visita actualitzades correctament",
+ *         description="Visita actualitzada amb èxit",
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="success"),
@@ -337,6 +337,16 @@ class VisitesController extends Controller
                 throw new \Illuminate\Validation\ValidationException($validacio);
             }
 
+            $mdRol = $request->md_rol;
+            if (empty($request->data_baixa) && $mdRol == 'administrador') {
+                $tupla->data_baixa = NULL;
+                $tupla->save();
+            }
+
+            if (!empty($request->espai_id) && $mdRol == 'administrador') {
+                $request->merge(['espai_id' => $request->espai_id]);
+            } 
+
             $tupla->update($request->all());
 
             return response()->json(['status' => 'success', 'data' => $tupla], 200);
@@ -355,6 +365,66 @@ class VisitesController extends Controller
      */
 
 
+/**
+ * @OA\Delete(
+ *     path="/api/visites/{id}",
+ *     tags={"Visites"},
+ *     summary="Elimina una visita",
+ *     description="Elimina una visita de la base de dades mitjançant l'identificador proporcionat.",
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="path",
+ *         required=true,
+ *         description="Identificador de la visita a eliminar",
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Visita eliminada correctament",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(
+ *                 property="status",
+ *                 type="string",
+ *                 example="success"
+ *             ),
+ *             @OA\Property(
+ *                 property="data",
+ *                 type="object",
+ *                 ref="#/components/schemas/Visites"
+ *             )
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Error en la sol·licitud",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(
+ *                 property="status",
+ *                 type="string",
+ *                 example="Error"
+ *             )
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Error intern del servidor",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(
+ *                 property="status",
+ *                 type="string",
+ *                 example="error"
+ *             ),
+ *             @OA\Property(
+ *                 property="message",
+ *                 type="string"
+ *             )
+ *         )
+ *     )
+ * )
+ */
     public function destroy($id)
     {
         try {
@@ -368,6 +438,66 @@ class VisitesController extends Controller
         }
     }
 
+    /**
+ * @OA\Delete(
+ *     path="/api/visites/{id}",
+ *     tags={"Visites"},
+ *     summary="Elimina una visita",
+ *     description="Elimina una visita de la base de dades mitjançant l'identificador proporcionat.",
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="path",
+ *         required=true,
+ *         description="Identificador de la visita a eliminar",
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Visita eliminada correctament",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(
+ *                 property="status",
+ *                 type="string",
+ *                 example="success"
+ *             ),
+ *             @OA\Property(
+ *                 property="data",
+ *                 type="object",
+ *                 ref="#/components/schemas/Visites"
+ *             )
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Error en la sol·licitud",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(
+ *                 property="status",
+ *                 type="string",
+ *                 example="Error"
+ *             )
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Error intern del servidor",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(
+ *                 property="status",
+ *                 type="string",
+ *                 example="error"
+ *             ),
+ *             @OA\Property(
+ *                 property="message",
+ *                 type="string"
+ *             )
+ *         )
+ *     )
+ * )
+ */
     public function delete($id)
     {
         try {

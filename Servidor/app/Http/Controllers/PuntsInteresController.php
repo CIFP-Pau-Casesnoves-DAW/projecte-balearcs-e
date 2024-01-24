@@ -89,34 +89,33 @@ class PuntsInteresController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    /**
+/**
  * @OA\Post(
  *     path="/api/punts-interes",
- *     tags={"Punts d'Interès"},
  *     summary="Crea un nou punt d'interès",
+ *     tags={"Punts d'Interès"},
  *     @OA\RequestBody(
  *         required=true,
- *         description="Dades del punt d'interès a crear",
+ *         description="Introdueix dades per crear un nou punt d'interès",
  *         @OA\JsonContent(
- *             @OA\Property(property="titol", type="string", description="Títol del punt d'interès"),
- *             @OA\Property(property="descripcio", type="string", description="Descripció del punt d'interès"),
- *             @OA\Property(property="espai_id", type="integer", description="ID de l'espai associat al punt d'interès")
+ *             required={"titol", "descripcio", "espai_id"},
+ *             @OA\Property(property="titol", type="string", example="Títol del punt d'interès"),
+ *             @OA\Property(property="descripcio", type="string", example="Descripció del punt d'interès"),
+ *             @OA\Property(property="espai_id", type="integer", example=1)
  *         )
  *     ),
  *     @OA\Response(
  *         response=200,
  *         description="Punt d'interès creat amb èxit",
  *         @OA\JsonContent(
- *             type="object",
  *             @OA\Property(property="status", type="string", example="success"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Punts d'Interès")
+ *             @OA\Property(property="data", type="object")
  *         )
  *     ),
  *     @OA\Response(
  *         response=400,
- *         description="Error en la sol·licitud",
+ *         description="Dades invàlides o error en la petició",
  *         @OA\JsonContent(
- *             type="object",
  *             @OA\Property(property="status", type="string", example="error"),
  *             @OA\Property(property="data", type="object")
  *         )
@@ -125,9 +124,8 @@ class PuntsInteresController extends Controller
  *         response=500,
  *         description="Error intern del servidor",
  *         @OA\JsonContent(
- *             type="object",
  *             @OA\Property(property="status", type="string", example="error"),
- *             @OA\Property(property="message", type="string")
+ *             @OA\Property(property="message", type="string", example="Missatge d'error")
  *         )
  *     )
  * )
@@ -145,7 +143,7 @@ class PuntsInteresController extends Controller
                 'max' => 'El :attribute ha de tenir màxim :max caràcters.'
             ];
 
-            $validacio = PuntsInteres::make($request->all(), $reglesValidacio, $missatges);
+            $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
             if ($validacio->fails()) {
                 throw new \Illuminate\Validation\ValidationException($validacio);
             }
@@ -154,7 +152,7 @@ class PuntsInteresController extends Controller
 
             return response()->json(['status' => 'success', 'data' => $tupla], 200);
         } catch (\Illuminate\Validation\ValidationException $validationException) {
-            return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
+            return response()->json(['status' => 'No trobat'], 400);
         } catch (\Exception $exception) {
             return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
         }
@@ -167,23 +165,25 @@ class PuntsInteresController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    /**
+ /**
  * @OA\Get(
  *     path="/api/punts-interes/{id}",
  *     tags={"Punts d'Interès"},
  *     summary="Obté les dades d'un punt d'interès específic",
+ *     description="Retorna les dades d'un punt d'interès donat el seu identificador únic.",
+ *     operationId="showPuntsInteres",
  *     @OA\Parameter(
  *         name="id",
- *         in="path",
- *         required=true,
  *         description="Identificador únic del punt d'interès",
+ *         required=true,
+ *         in="path",
  *         @OA\Schema(
  *             type="integer"
  *         )
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Dades del punt d'interès trobades",
+ *         description="Dades del punt d'interès trobades amb èxit",
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="correcto"),
@@ -195,7 +195,7 @@ class PuntsInteresController extends Controller
  *         description="Punt d'interès no trobat",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="status", type="string", example="Punt d'interès no trobat")
+ *             @OA\Property(property="status", type="string", example="Usuaris no trobat")
  *         )
  *     ),
  *     @OA\Response(
@@ -206,9 +206,12 @@ class PuntsInteresController extends Controller
  *             @OA\Property(property="status", type="string", example="error"),
  *             @OA\Property(property="message", type="string")
  *         )
- *     )
+ *     ),
+ *     
  * )
+ * 
  */
+
     public function show($id)
     {
         try {
@@ -229,56 +232,54 @@ class PuntsInteresController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    /**
+/**
  * @OA\Put(
- *     path="/api/punts-interes/{id}",
- *     tags={"Punts d'Interès"},
- *     summary="Actualitza les dades d'un punt d'interès",
+ *     path="/puntsInteres/{id}",
+ *     operationId="updatePuntsInteres",
+ *     tags={"Punts Interès"},
+ *     summary="Actualitza un punt d'interès",
+ *     description="Actualitza la informació d'un punt d'interès existent.",
  *     @OA\Parameter(
  *         name="id",
  *         in="path",
+ *         description="ID del punt d'interès a actualitzar",
  *         required=true,
- *         description="Identificador únic del punt d'interès",
  *         @OA\Schema(
- *             type="integer"
+ *             type="integer",
+ *             format="int64"
  *         )
  *     ),
  *     @OA\RequestBody(
  *         required=true,
- *         description="Dades a actualitzar del punt d'interès",
+ *         description="Dades del punt d'interès per actualitzar",
  *         @OA\JsonContent(
- *             @OA\Property(property="titol", type="string", description="Títol del punt d'interès"),
- *             @OA\Property(property="descripcio", type="string", description="Descripció del punt d'interès"),
- *             @OA\Property(property="espai_id", type="integer", description="Identificador de l'espai associat")
+ *             required={"titol", "descripcio"},
+ *             @OA\Property(property="titol", type="string", example="Títol actualitzat"),
+ *             @OA\Property(property="descripcio", type="string", example="Descripció actualitzada"),
+ *             @OA\Property(property="espai_id", type="integer", example=1)
  *         )
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Dades del punt d'interès actualitzades amb èxit",
+ *         description="Punt d'interès actualitzat correctament",
  *         @OA\JsonContent(
- *             type="object",
- *             @OA\Property(property="status", type="string", example="correcto"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Punts d'Interès")
+ *             @OA\Property(property="status", type="string", example="success"),
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/PuntsInteres")
  *         )
  *     ),
  *     @OA\Response(
  *         response=400,
- *         description="Error de validació o punt d'interès no trobat",
- *         @OA\JsonContent(
- *             type="object",
- *             @OA\Property(property="status", type="string", example="error"),
- *             @OA\Property(property="data", type="object")
- *         )
+ *         description="Dades invàlides"
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Punt d'interès no trobat"
  *     ),
  *     @OA\Response(
  *         response=500,
- *         description="Error intern del servidor",
- *         @OA\JsonContent(
- *             type="object",
- *             @OA\Property(property="status", type="string", example="error"),
- *             @OA\Property(property="message", type="string")
- *         )
+ *         description="Error del servidor"
  *     )
+ *  
  * )
  */
     public function update(Request $request, $id)
@@ -298,6 +299,15 @@ class PuntsInteresController extends Controller
             $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
             if ($validacio->fails()) {
                 throw new \Illuminate\Validation\ValidationException($validacio);
+            }
+            $mdRol = $request->md_rol;
+            if (empty($request->data_baixa) && $mdRol == 'administrador') {
+                $tupla->data_baixa = NULL;
+                $tupla->save();
+            }
+
+            if (!empty($request->espai_id) && $mdRol == 'administrador') {
+                $request->merge(['espai_id' => $request->espai_id]);
             }
 
             $tupla->update($request->all());

@@ -73,52 +73,44 @@ class AudiosController extends Controller
 
 /**
  * @OA\Post(
- *     path="/api/audios",
- *     tags={"Audios"},
- *     summary="Crea un nou audio",
- *     @OA\RequestBody(
- *         required=true,
- *         description="Dades necessàries per a crear un nou audio",
- *         @OA\JsonContent(
- *             required={"url", "punt_interes_id"},
- *             @OA\Property(property="url", type="string", format="uri", description="URL de l'audio"),
- *             @OA\Property(property="punt_interes_id", type="integer", description="Identificador del punt d'interès associat a l'audio")
- *         )
- *     ),
- *     @OA\Response(
- *         response=200,
- *         description="Nou audio creat correctament",
- *         @OA\JsonContent(
- *             type="object",
- *             @OA\Property(property="status", type="string", example="success"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Audios")
- *         )
- *     ),
- *     @OA\Response(
- *         response=400,
- *         description="Error en la validació de dades",
- *         @OA\JsonContent(
- *             type="object",
- *             @OA\Property(property="status", type="string", example="error"),
- *             @OA\Property(property="data", type="object")
- *         )
- *     ),
- *     @OA\Response(
- *         response=500,
- *         description="Error intern del servidor",
- *         @OA\JsonContent(
- *             type="object",
- *             @OA\Property(property="status", type="string", example="error"),
- *             @OA\Property(property="message", type="string")
- *         )
- *     )
+ *   path="/audios",
+ *   summary="Crea un nou àudio",
+ *   description="Guarda un nou àudio a la base de dades",
+ *   tags={"Audios"},
+ *   @OA\RequestBody(
+ *       required=true,
+ *       description="Dades per al nou àudio",
+ *       @OA\JsonContent(
+ *          required={"url", "punt_interes_id"},
+ *          @OA\Property(property="url", type="string", example="http://exemple.com/audio.mp3"),
+ *          @OA\Property(property="punt_interes_id", type="integer", example=1)
+ *       ),
+ *   ),
+ *   @OA\Response(
+ *       response=200,
+ *       description="Àudio creat amb èxit",
+ *       @OA\JsonContent(
+ *          @OA\Property(property="status", type="string", example="success"),
+ *          @OA\Property(property="data", type="object", ref="#/components/schemas/Audios")
+ *       )
+ *   ),
+ *   @OA\Response(
+ *       response=400,
+ *       description="Error de validació",
+ *   ),
+ *   @OA\Response(
+ *       response=500,
+ *       description="Error del servidor",
+ *   ),
  * )
+ *
  */
+
 public function store(Request $request)
 {
     try {
         $reglesValidacio = [
-            'url' => 'required|url',
+            'url' => 'required|string',
             'punt_interes_id' => 'required|exists:punts_interes,id',
         ];
         $missatges = [
@@ -126,7 +118,7 @@ public function store(Request $request)
             'max' => 'El :attribute ha de tenir màxim :max caràcters.'
         ];
 
-        $validacio = Audios::make($request->all(), $reglesValidacio, $missatges);
+        $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
         if ($validacio->fails()) {
             throw new \Illuminate\Validation\ValidationException($validacio);
         }
@@ -170,7 +162,7 @@ public function store(Request $request)
  *         description="Audio no trobat",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="status", type="string", example="Usuari no trobat")
+ *             @OA\Property(property="status", type="string", example="No trobat")
  *         )
  *     ),
  *     @OA\Response(
@@ -190,7 +182,7 @@ public function store(Request $request)
             $tupla = Audios::findOrFail($id);
             return response()->json(['status' => 'correcto', 'data' => $tupla], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json(['status' => 'Usuaris no trobat'], 400);
+            return response()->json(['status' => 'No trobat'], 400);
         } catch (\Exception $exception) {
             return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
         }
@@ -198,54 +190,54 @@ public function store(Request $request)
 
 /**
  * @OA\Put(
- *     path="/api/audios/{id}",
- *     tags={"Audios"},
- *     summary="Actualitza un audio existent",
+ *     path="/audios/{id}",
+ *     summary="Actualitza un àudio",
+ *     description="Actualitza les dades d'un àudio segons l'ID",
+ *     operationId="updateAudio",
+ *     tags={"audios"},
  *     @OA\Parameter(
  *         name="id",
  *         in="path",
  *         required=true,
- *         description="Identificador únic de l'audio a actualitzar",
+ *         description="ID de l'àudio a actualitzar",
  *         @OA\Schema(
- *             type="integer"
+ *             type="integer",
+ *             format="int64"
  *         )
  *     ),
  *     @OA\RequestBody(
  *         required=true,
- *         description="Dades de l'audio a actualitzar",
+ *         description="Dades de l'àudio per actualitzar",
  *         @OA\JsonContent(
- *             required={},
- *             @OA\Property(property="url", type="string", format="uri", description="URL de l'audio"),
- *             @OA\Property(property="punt_interes_id", type="integer", description="Identificador del punt d'interès associat a l'audio")
+ *             required={"url", "punt_interes_id"},
+ *             @OA\Property(property="url", type="string", example="http://exemple.com/audio.mp3"),
+ *             @OA\Property(property="punt_interes_id", type="integer", example=1)
  *         )
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Dades de l'audio actualitzades correctament",
+ *         description="Àudio actualitzat amb èxit",
  *         @OA\JsonContent(
- *             type="object",
  *             @OA\Property(property="status", type="string", example="success"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Audios")
+ *             @OA\Property(property="data", type="object")
  *         )
  *     ),
  *     @OA\Response(
  *         response=400,
- *         description="Error en la validació de dades",
+ *         description="Error de validació",
  *         @OA\JsonContent(
- *             type="object",
  *             @OA\Property(property="status", type="string", example="error"),
- *             @OA\Property(property="data", type="object", additionalProperties={"type":"string"})
+ *             @OA\Property(property="data", type="object")
  *         )
  *     ),
  *     @OA\Response(
  *         response=500,
  *         description="Error intern del servidor",
  *         @OA\JsonContent(
- *             type="object",
  *             @OA\Property(property="status", type="string", example="error"),
  *             @OA\Property(property="message", type="string")
  *         )
- *     )
+ *     ),
  * )
  */
 
@@ -254,7 +246,7 @@ public function update(Request $request, $id)
     try {
         $tupla = Audios::findOrFail($id);
         $reglesValidacio = [
-            'url' => 'nullable|url',
+            'url' => 'nullable|string',
             'punt_interes_id' => 'nullable|exists:punts_interes,id',
         ];
         $missatges = [
@@ -266,6 +258,11 @@ public function update(Request $request, $id)
         if ($validacio->fails()) {
             throw new \Illuminate\Validation\ValidationException($validacio);
         }
+        $mdRol = $request->md_rol;
+            if (empty($request->data_baixa) && $mdRol == 'administrador') {
+                $tupla->data_baixa = NULL;
+                $tupla->save();
+            }
 
         $tupla->update($request->all());
 

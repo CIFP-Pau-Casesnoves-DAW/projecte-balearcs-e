@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Espais;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
-use App\Models\Usuaris;
+
 
 /**
  * @OA\Tag(
@@ -239,65 +239,47 @@ class EspaisController extends Controller
         }
     }
 
-    /**
+ /**
  * @OA\Put(
- *     path="/api/espais/{id}",
+ *     path="/espais/{id}",
  *     tags={"Espais"},
  *     summary="Actualitza un espai existent",
+ *     description="Actualitza les dades d'un espai basat en el seu ID",
+ *     operationId="updateEspai",
  *     @OA\Parameter(
  *         name="id",
  *         in="path",
+ *         description="ID de l'espai a actualitzar",
  *         required=true,
- *         description="Identificador únic de l'espai a actualitzar",
  *         @OA\Schema(
- *             type="integer"
+ *             type="integer",
+ *             format="int64"
  *         )
  *     ),
  *     @OA\RequestBody(
+ *         description="Dades actualitzades de l'espai",
  *         required=true,
- *         description="Dades de l'espai a actualitzar",
- *         @OA\JsonContent(
- *             required={},
- *             @OA\Property(property="nom", type="string", description="Nom de l'espai", maxLength=255),
- *             @OA\Property(property="descripcio", type="string", description="Descripció de l'espai"),
- *             @OA\Property(property="carrer", type="string", description="Carrer de l'espai", maxLength=255),
- *             @OA\Property(property="numero", type="string", description="Número de l'edifici", maxLength=10),
- *             @OA\Property(property="pis_porta", type="string", description="Pis i porta", maxLength=50, nullable=true),
- *             @OA\Property(property="web", type="string", description="Web de l'espai", maxLength=255, nullable=true),
- *             @OA\Property(property="mail", type="string", format="email", description="Correu electrònic de contacte", maxLength=255),
- *             @OA\Property(property="grau_acc", type="string", description="Grau d'accessibilitat", enum={"baix", "mig", "alt"}, nullable=true),
- *             @OA\Property(property="any_cons", type="integer", description="Any de construcció", nullable=true)
- * 
- *         )
+ *         @OA\JsonContent(ref="#/components/schemas/Espai")
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Dades de l'espai actualitzades correctament",
- *         @OA\JsonContent(
- *             type="object",
- *             @OA\Property(property="status", type="string", example="success"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Espais")
- *         )
+ *         description="Espai actualitzat correctament",
+ *         @OA\JsonContent(ref="#/components/schemas/Espai")
  *     ),
  *     @OA\Response(
  *         response=400,
- *         description="Error en la validació de dades",
- *         @OA\JsonContent(
- *             type="object",
- *             @OA\Property(property="status", type="string", example="error"),
- *             @OA\Property(property="data", type="object", additionalProperties={"type":"string"})
- *         )
+ *         description="Dades no vàlides"
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Espai no trobat"
  *     ),
  *     @OA\Response(
  *         response=500,
- *         description="Error intern del servidor",
- *         @OA\JsonContent(
- *             type="object",
- *             @OA\Property(property="status", type="string", example="error"),
- *             @OA\Property(property="message", type="string")
- *         )
+ *         description="Error del servidor"
  *     )
  * )
+ * 
  */
 
     public function update(Request $request, $id)
@@ -370,6 +352,11 @@ class EspaisController extends Controller
                 $espai = Espais::find($id);
                 $espai->destacat = $request->input('destacat');
                 $espai->save();
+            }
+
+            if (empty($request->data_baixa) && $mdRol == 'administrador') {
+                $tupla->data_baixa = NULL;
+                $tupla->save();
             }
 
             $tupla->update($request->all());

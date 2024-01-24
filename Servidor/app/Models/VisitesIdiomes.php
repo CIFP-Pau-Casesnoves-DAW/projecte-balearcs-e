@@ -10,6 +10,9 @@ class VisitesIdiomes extends Model
     use HasFactory;
 
     protected $table = 'visites_idiomes';
+    protected $primaryKey = ['idioma_id', 'visita_id'];
+    public $incrementing = false;
+
 
     protected $fillable = [
         'idioma_id',
@@ -18,12 +21,7 @@ class VisitesIdiomes extends Model
         'data_baixa',
     ];
 
-    protected $primaryKey = ['idioma_id', 'visita_id'];
-    public $incrementing = false;
-
-    protected $dates = [
-        'data_baixa',
-    ];
+   
 
     public function idioma()
     {

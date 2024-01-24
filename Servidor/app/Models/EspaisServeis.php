@@ -11,8 +11,8 @@ class EspaisServeis extends Pivot
 
     protected $table = 'espais_serveis';
 
-    public $incrementing = true; // Si tens una clau primària autoincrementada
-    protected $primaryKey = ['servei_id', 'espai_id']; // Defineix la clau primària composta
+    public $incrementing = false;
+    protected $primaryKey = ['servei_id', 'espai_id'];
 
     protected $fillable = [
         'servei_id',

@@ -75,47 +75,51 @@ class MunicipisController extends Controller
         }
     }
 
-    /**
+/**
  * @OA\Post(
- *     path="/api/municipis",
- *     tags={"Municipis"},
+ *     path="/municipis",
  *     summary="Crea un nou municipi",
+ *     description="Guarda un nou municipi a la base de dades",
+ *     operationId="storeMunicipi",
+ *     tags={"municipis"},
  *     @OA\RequestBody(
  *         required=true,
- *         description="Dades del municipi a crear",
+ *         description="Dades necessàries per a la creació d'un nou municipi",
  *         @OA\JsonContent(
- *             @OA\Property(property="nom", type="string", description="Nom del municipi"),
- *             @OA\Property(property="illa_id", type="integer", description="Identificador de la illa a la qual pertany el municipi"),
- *             @OA\Property(property="data_baixa", type="string", format="date", description="Data de baixa del municipi", nullable=true)
- *         )
+ *             required={"nom", "illa_id"},
+ *             @OA\Property(property="nom", type="string", example="Palma"),
+ *             @OA\Property(property="illa_id", type="integer", example=1),
+ *             @OA\Property(property="data_baixa", type="string", format="date-time", example="2024-01-24T14:00:00Z")
+ *         ),
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Municipi creat amb èxit",
+ *         description="Municipi creat correctament",
  *         @OA\JsonContent(
- *             type="object",
  *             @OA\Property(property="status", type="string", example="success"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Municipi")
- *         )
+ *             @OA\Property(
+ *                 property="data",
+ *                 type="object",
+ *                 ref="#/components/schemas/Municipi"
+ *             ),
+ *         ),
  *     ),
  *     @OA\Response(
  *         response=400,
- *         description="Error en la sol·licitud",
+ *         description="Dades invàlides",
  *         @OA\JsonContent(
- *             type="object",
- *             @OA\Property(property="status", type="string", example="error"),
- *             @OA\Property(property="data", type="object")
- *         )
+ *             @OA\Property(property="status", type="string", example="No trobat"),
+ *         ),
  *     ),
  *     @OA\Response(
  *         response=500,
  *         description="Error intern del servidor",
  *         @OA\JsonContent(
- *             type="object",
  *             @OA\Property(property="status", type="string", example="error"),
  *             @OA\Property(property="message", type="string")
- *         )
- *     )
+ *         ),
+ *     ),
+ *     
  * )
  */
     public function store(Request $request)
@@ -124,7 +128,7 @@ class MunicipisController extends Controller
             $reglesValidacio = [
                 'nom' => 'required|string|max:255',
                 'illa_id' => 'required|int',
-                'data_baixa' => 'nullable|date',
+                
             ];
             $missatges = [
                 'required' => 'El camp :attribute és obligatori.',
@@ -136,12 +140,16 @@ class MunicipisController extends Controller
             if ($validacio->fails()) {
                 throw new \Illuminate\Validation\ValidationException($validacio);
             }
-
+            if (!empty($request->data_baixa)) {
+                $request->merge(['data_baixa' => now()]);
+            } else if (empty($request->data_baixa)) {
+                $request->merge(['data_baixa' => NULL]);
+            }
             $tupla = Municipis::create($request->all());
 
             return response()->json(['status' => 'success', 'data' => $tupla], 200);
         } catch (\Illuminate\Validation\ValidationException $validationException) {
-            return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
+            return response()->json(['status' => 'No trobat'], 400);
         } catch (\Exception $exception) {
             return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
         }
@@ -190,52 +198,51 @@ class MunicipisController extends Controller
         }
     }
 
-    /**
+/**
  * @OA\Put(
- *     path="/api/municipis/{id}",
- *     tags={"Municipis"},
- *     summary="Actualitza les dades d'un municipi existent",
+ *     path="/municipis/{id}",
+ *     summary="Actualitza un municipi",
+ *     description="Actualitza la informació d'un municipi existent a la base de dades.",
+ *     operationId="updateMunicipi",
+ *     tags={"municipis"},
  *     @OA\Parameter(
  *         name="id",
  *         in="path",
  *         required=true,
- *         description="Identificador únic del municipi a actualitzar",
+ *         description="Identificador únic del municipi",
  *         @OA\Schema(
  *             type="integer"
  *         )
  *     ),
  *     @OA\RequestBody(
+ *         description="Dades del municipi per actualitzar",
  *         required=true,
- *         description="Dades del municipi a actualitzar",
  *         @OA\JsonContent(
- *             @OA\Property(property="nom", type="string", description="Nom del municipi", nullable=true),
- *             @OA\Property(property="illa_id", type="integer", description="Identificador de la illa a la qual pertany el municipi", nullable=true),
- *             @OA\Property(property="data_baixa", type="string", format="date", description="Data de baixa del municipi", nullable=true)
+ *             required={"nom", "illa_id"},
+ *             @OA\Property(property="nom", type="string", example="Palma"),
+ *             @OA\Property(property="illa_id", type="integer", example=1)
  *         )
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Dades del municipi actualitzades amb èxit",
+ *         description="Municipi actualitzat amb èxit",
  *         @OA\JsonContent(
- *             type="object",
  *             @OA\Property(property="status", type="string", example="success"),
  *             @OA\Property(property="data", type="object", ref="#/components/schemas/Municipi")
  *         )
  *     ),
  *     @OA\Response(
  *         response=400,
- *         description="Error en la sol·licitud",
+ *         description="Error de validació",
  *         @OA\JsonContent(
- *             type="object",
  *             @OA\Property(property="status", type="string", example="error"),
  *             @OA\Property(property="data", type="object")
  *         )
  *     ),
  *     @OA\Response(
  *         response=500,
- *         description="Error intern del servidor",
+ *         description="Error del servidor",
  *         @OA\JsonContent(
- *             type="object",
  *             @OA\Property(property="status", type="string", example="error"),
  *             @OA\Property(property="message", type="string")
  *         )
@@ -249,7 +256,7 @@ class MunicipisController extends Controller
             $reglesValidacio = [
                 'nom' => 'nullable|string|max:255',
                 'illa_id' => 'nullable|int',
-                'data_baixa' => 'nullable|date',
+                
             ];
             $missatges = [
                 'required' => 'El camp :attribute és obligatori.',
@@ -260,6 +267,11 @@ class MunicipisController extends Controller
             $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
             if ($validacio->fails()) {
                 throw new \Illuminate\Validation\ValidationException($validacio);
+            }
+            if (!empty($request->data_baixa)) {
+                $request->merge(['data_baixa' => now()]);
+            } else if (empty($request->data_baixa)) {
+                $request->merge(['data_baixa' => NULL]);
             }
 
             $tupla->update($request->all());

@@ -170,7 +170,7 @@ class ComentarisController extends Controller
  *         description="Comentari no trobat",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="status", type="string", example="Usuaris no trobat")
+ *             @OA\Property(property="status", type="string", example="No trobat")
  *         )
  *     )
  * )
@@ -181,7 +181,7 @@ class ComentarisController extends Controller
             $tupla = Comentaris::findOrFail($id);
             return response()->json(['status' => 'correcto', 'data' => $tupla], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json(['status' => 'Usuaris no trobat'], 400);
+            return response()->json(['status' => 'No trobat'], 400);
         }
     }
 

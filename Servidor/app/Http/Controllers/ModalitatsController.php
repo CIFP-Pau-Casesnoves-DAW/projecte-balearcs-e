@@ -75,58 +75,58 @@ class ModalitatsController extends Controller
         }
     }
 
-    /**
+/**
  * @OA\Post(
- *     path="/api/modalitats",
- *     tags={"Modalitats"},
- *     summary="Crea una nova modalitat",
+ *     path="/modalitats",
+ *     tags={"modalitats"},
+ *     summary="Afegeix una nova modalitat",
+ *     operationId="storeModalitat",
  *     @OA\RequestBody(
  *         required=true,
- *         description="Dades de la modalitat a crear",
+ *         description="Dades de la nova modalitat",
  *         @OA\JsonContent(
- *             @OA\Property(property="nom_modalitat", type="string", example="Nom de la nova modalitat"),
- *             @OA\Property(property="data_baixa", type="string", format="date", example="2024-01-21"),
+ *             required={"nom_modalitat"},
+ *             @OA\Property(property="nom_modalitat", type="string", maxLength=255, example="Pintura"),
+ *             @OA\Property(property="data_baixa", type="string", format="date-time", example="2024-01-24T17:00:00Z")
  *         )
  *     ),
  *     @OA\Response(
  *         response=200,
  *         description="Modalitat creada amb èxit",
  *         @OA\JsonContent(
- *             type="object",
  *             @OA\Property(property="status", type="string", example="success"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Modalitats")
+ *             @OA\Property(
+ *                 property="data",
+ *                 type="object",
+ *                 @OA\Property(property="nom_modalitat", type="string", example="Pintura")
+ *             )
  *         )
  *     ),
  *     @OA\Response(
  *         response=400,
  *         description="Error de validació",
  *         @OA\JsonContent(
- *             type="object",
  *             @OA\Property(property="status", type="string", example="error"),
- *             @OA\Property(property="data", type="object", example={
- *                 "nom_modalitat": {"El camp nom_modalitat és obligatori."},
- *                 "data_baixa": {"El camp data_baixa ha de ser una data vàlida."}
- *             })
+ *             @OA\Property(property="data", type="object")
  *         )
  *     ),
  *     @OA\Response(
  *         response=500,
  *         description="Error intern del servidor",
  *         @OA\JsonContent(
- *             type="object",
  *             @OA\Property(property="status", type="string", example="error"),
  *             @OA\Property(property="message", type="string")
  *         )
- *     )
+ *     ),
+ *     
  * )
- *
  */
     public function store(Request $request)
     {
         try {
             $reglesValidacio = [
                 'nom_modalitat' => 'required|string|max:255',
-                'data_baixa' => 'nullable|date',
+                
             ];
             $missatges = [
                 'required' => 'El camp :attribute és obligatori.',
@@ -137,7 +137,11 @@ class ModalitatsController extends Controller
             if ($validacio->fails()) {
                 throw new \Illuminate\Validation\ValidationException($validacio);
             }
-
+            if (!empty($request->data_baixa)) {
+                $request->merge(['data_baixa' => now()]);
+            } else if (empty($request->data_baixa)) {
+                $request->merge(['data_baixa' => NULL]);
+            }
             $tupla = Modalitats::create($request->all());
 
             return response()->json(['status' => 'success', 'data' => $tupla], 200);
@@ -198,66 +202,67 @@ class ModalitatsController extends Controller
             $tupla = Modalitats::findOrFail($id);
             return response()->json(['status' => 'correcto', 'data' => $tupla], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json(['status' => 'Usuaris no trobat'], 400);
+            return response()->json(['status' => 'No trobat'], 400);
         } catch (\Exception $exception) {
             return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
         }
     }
 
-    /**
+/**
  * @OA\Put(
- *     path="/api/modalitats/{id}",
+ *     path="/modalitats/{id}",
+ *     operationId="updateModalitat",
  *     tags={"Modalitats"},
- *     summary="Actualitza les dades d'una modalitat existent",
+ *     summary="Actualitza una modalitat existent",
+ *     description="Actualitza la informació d'una modalitat basant-se en l'ID proporcionat.",
  *     @OA\Parameter(
  *         name="id",
  *         in="path",
  *         required=true,
- *         description="Identificador únic de la modalitat a actualitzar",
+ *         description="ID de la modalitat a actualitzar",
  *         @OA\Schema(
  *             type="integer"
  *         )
  *     ),
  *     @OA\RequestBody(
  *         required=true,
- *         description="Dades de la modalitat a actualitzar",
+ *         description="Dades per a actualitzar la modalitat",
  *         @OA\JsonContent(
- *             @OA\Property(property="nom_modalitat", type="string", example="Nou nom de la modalitat"),
- *             @OA\Property(property="data_baixa", type="string", format="date", example="2024-01-21"),
+ *             required={"nom_modalitat"},
+ *             @OA\Property(property="nom_modalitat", type="string", example="Pintura"),
+ *             @OA\Property(property="data_baixa", type="string", format="date-time", example="2024-01-24T14:00:00Z")
  *         )
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Dades de la modalitat actualitzades amb èxit",
+ *         description="Modalitat actualitzada amb èxit",
  *         @OA\JsonContent(
- *             type="object",
  *             @OA\Property(property="status", type="string", example="success"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Modalitats")
+ *             @OA\Property(
+ *                 property="data",
+ *                 type="object",
+ *                 ref="#/components/schemas/Modalitat"
+ *             )
  *         )
  *     ),
  *     @OA\Response(
  *         response=400,
  *         description="Error de validació",
  *         @OA\JsonContent(
- *             type="object",
  *             @OA\Property(property="status", type="string", example="error"),
- *             @OA\Property(property="data", type="object", example={
- *                 "nom_modalitat": {"El camp nom_modalitat ha de ser una cadena de text."},
- *                 "data_baixa": {"El camp data_baixa ha de ser una data vàlida."}
- *             })
+ *             @OA\Property(property="data", type="object")
  *         )
  *     ),
  *     @OA\Response(
  *         response=500,
  *         description="Error intern del servidor",
  *         @OA\JsonContent(
- *             type="object",
  *             @OA\Property(property="status", type="string", example="error"),
  *             @OA\Property(property="message", type="string")
  *         )
- *     )
+ *     ),
+ *     
  * )
- *
  */
 
     public function update(Request $request, $id)
@@ -266,7 +271,7 @@ class ModalitatsController extends Controller
             $tupla = Modalitats::findOrFail($id);
             $reglesValidacio = [
                 'nom_modalitat' => 'nullable|string|max:255',
-                'data_baixa' => 'nullable|date',
+                
             ];
             $missatges = [
                 'required' => 'El camp :attribute és obligatori.',
@@ -277,7 +282,11 @@ class ModalitatsController extends Controller
             if ($validacio->fails()) {
                 throw new \Illuminate\Validation\ValidationException($validacio);
             }
-
+            if (!empty($request->data_baixa)) {
+                $request->merge(['data_baixa' => now()]);
+            } else if (empty($request->data_baixa)) {
+                $request->merge(['data_baixa' => NULL]);
+            }
             $tupla->update($request->all());
 
             return response()->json(['status' => 'success', 'data' => $tupla], 200);

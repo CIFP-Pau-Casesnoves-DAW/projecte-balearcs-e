@@ -75,51 +75,52 @@ class IdiomesController extends Controller
         }
     }
 
- /**
+/**
  * @OA\Post(
- *     path="/api/idiomes",
- *     tags={"Idiomes"},
+ *     path="/idiomes",
  *     summary="Crea un nou idioma",
+ *     description="Afegeix un nou idioma a la base de dades",
+ *     operationId="storeIdioma",
+ *     tags={"Idiomes"},
  *     @OA\RequestBody(
+ *         description="Dades de l'idioma per crear",
  *         required=true,
- *         description="Dades necessàries per a crear un nou idioma",
  *         @OA\JsonContent(
  *             required={"idioma"},
- *             @OA\Property(property="idioma", type="string", description="Nom de l'idioma", maxLength=255),
- *             @OA\Property(property="data_baixa", type="string", format="date", description="Data de baixa de l'idioma", nullable=true)
+ *             @OA\Property(property="idioma", type="string", maxLength=255, example="Català"),
+ *             @OA\Property(property="data_baixa", type="string", format="date", example="2024-01-24")
  *         )
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Nou idioma creat correctament",
+ *         description="Idioma creat amb èxit",
  *         @OA\JsonContent(
- *             type="object",
  *             @OA\Property(property="status", type="string", example="success"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Idiomes")
+ *             @OA\Property(
+ *                 property="data",
+ *                 type="object",
+ *                 ref="#/components/schemas/Idioma"
+ *             )
  *         )
  *     ),
  *     @OA\Response(
  *         response=400,
- *         description="Error en la validació de dades",
+ *         description="Error de validació",
  *         @OA\JsonContent(
- *             type="object",
  *             @OA\Property(property="status", type="string", example="error"),
- *             @OA\Property(property="data", type="object", additionalProperties={"type":"string"})
+ *             @OA\Property(property="data", type="object")
  *         )
  *     ),
  *     @OA\Response(
  *         response=500,
- *         description="Error intern del servidor",
+ *         description="Error del servidor",
  *         @OA\JsonContent(
- *             type="object",
  *             @OA\Property(property="status", type="string", example="error"),
  *             @OA\Property(property="message", type="string")
  *         )
  *     )
  * )
  */
-
-
     public function store(Request $request)
     {
         try {
@@ -135,6 +136,11 @@ class IdiomesController extends Controller
             $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
             if ($validacio->fails()) {
                 throw new \Illuminate\Validation\ValidationException($validacio);
+            }
+            if (!empty($request->data_baixa)) {
+                $request->merge(['data_baixa' => now()]);
+            } else if (empty($request->data_baixa)) {
+                $request->merge(['data_baixa' => NULL]);
             }
 
             $tupla = Idiomes::create($request->all());
@@ -177,7 +183,7 @@ class IdiomesController extends Controller
  *         description="Idioma no trobat",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="status", type="string", example="Usuaris no trobat")
+ *             @OA\Property(property="status", type="string", example="No trobat")
  *         )
  *     ),
  *     @OA\Response(
@@ -198,62 +204,55 @@ class IdiomesController extends Controller
             $tupla = Idiomes::findOrFail($id);
             return response()->json(['status' => 'correcto', 'data' => $tupla], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json(['status' => 'Usuaris no trobat'], 400);
+            return response()->json(['status' => 'No trobat'], 400);
         } catch (\Exception $exception) {
             return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
         }
     }
 
-    /**
+/**
  * @OA\Put(
- *     path="/api/idiomes/{id}",
+ *     path="/idiomes/{id}",
  *     tags={"Idiomes"},
- *     summary="Actualitza un idioma existent",
+ *     summary="Actualitza un idioma",
+ *     description="Actualitza les dades d'un idioma específic a partir de l'ID",
  *     @OA\Parameter(
  *         name="id",
- *         in="path",
+ *         description="ID de l'idioma a actualitzar",
  *         required=true,
- *         description="Identificador únic de l'idioma a actualitzar",
+ *         in="path",
  *         @OA\Schema(
  *             type="integer"
  *         )
  *     ),
  *     @OA\RequestBody(
  *         required=true,
- *         description="Dades de l'idioma a actualitzar",
+ *         description="Dades de l'idioma per actualitzar",
  *         @OA\JsonContent(
- *             required={},
- *             @OA\Property(property="nom", type="string", description="Nom de l'idioma", maxLength=255),
- *             @OA\Property(property="zona", type="string", description="Zona geogràfica de l'idioma", maxLength=255),
- *             @OA\Property(property="data_baixa", type="string", format="date", description="Data de baixa de l'idioma", nullable=true)
+ *             required={"idioma"},
+ *             @OA\Property(property="idioma", type="string", example="Català", description="Nom de l'idioma"),
+ *             @OA\Property(property="data_baixa", type="string", format="date", example="2024-01-24", description="Data de baixa de l'idioma")
  *         )
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Dades de l'idioma actualitzades correctament",
+ *         description="Idioma actualitzat amb èxit",
  *         @OA\JsonContent(
- *             type="object",
  *             @OA\Property(property="status", type="string", example="success"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Idiomes")
+ *             @OA\Property(
+ *                 property="data",
+ *                 type="object",
+ *                 ref="#/components/schemas/Idioma"
+ *             )
  *         )
  *     ),
  *     @OA\Response(
  *         response=400,
- *         description="Error en la validació de dades",
- *         @OA\JsonContent(
- *             type="object",
- *             @OA\Property(property="status", type="string", example="error"),
- *             @OA\Property(property="data", type="object", additionalProperties={"type":"string"})
- *         )
+ *         description="Error de validació"
  *     ),
  *     @OA\Response(
  *         response=500,
- *         description="Error intern del servidor",
- *         @OA\JsonContent(
- *             type="object",
- *             @OA\Property(property="status", type="string", example="error"),
- *             @OA\Property(property="message", type="string")
- *         )
+ *         description="Error intern del servidor"
  *     )
  * )
  */
@@ -263,9 +262,8 @@ class IdiomesController extends Controller
         try {
             $tupla = Idiomes::findOrFail($id);
             $reglesValidacio = [
-                'nom' => 'nullable|string|max:255',
-                'zona' => 'nullable|string|max:255',
-                'data_baixa' => 'nullable|date',
+                'idioma' => 'nullable|string|max:255',
+            
             ];
             $missatges = [
                 'required' => 'El camp :attribute és obligatori.',
@@ -275,6 +273,11 @@ class IdiomesController extends Controller
             $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
             if ($validacio->fails()) {
                 throw new \Illuminate\Validation\ValidationException($validacio);
+            }
+            if (!empty($request->data_baixa)) {
+                $request->merge(['data_baixa' => now()]);
+            } else if (empty($request->data_baixa)) {
+                $request->merge(['data_baixa' => NULL]);
             }
 
             $tupla->update($request->all());

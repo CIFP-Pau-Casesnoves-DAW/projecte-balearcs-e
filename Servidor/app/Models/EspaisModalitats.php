@@ -11,8 +11,9 @@ class EspaisModalitats extends Pivot
 
     protected $table = 'espais_modalitats';
 
-    public $incrementing = true; // Si tens una clau primària autoincrementada
-    protected $primaryKey = ['espai_id', 'modalitat_id']; // Defineix la clau primària composta
+    public $incrementing = false;
+    protected $primaryKey = ['espai_id', 'modalitat_id'];
+
 
     protected $fillable = [
         'espai_id',

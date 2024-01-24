@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\VisitesIdiomes;
+use Illuminate\Support\Facades\Validator;
 
 /**
  * @OA\Tag(
@@ -13,106 +14,173 @@ use App\Models\VisitesIdiomes;
  */
 class VisitesIdiomesController extends Controller
 {
-   
-
+  
     /**
  * @OA\Get(
- *     path="/visitesidiomes",
- *     summary="Llista totes les traduccions de visites",
+ *     path="/api/visitesidiomes",
  *     tags={"VisitesIdiomes"},
+ *     summary="Llista totes les entitats VisitesIdiomes",
+ *     description="Recupera una llista de totes les entitats VisitesIdiomes des del servidor.",
  *     @OA\Response(
  *         response=200,
- *         description="Retorna una llista de totes les traduccions de visites",
+ *         description="Llista d'entitats VisitesIdiomes recuperada amb èxit",
  *         @OA\JsonContent(
- *             type="array",
- *             @OA\Items(ref="#/components/schemas/VisitaIdioma")
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="correcto"),
+ *             @OA\Property(
+ *                 property="data",
+ *                 type="array",
+ *                 @OA\Items(ref="#/components/schemas/VisitesIdiomes")
+ *             )
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Error de validació en la sol·licitud",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="data", type="object")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Error intern del servidor",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string")
  *         )
  *     )
  * )
  * @OA\Schema(
- *     schema="VisitaIdioma",
+ *     schema="VisitesIdiomes",
  *     type="object",
- *     @OA\Property(property="visita_id", type="integer", example="1"),
- *     @OA\Property(property="idioma_id", type="integer", example="1"),
- *     @OA\Property(property="traduccio", type="string", example="Visita guiada"),
- *     @OA\Property(property="data_baixa", type="string", format="date", example="2024-01-01")
+ *     description="Model de l'entitat VisitesIdiomes",
+ *     @OA\Property(property="id", type="integer", description="Identificador únic de la visita idioma"),
+ *     @OA\Property(property="visita_id", type="integer", description="Identificador de la visita"),
+ *     @OA\Property(property="idioma_id", type="integer", description="Identificador de l'idioma"),
+ *     @OA\Property(property="descripcio", type="string", description="Descripció de la visita en l'idioma especificat"),
+ *     @OA\Property(property="data_baixa", type="string", format="date", nullable=true, description="Data de baixa de la visita idioma")
  * )
  */
 
     public function index()
     {
-        $visitesIdiomes = VisitesIdiomes::all();
-        return response()->json(['visites_idiomes' => $visitesIdiomes]);
+        try {
+            $tuples = VisitesIdiomes::all();
+            return response()->json(['status' => 'correcto', 'data' => $tuples], 200);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json(['status' => 'error', 'data' => $e->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 
-   
-
+ 
     /**
  * @OA\Post(
- *     path="/visitesidiomes",
- *     summary="Crea una nova traducció de visita",
+ *     path="/api/visitesidiomes",
  *     tags={"VisitesIdiomes"},
+ *     summary="Crea una nova entitat VisitesIdiomes",
+ *     description="Guarda una nova entitat VisitesIdiomes a la base de dades segons les dades proporcionades.",
  *     @OA\RequestBody(
  *         required=true,
- *         description="Dades per a crear una nova traducció de visita",
+ *         description="Dades necessàries per a la creació de VisitesIdiomes",
  *         @OA\JsonContent(
  *             required={"idioma_id", "visita_id", "traduccio"},
  *             @OA\Property(property="idioma_id", type="integer", example=1),
- *             @OA\Property(property="visita_id", type="integer", example=1),
- *             @OA\Property(property="traduccio", type="string", example="Visita guiada al museu"),
- *             @OA\Property(property="data_baixa", type="string", format="date", example="2024-01-01")
+ *             @OA\Property(property="visita_id", type="integer", example=2),
+ *             @OA\Property(property="traduccio", type="string", example="Traducció en un idioma específic"),
+ *             @OA\Property(property="data_baixa", type="string", format="date", example="2024-01-24")
  *         )
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Traducció de visita creada correctament",
+ *         description="Entitat VisitesIdiomes creada amb èxit",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="message", type="string", example="Traducción de visita creada correctamente"),
- *             @OA\Property(property="visita_idioma", ref="#/components/schemas/VisitaIdioma")
+ *             @OA\Property(property="status", type="string", example="success"),
+ *             @OA\Property(property="data", ref="#/components/schemas/VisitesIdiomes")
  *         )
  *     ),
  *     @OA\Response(
  *         response=400,
- *         description="Dades invàlides",
+ *         description="Error de validació en les dades enviades",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="errors", type="object")
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="data", type="object")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Error intern del servidor",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string")
  *         )
  *     )
  * )
+ * 
  */
     public function store(Request $request)
     {
-        $request->validate([
-            'idioma_id' => 'required|exists:idiomes,id',
-            'visita_id' => 'required|exists:visites,id',
-            'traduccio' => 'required|string',
-            'data_baixa' => 'nullable|date',
-        ]);
+        try {
+            $reglesValidacio = [
+                'idioma_id' => 'required|int',
+                'visita_id' => 'required|int',
+                'traduccio' => 'required|string|max:255',
+                'data_baixa' => 'nullable|date',
+            ];
+            $missatges = [
+                'required' => 'El camp :attribute és obligatori.',
+                'max' => 'El :attribute ha de tenir màxim :max caràcters.'
+            ];
 
-        $visitaIdioma = VisitesIdiomes::create($request->all());
+            $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
+            if ($validacio->fails()) {
+                throw new \Illuminate\Validation\ValidationException($validacio);
+            }
 
-        return response()->json(['message' => 'Traducción de visita creada correctamente', 'visita_idioma' => $visitaIdioma]);
+            $tupla = VisitesIdiomes::create($request->all());
+
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
+        } catch (\Illuminate\Validation\ValidationException $validationException) {
+            return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 
-   
-
-    /**
+   /**
  * @OA\Get(
- *     path="/visitesidiomes/{visitaIdioma}",
- *     summary="Mostra una traducció de visita específica",
+ *     path="/api/visitesidiomes/{idioma_id}/{visita_id}",
  *     tags={"VisitesIdiomes"},
+ *     summary="Mostra la traducció d'una visita específica en un idioma concret",
+ *     description="Retorna les dades de la traducció d'una visita en un idioma específic segons l'identificador de l'idioma i de la visita.",
  *     @OA\Parameter(
- *         name="visitaIdioma",
+ *         name="idioma_id",
  *         in="path",
  *         required=true,
- *         description="ID de la traducció de visita a mostrar",
- *         @OA\Schema(type="integer")
+ *         description="Identificador de l'idioma",
+ *         @OA\Schema(
+ *             type="integer"
+ *         )
+ *     ),
+ *     @OA\Parameter(
+ *         name="visita_id",
+ *         in="path",
+ *         required=true,
+ *         description="Identificador de la visita",
+ *         @OA\Schema(
+ *             type="integer"
+ *         )
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Retorna la traducció de la visita especificada",
+ *         description="Traducció trobada amb èxit",
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="visita_idioma", ref="#/components/schemas/VisitaIdioma")
@@ -120,123 +188,200 @@ class VisitesIdiomesController extends Controller
  *     ),
  *     @OA\Response(
  *         response=404,
- *         description="Traducció de visita no trobada",
+ *         description="Traducció no trobada",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="message", type="string", example="Traducción de visita no encontrada")
+ *             @OA\Property(property="message", type="string", example="Traducció no trobada")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Error intern del servidor",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string")
  *         )
  *     )
  * )
  */
-
-    public function show(VisitesIdiomes $visitaIdioma)
+    public function show($idioma_id, $visita_id)
     {
-        return response()->json(['visita_idioma' => $visitaIdioma]);
+        try {
+            $visitaIdioma = VisitesIdiomes::where('idioma_id', $idioma_id)->where('visita_id', $visita_id)->first();
+            if (!$visitaIdioma) {
+                return response()->json(['message' => 'Traducció no trobada'], 404);
+            }
+            return response()->json(['visita_idioma' => $visitaIdioma], 200);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 
-   
 
-  
-     /**
+
+ 
+    /**
  * @OA\Put(
- *     path="/visitesidiomes/{visitaIdioma}",
- *     summary="Actualitza una traducció de visita específica",
- *     tags={"VisitesIdiomes"},
+ *     path="/api/visitaIdioma/{idioma_id}/{visita_id}",
+ *     tags={"VisitaIdioma"},
+ *     summary="Actualitza la traducció d'una visita existent",
  *     @OA\Parameter(
- *         name="visitaIdioma",
+ *         name="idioma_id",
  *         in="path",
  *         required=true,
- *         description="ID de la traducció de visita a actualitzar",
- *         @OA\Schema(type="integer")
+ *         description="Identificador únic de l'idioma de la traducció",
+ *         @OA\Schema(
+ *             type="integer"
+ *         )
+ *     ),
+ *     @OA\Parameter(
+ *         name="visita_id",
+ *         in="path",
+ *         required=true,
+ *         description="Identificador únic de la visita a actualitzar",
+ *         @OA\Schema(
+ *             type="integer"
+ *         )
  *     ),
  *     @OA\RequestBody(
  *         required=true,
- *         description="Dades per a actualitzar la traducció de la visita",
+ *         description="Dades de la traducció de la visita a actualitzar",
  *         @OA\JsonContent(
- *             required={"idioma_id", "visita_id", "traduccio"},
- *             @OA\Property(property="idioma_id", type="integer", example="1"),
- *             @OA\Property(property="visita_id", type="integer", example="2"),
- *             @OA\Property(property="traduccio", type="string", example="Visita guiada al museu"),
- *             @OA\Property(property="data_baixa", type="string", format="date", example="2024-01-01")
+ *             required={"traduccio"},
+ *             @OA\Property(property="traduccio", type="string", description="Text de la traducció", maxLength=255)
  *         )
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Traducció de visita actualitzada correctament",
+ *         description="Dades de la traducció actualitzades correctament",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="message", type="string", example="Traducción de visita actualizada correctamente"),
- *             @OA\Property(property="visita_idioma", ref="#/components/schemas/VisitaIdioma")
+ *             @OA\Property(property="status", type="string", example="success"),
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/VisitaIdioma")
  *         )
  *     ),
  *     @OA\Response(
  *         response=400,
- *         description="Dades invàlides",
+ *         description="Error en la validació de dades",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="errors", type="object")
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="errors", type="object", additionalProperties={"type":"string"})
  *         )
  *     ),
  *     @OA\Response(
  *         response=404,
- *         description="Traducció de visita no trobada",
+ *         description="Traducció no trobada",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="message", type="string", example="Traducción de visita no encontrada")
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Error intern del servidor",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string")
  *         )
  *     )
  * )
  */
-    public function update(Request $request, VisitesIdiomes $visitaIdioma)
+    public function update(Request $request, $idioma_id, $visita_id)
     {
-        $request->validate([
-            'idioma_id' => 'required|exists:idiomes,id',
-            'visita_id' => 'required|exists:visites,id',
-            'traduccio' => 'required|string',
-            'data_baixa' => 'nullable|date',
-        ]);
+        $reglesValidacio = [
+            'traduccio' => 'nullable|string|max:255',
+        ];
+        $missatges = [
+            'required' => 'El camp :attribute és obligatori.',
+            'max' => 'El :attribute ha de tenir màxim :max caràcters.'
+        ];
 
-        $visitaIdioma->update($request->all());
+        $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
+        if ($validacio->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'errors' => $validacio->errors()
+            ], 400);
+        } else {
+            try {
+                $traduccio_visita = VisitesIdiomes::where('idioma_id', $idioma_id)->where('visita_id', $visita_id);
+                if (!empty($request->data_baixa)) {
+                    $request->merge(['data_baixa' => now()]);
+                } else if (empty($request->data_baixa)) {
+                    $request->merge(['data_baixa' => NULL]);
+                }
 
-        return response()->json(['message' => 'Traducción de visita actualizada correctamente', 'visita_idioma' => $visitaIdioma]);
+                $traduccio_visita->update($request->all());
+                return response()->json([
+                    'status' => 'success',
+                    'data' => $traduccio_visita
+                ], 200);
+            } catch (\Exception $e) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'La traduccio de la visita amb la id ' . $visita_id . 'amb idioma' . $idioma_id . 'no existeix'
+                ], 404);
+            }
+        }
     }
 
-    
-
+  
     /**
  * @OA\Delete(
- *     path="/visitesidiomes/{visitaIdioma}",
- *     summary="Elimina una traducció de visita específica",
- *     tags={"VisitesIdiomes"},
+ *     path="/api/visites/{idioma_id}/{visita_id}",
+ *     tags={"Visites"},
+ *     summary="Esborra una traducció específica d'una visita",
+ *     description="Esborra la traducció d'una visita basant-se en l'idioma i l'identificador de la visita",
  *     @OA\Parameter(
- *         name="visitaIdioma",
+ *         name="idioma_id",
  *         in="path",
  *         required=true,
- *         description="ID de la traducció de visita a eliminar",
- *         @OA\Schema(type="integer")
+ *         description="Identificador de l'idioma de la traducció a esborrar",
+ *         @OA\Schema(
+ *             type="integer"
+ *         )
+ *     ),
+ *     @OA\Parameter(
+ *         name="visita_id",
+ *         in="path",
+ *         required=true,
+ *         description="Identificador de la visita de la traducció a esborrar",
+ *         @OA\Schema(
+ *             type="integer"
+ *         )
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Traducció de visita eliminada correctament",
- *         @OA\JsonContent(
- *             type="object",
- *             @OA\Property(property="message", type="string", example="Traducción de visita eliminada correctamente")
- *         )
+ *         description="Traducció esborrada correctament"
  *     ),
  *     @OA\Response(
  *         response=404,
- *         description="Traducció de visita no trobada",
- *         @OA\JsonContent(
- *             type="object",
- *             @OA\Property(property="message", type="string", example="Traducción de visita no encontrada")
- *         )
+ *         description="Traducció no trobada"
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Error intern del servidor"
  *     )
  * )
  */
-    public function destroy(VisitesIdiomes $visitaIdioma)
+    //funciona
+    public function destroy($idioma_id, $visita_id)
     {
-        $visitaIdioma->delete();
+        try {
+            $traduccio_visita = VisitesIdiomes::where('idioma_id', $idioma_id)->where('visita_id', $visita_id);
+            $traduccio_visita->delete();
 
-        return response()->json(['message' => 'Traducción de visita eliminada correctamente']);
+            if ($traduccio_visita) {
+                return response()->json(['status' => ' Esborrat correctament'], 200);
+            } else {
+                return response()->json(['status' => 'No trobat'], 404);
+            }
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
     }
 }

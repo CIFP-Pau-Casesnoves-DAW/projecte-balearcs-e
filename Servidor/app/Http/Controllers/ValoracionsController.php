@@ -219,7 +219,7 @@ class ValoracionsController extends Controller
             $tupla = Valoracions::findOrFail($id);
             return response()->json(['status' => 'correcto', 'data' => $tupla], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json(['status' => 'Usuaris no trobat'], 400);
+            return response()->json(['status' => 'No trobat'], 400);
         }
     }
 
@@ -231,10 +231,10 @@ class ValoracionsController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    /**
+ /**
  * @OA\Put(
  *     path="/valoracions/{id}",
- *     summary="Actualitza una valoració per ID",
+ *     summary="Actualitza una valoració existent",
  *     tags={"Valoracions"},
  *     @OA\Parameter(
  *         name="id",
@@ -245,20 +245,19 @@ class ValoracionsController extends Controller
  *     ),
  *     @OA\RequestBody(
  *         required=true,
- *         description="Dades necessàries per a actualitzar una valoració",
+ *         description="Dades necessàries per actualitzar la valoració",
  *         @OA\JsonContent(
- *             required={"puntuacio"},
- *             @OA\Property(property="puntuacio", type="integer", example=5),
- *             @OA\Property(property="data", type="string", format="date", example="2024-01-21", nullable=true),
- *             @OA\Property(property="usuari_id", type="integer", example=1, nullable=true),
- *             @OA\Property(property="espai_id", type="integer", example=2, nullable=true),
+ *             required={"puntuacio", "espai_id"},
+ *             @OA\Property(property="puntuacio", type="integer", example=4),
+ *             @OA\Property(property="espai_id", type="integer", example=1),
+ *             @OA\Property(property="usuari_id", type="integer", example=2, nullable=true),
  *             @OA\Property(property="data_baixa", type="string", format="date", example="2024-01-28", nullable=true),
  *             @OA\Property(property="validat", type="boolean", example=true, nullable=true)
  *         )
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Valoració actualitzada correctament",
+ *         description="Valoració actualitzada amb èxit",
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="success"),
@@ -267,7 +266,7 @@ class ValoracionsController extends Controller
  *     ),
  *     @OA\Response(
  *         response=400,
- *         description="Error en la validació de dades",
+ *         description="Validació de dades fallida",
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="error"),
@@ -301,10 +300,7 @@ class ValoracionsController extends Controller
 
             $reglesValidacio = [
                 'puntuacio' => 'nullable|integer',
-                'data' => 'nullable|date',
-                'usuari_id' => 'nullable|integer',
                 'espai_id' => 'nullable|integer',
-                'data_baixa' => 'nullable|date',
             ];
 
             $missatges = [
@@ -330,6 +326,14 @@ class ValoracionsController extends Controller
                 $valoracio = Valoracions::find($id);
                 $valoracio->usuari_id = $request->input('usuari_id');
                 $valoracio->save();
+            }
+
+            if (empty($request->data_baixa) && $mdRol == 'administrador') {
+                $tupla->data_baixa = NULL;
+                $tupla->save();
+            } else if (!empty($request->data_baixa) && $mdRol == 'administrador') {
+                $tupla->data_baixa = now();
+                $tupla->save();
             }
 
             $request->merge(['data' => Carbon::now()]);

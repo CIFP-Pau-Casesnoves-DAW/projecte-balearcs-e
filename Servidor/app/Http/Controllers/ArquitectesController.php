@@ -70,75 +70,82 @@ class ArquitectesController extends Controller
         }
     }
 
-    /**
+ /**
  * @OA\Post(
  *     path="/arquitectes",
  *     summary="Crea un nou arquitecte",
  *     tags={"Arquitectes"},
  *     @OA\RequestBody(
  *         required=true,
- *         description="Dades necessàries per a crear un nou arquitecte",
+ *         description="Dades de l'arquitecte",
  *         @OA\JsonContent(
  *             required={"nom"},
- *             @OA\Property(property="nom", type="string", example="Antoni Gaudí"),
- *             @OA\Property(property="data_baixa", type="string", format="date", example="2024-12-31", nullable=true)
+ *             @OA\Property(property="nom", type="string", example="Joan Miró"),
+ *             @OA\Property(property="data_baixa", type="string", format="date", example="2024-01-01")
  *         )
  *     ),
  *     @OA\Response(
  *         response=200,
  *         description="Arquitecte creat correctament",
  *         @OA\JsonContent(
- *             type="object",
  *             @OA\Property(property="status", type="string", example="success"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Arquitectes")
+ *             @OA\Property(
+ *                 property="data",
+ *                 type="object",
+ *                 ref="#/components/schemas/Arquitecte"
+ *             )
  *         )
  *     ),
  *     @OA\Response(
  *         response=400,
- *         description="Error en la validació de dades",
+ *         description="Error de validació",
  *         @OA\JsonContent(
- *             type="object",
  *             @OA\Property(property="status", type="string", example="error"),
- *             @OA\Property(property="data", type="object", additionalProperties={"type":"string"})
+ *             @OA\Property(property="data", type="object")
  *         )
  *     ),
  *     @OA\Response(
  *         response=500,
  *         description="Error intern del servidor",
  *         @OA\JsonContent(
- *             type="object",
  *             @OA\Property(property="status", type="string", example="error"),
  *             @OA\Property(property="message", type="string")
  *         )
  *     )
  * )
  */
+
 public function store(Request $request)
-{
-    try {
-        $reglesValidacio = [
-            'nom' => 'required|string|max:255',
-            'data_baixa' => 'nullable|date',
-        ];
-        $missatges = [
-            'required' => 'El camp :attribute és obligatori.',
-            'max' => 'El :attribute ha de tenir màxim :max caràcters.'
-        ];
+    {
+        try {
+            $reglesValidacio = [
+                'nom' => 'required|string|max:255',
+                'data_baixa' => 'nullable|date',
+            ];
+            $missatges = [
+                'required' => 'El camp :attribute és obligatori.',
+                'max' => 'El :attribute ha de tenir màxim :max caràcters.'
+            ];
+            $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
+            if ($validacio->fails()) {
+                throw new \Illuminate\Validation\ValidationException($validacio);
+            }
 
-        $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
-        if ($validacio->fails()) {
-            throw new \Illuminate\Validation\ValidationException($validacio);
+            if (!empty($request->data_baixa)) {
+                $request->merge(['data_baixa' => now()]);
+            } else if (empty($request->data_baixa)) {
+                $request->merge(['data_baixa' => NULL]);
+            }
+
+            $tupla = Arquitectes::create($request->all());
+
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
+        } catch (\Illuminate\Validation\ValidationException $validationException) {
+            return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
         }
-
-        $tupla = Arquitectes::create($request->all());
-
-        return response()->json(['status' => 'success', 'data' => $tupla], 200);
-    } catch (\Illuminate\Validation\ValidationException $validationException) {
-        return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
-    } catch (\Exception $exception) {
-        return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
     }
-}
 
 /**
  * @OA\Get(
@@ -168,7 +175,7 @@ public function store(Request $request)
  *         description="Arquitecte no trobat",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="status", type="string", example="Usuari no trobat")
+ *             @OA\Property(property="status", type="string", example="No trobat")
  *         )
  *     ),
  *     @OA\Response(
@@ -188,7 +195,7 @@ public function show($id)
         $tupla = Arquitectes::findOrFail($id);
         return response()->json(['status' => 'correcto', 'data' => $tupla], 200);
     } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-        return response()->json(['status' => 'Usuaris no trobat'], 400);
+        return response()->json(['status' => 'No trobat'], 400);
     } catch (\Exception $exception) {
         return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
     }
@@ -197,56 +204,47 @@ public function show($id)
  /**
  * @OA\Put(
  *     path="/arquitectes/{id}",
- *     summary="Actualitza les dades d'un arquitecte",
  *     tags={"Arquitectes"},
+ *     summary="Actualitza un arquitecte",
+ *     operationId="updateArquitecte",
+ *     description="Actualitza les dades d'un arquitecte existent. Només els camps proporcionats seran actualitzats.",
  *     @OA\Parameter(
  *         name="id",
  *         in="path",
+ *         description="ID de l'arquitecte a actualitzar",
  *         required=true,
- *         description="Identificador únic de l'arquitecte a actualitzar",
  *         @OA\Schema(
- *             type="integer"
+ *             type="integer",
+ *             format="int64"
  *         )
  *     ),
  *     @OA\RequestBody(
+ *         description="Dades de l'arquitecte per actualitzar",
  *         required=true,
- *         description="Dades de l'arquitecte a actualitzar",
  *         @OA\JsonContent(
- *             required={},
- *             @OA\Property(property="nom", type="string", example="Antoni Gaudí", maxLength=255),
- *             @OA\Property(property="data_baixa", type="string", format="date", example="2024-12-31", nullable=true)
+ *             ref="#/components/schemas/Arquitecte"
  *         )
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Dades de l'arquitecte actualitzades correctament",
- *         @OA\JsonContent(
- *             type="object",
- *             @OA\Property(property="status", type="string", example="success"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Arquitectes")
- *         )
+ *         description="Arquitecte actualitzat amb èxit",
+ *         @OA\JsonContent(ref="#/components/schemas/Arquitecte")
  *     ),
  *     @OA\Response(
  *         response=400,
- *         description="Error en la validació de dades",
- *         @OA\JsonContent(
- *             type="object",
- *             @OA\Property(property="status", type="string", example="error"),
- *             @OA\Property(property="data", type="object", additionalProperties={"type":"string"})
- *         )
+ *         description="Petició incorrecta"
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Arquitecte no trobat"
  *     ),
  *     @OA\Response(
  *         response=500,
- *         description="Error intern del servidor",
- *         @OA\JsonContent(
- *             type="object",
- *             @OA\Property(property="status", type="string", example="error"),
- *             @OA\Property(property="message", type="string")
- *         )
+ *         description="Error del servidor"
  *     )
  * )
+ * 
  */
-
 
  public function update(Request $request, $id)
  {
@@ -254,16 +252,20 @@ public function show($id)
          $tupla = Arquitectes::findOrFail($id);
          $reglesValidacio = [
              'nom' => 'nullable|string|max:255',
-             'data_baixa' => 'nullable|date',
          ];
          $missatges = [
              'required' => 'El camp :attribute és obligatori.',
              'max' => 'El :attribute ha de tenir màxim :max caràcters.'
          ];
-
          $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
          if ($validacio->fails()) {
              throw new \Illuminate\Validation\ValidationException($validacio);
+         }
+
+         if (!empty($request->data_baixa)) {
+             $request->merge(['data_baixa' => now()]);
+         } else if (empty($request->data_baixa)) {
+             $request->merge(['data_baixa' => NULL]);
          }
 
          $tupla->update($request->all());
