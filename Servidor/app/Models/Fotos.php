@@ -16,7 +16,6 @@ class Fotos extends Model
         'punt_interes_id',
         'espai_id',
         'comentari',
-        'data_baixa'
     ];
 
     /**
@@ -24,7 +23,7 @@ class Fotos extends Model
      */
     public function puntInteres()
     {
-        return $this->belongsTo(PuntInteres::class, 'punt_interes_id');
+        return $this->belongsTo(PuntsInteres::class, 'punt_interes_id');
     }
 
     /**
@@ -32,7 +31,7 @@ class Fotos extends Model
      */
     public function espai()
     {
-        return $this->belongsTo(Espai::class, 'espai_id');
+        return $this->belongsTo(Espais::class, 'espai_id');
     }
 
 }

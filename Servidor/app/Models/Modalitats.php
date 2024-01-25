@@ -33,3 +33,4 @@ class Modalitats extends Model
     }
 
 }
+
