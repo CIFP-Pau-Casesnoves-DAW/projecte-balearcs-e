@@ -34,7 +34,7 @@ class IllesController extends Controller
  *             @OA\Property(
  *                 property="data",
  *                 type="array",
- *                 @OA\Items(ref="#/components/schemas/Illa")
+ *                 @OA\Items(ref="#/components/schemas/Illes")
  *             )
  *         )
  *     ),
@@ -61,7 +61,7 @@ class IllesController extends Controller
  *     )
  * )
  * @OA\Schema(
- *     schema="Illa",
+ *     schema="Illes",
  *     type="object",
  *     @OA\Property(property="id", type="integer", description="Identificador únic de l'illa"),
  *     @OA\Property(property="nom", type="string", description="Nom de l'illa"),
@@ -95,7 +95,7 @@ class IllesController extends Controller
  *   summary="Crea una nova illa",
  *   description="Aquest endpoint permet crear una nova illa amb les dades proporcionades.",
  *   operationId="storeIlla",
- *   tags={"illes"},
+ *   tags={"Illes"},
  *   @OA\RequestBody(
  *     required=true,
  *     description="Dades de la nova illa",
@@ -111,7 +111,7 @@ class IllesController extends Controller
  *     description="Illa creada amb èxit",
  *     @OA\JsonContent(
  *       @OA\Property(property="status", type="string", example="success"),
- *       @OA\Property(property="data", type="object", ref="#/components/schemas/Illa")
+ *       @OA\Property(property="data", type="object", ref="#/components/schemas/Illes")
  *     )
  *   ),
  *   @OA\Response(
@@ -193,7 +193,7 @@ class IllesController extends Controller
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="correcto"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Illa")
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Illes")
  *         )
  *     ),
  *     @OA\Response(
@@ -237,53 +237,50 @@ class IllesController extends Controller
      */
 
   
- /**
+/**
  * @OA\Put(
- *     path="/illes/{id}",
- *     summary="Actualitza les dades d'una illa",
+ *     path="/api/illes/{id}",
  *     tags={"Illes"},
+ *     summary="Actualitza una illa",
+ *     operationId="updateIlla",
+ *     description="Actualitza les dades d'una illa existent. Només els camps proporcionats seran actualitzats.",
  *     @OA\Parameter(
  *         name="id",
  *         in="path",
+ *         description="ID de la illa a actualitzar",
  *         required=true,
  *         @OA\Schema(
- *             type="integer"
+ *             type="integer",
+ *             format="int64"
  *         )
  *     ),
  *     @OA\RequestBody(
+ *         description="Dades de la illa per actualitzar",
  *         required=true,
  *         @OA\JsonContent(
- *             required={"nom", "zona"},
- *             @OA\Property(property="nom", type="string", maxLength=255, example="Mallorca"),
- *             @OA\Property(property="zona", type="string", maxLength=255, example="Llevant")
+ *             ref="#/components/schemas/Illes"
  *         )
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Dades de l'illa actualitzades amb èxit",
- *         @OA\JsonContent(
- *             @OA\Property(property="status", type="string", example="success"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Illes")
- *         )
+ *         description="Illa actualitzada amb èxit",
+ *         @OA\JsonContent(ref="#/components/schemas/Illes")
  *     ),
  *     @OA\Response(
  *         response=400,
- *         description="Error de validació",
- *         @OA\JsonContent(
- *             @OA\Property(property="status", type="string", example="error"),
- *             @OA\Property(property="data", type="object", example={"nom": "El camp nom és obligatori."})
- *         )
+ *         description="Petició incorrecta o error en la validació de dades"
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Illa no trobada"
  *     ),
  *     @OA\Response(
  *         response=500,
- *         description="Error intern del servidor",
- *         @OA\JsonContent(
- *             @OA\Property(property="status", type="string", example="error"),
- *             @OA\Property(property="message", type="string", example="Missatge d'error")
- *         )
+ *         description="Error del servidor"
  *     )
  * )
  */
+
     public function update(Request $request, $id)
     {
         try {
@@ -346,7 +343,7 @@ class IllesController extends Controller
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="success"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Illa")
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Illes")
  *         )
  *     ),
  *     @OA\Response(

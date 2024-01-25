@@ -29,7 +29,7 @@ class MunicipisController extends Controller
  *             @OA\Property(
  *                 property="data",
  *                 type="array",
- *                 @OA\Items(ref="#/components/schemas/Municipi")
+ *                 @OA\Items(ref="#/components/schemas/Municipis")
  *             )
  *         )
  *     ),
@@ -53,7 +53,7 @@ class MunicipisController extends Controller
  *     )
  * )
  * @OA\Schema(
- *     schema="Municipi",
+ *     schema="Municipis",
  *     type="object",
  *     @OA\Property(property="id", type="integer", description="Identificador únic del municipi"),
  *     @OA\Property(property="nom", type="string", description="Nom del municipi"),
@@ -77,51 +77,49 @@ class MunicipisController extends Controller
 
 /**
  * @OA\Post(
- *     path="/municipis",
+ *     path="/api/municipis",
  *     summary="Crea un nou municipi",
- *     description="Guarda un nou municipi a la base de dades",
- *     operationId="storeMunicipi",
- *     tags={"municipis"},
+ *     tags={"Municipis"},
  *     @OA\RequestBody(
  *         required=true,
- *         description="Dades necessàries per a la creació d'un nou municipi",
+ *         description="Dades necessàries per a crear un nou municipi",
  *         @OA\JsonContent(
  *             required={"nom", "illa_id"},
  *             @OA\Property(property="nom", type="string", example="Palma"),
  *             @OA\Property(property="illa_id", type="integer", example=1),
- *             @OA\Property(property="data_baixa", type="string", format="date-time", example="2024-01-24T14:00:00Z")
- *         ),
+ *             @OA\Property(property="data_baixa", type="string", format="date-time", nullable=true, example="2024-01-24T14:00:00Z")
+ *         )
  *     ),
  *     @OA\Response(
  *         response=200,
  *         description="Municipi creat correctament",
  *         @OA\JsonContent(
+ *             type="object",
  *             @OA\Property(property="status", type="string", example="success"),
- *             @OA\Property(
- *                 property="data",
- *                 type="object",
- *                 ref="#/components/schemas/Municipi"
- *             ),
- *         ),
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Municipis")
+ *         )
  *     ),
  *     @OA\Response(
  *         response=400,
  *         description="Dades invàlides",
  *         @OA\JsonContent(
+ *             type="object",
  *             @OA\Property(property="status", type="string", example="No trobat"),
- *         ),
+ *             @OA\Property(property="data", type="object", additionalProperties={"type":"string"})
+ *         )
  *     ),
  *     @OA\Response(
  *         response=500,
  *         description="Error intern del servidor",
  *         @OA\JsonContent(
+ *             type="object",
  *             @OA\Property(property="status", type="string", example="error"),
  *             @OA\Property(property="message", type="string")
- *         ),
- *     ),
- *     
+ *         )
+ *     )
  * )
  */
+
     public function store(Request $request)
     {
         try {
@@ -175,7 +173,7 @@ class MunicipisController extends Controller
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="correcto"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Municipi")
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Municipis")
  *         )
  *     ),
  *     @OA\Response(
@@ -200,11 +198,11 @@ class MunicipisController extends Controller
 
 /**
  * @OA\Put(
- *     path="/municipis/{id}",
+ *     path="/api/municipis/{id}",
  *     summary="Actualitza un municipi",
  *     description="Actualitza la informació d'un municipi existent a la base de dades.",
  *     operationId="updateMunicipi",
- *     tags={"municipis"},
+ *     tags={"Municipis"},
  *     @OA\Parameter(
  *         name="id",
  *         in="path",
@@ -228,7 +226,7 @@ class MunicipisController extends Controller
  *         description="Municipi actualitzat amb èxit",
  *         @OA\JsonContent(
  *             @OA\Property(property="status", type="string", example="success"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Municipi")
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Municipis")
  *         )
  *     ),
  *     @OA\Response(

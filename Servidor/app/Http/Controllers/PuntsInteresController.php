@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Validator;
 
 /**
  * @OA\Tag(
- *     name="Punts d'Interès",
+ *     name="PuntsInteres",
  *     description="Operacions per a Punts d'Interès"
  * )
  */
@@ -22,8 +22,8 @@ class PuntsInteresController extends Controller
 
     /**
  * @OA\Get(
- *     path="/api/punts-interes",
- *     tags={"Punts d'Interès"},
+ *     path="/api/puntsinteres",
+ *     tags={"PuntsInteres"},
  *     summary="Llista tots els punts d'interès",
  *     @OA\Response(
  *         response=200,
@@ -34,7 +34,7 @@ class PuntsInteresController extends Controller
  *             @OA\Property(
  *                 property="data",
  *                 type="array",
- *                 @OA\Items(ref="#/components/schemas/Punts d'Interès")
+ *                 @OA\Items(ref="#/components/schemas/PuntsInteres")
  *             )
  *         )
  *     ),
@@ -59,7 +59,7 @@ class PuntsInteresController extends Controller
  * )
  * 
  *   @OA\Schema(
- *     schema="Punts d'Interès",
+ *     schema="PuntsInteres",
  *     type="object",
  *     @OA\Property(property="id", type="integer", description="Identificador únic del punt d'interès"),
  *     @OA\Property(property="nom", type="string", description="Nom del punt d'interès"),
@@ -91,9 +91,9 @@ class PuntsInteresController extends Controller
 
 /**
  * @OA\Post(
- *     path="/api/punts-interes",
+ *     path="/api/puntsinteres",
  *     summary="Crea un nou punt d'interès",
- *     tags={"Punts d'Interès"},
+ *     tags={"PuntsInteres"},
  *     @OA\RequestBody(
  *         required=true,
  *         description="Introdueix dades per crear un nou punt d'interès",
@@ -167,8 +167,8 @@ class PuntsInteresController extends Controller
 
  /**
  * @OA\Get(
- *     path="/api/punts-interes/{id}",
- *     tags={"Punts d'Interès"},
+ *     path="/api/puntsinteres/{id}",
+ *     tags={"PuntsInteres"},
  *     summary="Obté les dades d'un punt d'interès específic",
  *     description="Retorna les dades d'un punt d'interès donat el seu identificador únic.",
  *     operationId="showPuntsInteres",
@@ -187,7 +187,7 @@ class PuntsInteresController extends Controller
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="correcto"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Punts d'Interès")
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/PuntsInteres")
  *         )
  *     ),
  *     @OA\Response(
@@ -234,9 +234,9 @@ class PuntsInteresController extends Controller
 
 /**
  * @OA\Put(
- *     path="/puntsInteres/{id}",
+ *     path="/api/puntsinteres/{id}",
  *     operationId="updatePuntsInteres",
- *     tags={"Punts Interès"},
+ *     tags={"PuntsInteres"},
  *     summary="Actualitza un punt d'interès",
  *     description="Actualitza la informació d'un punt d'interès existent.",
  *     @OA\Parameter(
@@ -329,8 +329,8 @@ class PuntsInteresController extends Controller
 
     /**
  * @OA\Delete(
- *     path="/api/punts-interes/{id}",
- *     tags={"Punts d'Interès"},
+ *     path="/api/puntsinteres/{id}",
+ *     tags={"PuntsInteres"},
  *     summary="Elimina un punt d'interès",
  *     @OA\Parameter(
  *         name="id",
@@ -385,8 +385,8 @@ class PuntsInteresController extends Controller
 
     /**
  * @OA\Delete(
- *     path="/api/punts-interes/{id}/delete",
- *     tags={"Punts d'Interès"},
+ *     path="/api/puntsinteres/{id}/delete",
+ *     tags={"PuntsInteres"},
  *     summary="Realitza una eliminació lògica d'un punt d'interès",
  *     @OA\Parameter(
  *         name="id",

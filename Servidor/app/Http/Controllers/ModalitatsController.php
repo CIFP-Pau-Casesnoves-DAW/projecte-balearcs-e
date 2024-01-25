@@ -77,8 +77,8 @@ class ModalitatsController extends Controller
 
 /**
  * @OA\Post(
- *     path="/modalitats",
- *     tags={"modalitats"},
+ *     path="/api/modalitats",
+ *     tags={"Modalitats"},
  *     summary="Afegeix una nova modalitat",
  *     operationId="storeModalitat",
  *     @OA\RequestBody(
@@ -241,7 +241,7 @@ class ModalitatsController extends Controller
  *             @OA\Property(
  *                 property="data",
  *                 type="object",
- *                 ref="#/components/schemas/Modalitat"
+ *                 ref="#/components/schemas/Modalitats"
  *             )
  *         )
  *     ),

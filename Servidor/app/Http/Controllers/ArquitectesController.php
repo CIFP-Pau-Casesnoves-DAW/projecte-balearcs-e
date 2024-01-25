@@ -92,7 +92,7 @@ class ArquitectesController extends Controller
  *             @OA\Property(
  *                 property="data",
  *                 type="object",
- *                 ref="#/components/schemas/Arquitecte"
+ *                 ref="#/components/schemas/Arquitectes"
  *             )
  *         )
  *     ),
@@ -222,13 +222,13 @@ public function show($id)
  *         description="Dades de l'arquitecte per actualitzar",
  *         required=true,
  *         @OA\JsonContent(
- *             ref="#/components/schemas/Arquitecte"
+ *             ref="#/components/schemas/Arquitectes"
  *         )
  *     ),
  *     @OA\Response(
  *         response=200,
  *         description="Arquitecte actualitzat amb èxit",
- *         @OA\JsonContent(ref="#/components/schemas/Arquitecte")
+ *         @OA\JsonContent(ref="#/components/schemas/Arquitectes")
  *     ),
  *     @OA\Response(
  *         response=400,

@@ -202,7 +202,7 @@ class EspaisModalitatsController extends Controller
  *     @OA\RequestBody(
  *         required=true,
  *         description="Dades de la modalitat per actualitzar",
- *         @OA\JsonContent(ref="#/components/schemas/EspaisModalitatsUpdateRequest")
+ *         @OA\JsonContent(ref="#/components/schemas/EspaisModalitats")
  *     ),
  *     @OA\Response(
  *         response=200,
@@ -257,11 +257,11 @@ class EspaisModalitatsController extends Controller
 
     /**
  * @OA\Delete(
- *     path="/api/espaimodalitats/{espai_id}/{modalitat_id}",
+ *     path="/api/espaismodalitats/{espai_id}/{modalitat_id}",
  *     summary="Elimina una entitat EspaiModalitat",
  *     description="Elimina l'entitat EspaiModalitat basant-se en l'ID d'espai i l'ID de modalitat proporcionats.",
  *     operationId="destroyEspaiModalitat",
- *     tags={"EspaiModalitat"},
+ *     tags={"EspaisModalitats"},
  *     @OA\Parameter(
  *         name="espai_id",
  *         in="path",

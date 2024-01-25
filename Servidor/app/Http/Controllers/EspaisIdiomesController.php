@@ -17,20 +17,15 @@ class EspaisIdiomesController extends Controller
 {
 /**
  * @OA\Get(
- *     path="/espaisidiomes",
+ *     path="/api/espaisidiomes",
  *     tags={"EspaisIdiomes"},
- *     summary="Obté tots els espais i idiomes",
- *     description="Retorna una llista de tots els espais i idiomes disponibles.",
+ *     summary="Llista totes les relacions entre espais i idiomes",
  *     @OA\Response(
  *         response=200,
- *         description="Operació reeixida",
+ *         description="Llista de relacions entre espais i idiomes recuperada amb èxit",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(
- *                 property="status",
- *                 type="string",
- *                 example="correcto"
- *             ),
+ *             @OA\Property(property="status", type="string", example="correcto"),
  *             @OA\Property(
  *                 property="data",
  *                 type="array",
@@ -40,25 +35,35 @@ class EspaisIdiomesController extends Controller
  *     ),
  *     @OA\Response(
  *         response=400,
- *         description="Error de validació"
+ *         description="Error en la sol·licitud",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="data", type="object")
+ *         )
  *     ),
  *     @OA\Response(
  *         response=500,
- *         description="Error intern del servidor"
+ *         description="Error intern del servidor",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string")
+ *         )
  *     )
  * )
- * 
  * @OA\Schema(
- *  schema="EspaisIdiomes",
- *  title="EspaisIdiomes",
- *  description="Model d'EspaisIdiomes",
- *      @OA\Property(property="idioma_id", type="integer", description="Id de l'idioma"), 
- *      @OA\Property(property="espai_id", type="integer", description="Id de l'espai"),
- *      @OA\Property(property="traduccio", type="string", description="Traducció de l'espai"),
- *      @OA\Property(property="data_baixa", type="date", description="Data de baixa de l'espai"),
+ *     schema="EspaisIdiomes",
+ *     type="object",
+ *     title="EspaisIdiomes",
+ *      @OA\Property(property="idioma_id", type="integer", format="int64", example=1),
+ *      @OA\Property(property="espai_id", type="integer", format="int64", example=1),
+ *      @OA\Property(property="traduccio", type="string", example="Descripció de l'espai en un idioma específic"),
+ *      @OA\Property(property="data_baixa", type="string", format="date-time", example="2024-01-24T15:00:00.000Z")
  * )
  * 
  */
+
     public function index()
     {
         try {
@@ -73,9 +78,9 @@ class EspaisIdiomesController extends Controller
 
    /**
  * @OA\Post(
- *     path="/espais-idiomes",
+ *     path="/espaisidiomes",
  *     summary="Crea una nova traducció d'espai",
- *     tags={"Espais Idiomes"},
+ *     tags={"EspaisIdiomes"},
  *     @OA\RequestBody(
  *         description="Dades necessàries per a crear una nova traducció d'espai",
  *         required=true,
@@ -157,6 +162,8 @@ class EspaisIdiomesController extends Controller
  * @OA\Get(
  *     path="/espaisidiomes/{idioma_id}/{espai_id}",
  *     summary="Obté la traducció específica d'un espai",
+ *     description="Retorna la traducció d'un espai específic.",
+ *     tags={"EspaisIdiomes"},
  *     @OA\Parameter(
  *         name="idioma_id",
  *         in="path",
@@ -200,11 +207,11 @@ class EspaisIdiomesController extends Controller
 
   /**
  * @OA\Put(
- *     path="/espais-idiomes/{idioma_id}/{espai_id}",
+ *     path="/espaisidiomes/{idioma_id}/{espai_id}",
  *     summary="Actualitza una traducció d'un espai",
  *     description="Actualitza la traducció d'un espai amb els valors proporcionats",
  *     operationId="updateTraduccioEspai",
- *     tags={"Espais Idiomes"},
+ *     tags={"EspaisIdiomes"},
  *     @OA\Parameter(
  *         name="idioma_id",
  *         in="path",
@@ -287,36 +294,58 @@ class EspaisIdiomesController extends Controller
         }
     }
 
-    /**
+/**
  * @OA\Delete(
  *     path="/espaisidiomes/{idioma_id}/{espai_id}",
- *     summary="Esborra la traducció d'un espai",
+ *     tags={"EspaisIdiomes"},
+ *     summary="Elimina la traducció d'un espai",
  *     @OA\Parameter(
  *         name="idioma_id",
  *         in="path",
  *         required=true,
- *         @OA\Schema(type="integer")
+ *         description="Identificador únic de l'idioma de la traducció a eliminar",
+ *         @OA\Schema(
+ *             type="integer"
+ *         )
  *     ),
  *     @OA\Parameter(
  *         name="espai_id",
  *         in="path",
  *         required=true,
- *         @OA\Schema(type="integer")
+ *         description="Identificador únic de l'espai del qual es vol eliminar la traducció",
+ *         @OA\Schema(
+ *             type="integer"
+ *         )
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Traducció esborrada correctament"
+ *         description="Traducció esborrada correctament",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="Esborrat correctament")
+ *         )
  *     ),
  *     @OA\Response(
  *         response=404,
- *         description="Traducció no trobada"
+ *         description="Traducció no trobada",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="No trobat")
+ *         )
  *     ),
  *     @OA\Response(
  *         response=500,
- *         description="Error del servidor"
+ *         description="Error intern del servidor",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string")
+ *         )
  *     )
  * )
  */
+
+
     //funciona
     public function destroy($idioma_id, $espai_id)
     {

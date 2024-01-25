@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Validator;
 
 /**
  * @OA\Tag(
- *     name="Modalitats Idiomes",
+ *     name="ModalitatsIdiomes",
  *     description="Operacions per a les modalitats d'idiomes"
  * )
  */
@@ -17,8 +17,8 @@ class ModalitatsIdiomesController extends Controller
 {
    /**
  * @OA\Get(
- *     path="/api/modalitats-idiomes",
- *     tags={"Modalitats Idiomes"},
+ *     path="/api/modalitatsidiomes",
+ *     tags={"ModalitatsIdiomes"},
  *     summary="Llista totes les associacions entre modalitats i idiomes",
  *     @OA\Response(
  *         response=200,
@@ -29,7 +29,7 @@ class ModalitatsIdiomesController extends Controller
  *             @OA\Property(
  *                 property="data",
  *                 type="array",
- *                 @OA\Items(ref="#/components/schemas/Modalitats Idiomes")
+ *                 @OA\Items(ref="#/components/schemas/ModalitatsIdiomes")
  *             )
  *         )
  *     ),
@@ -53,7 +53,7 @@ class ModalitatsIdiomesController extends Controller
  *     )
  * )
  * @OA\Schema(
- *     schema="Modalitats Idiomes",
+ *     schema="ModalitatsIdiomes",
  *     type="object",
  *     @OA\Property(property="id", type="integer", description="Identificador únic de l'associació"),
  *     @OA\Property(property="modalitat_id", type="integer", description="Identificador de la modalitat associada"),
@@ -75,7 +75,7 @@ class ModalitatsIdiomesController extends Controller
 
 /**
  * @OA\Post(
- *     path="/modalitatsidiomes",
+ *     path="/api/modalitatsidiomes",
  *     summary="Crea una nova traducció de modalitat per a un idioma específic",
  *     tags={"ModalitatsIdiomes"},
  *     @OA\RequestBody(
@@ -150,8 +150,8 @@ class ModalitatsIdiomesController extends Controller
 
     /**
  * @OA\Get(
- *     path="/api/modalitats-idiomes/{idioma_id}/{modalitat_id}",
- *     tags={"Modalitats Idiomes"},
+ *     path="/api/modalitatsidiomes/{idioma_id}/{modalitat_id}",
+ *     tags={"ModalitatsIdiomes"},
  *     summary="Obté una associació entre modalitats i idiomes específics",
  *     @OA\Parameter(
  *         name="idioma_id",
@@ -176,7 +176,7 @@ class ModalitatsIdiomesController extends Controller
  *         description="Associació trobada amb èxit",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="modalitat_idioma", type="object", ref="#/components/schemas/Modalitats Idiomes")
+ *             @OA\Property(property="modalitat_idioma", type="object", ref="#/components/schemas/ModalitatsIdiomes")
  *         )
  *     ),
  *     @OA\Response(
@@ -214,9 +214,9 @@ class ModalitatsIdiomesController extends Controller
 
 /**
  * @OA\Put(
- *     path="/modalitatsIdiomes/{idioma_id}/{modalitat_id}",
+ *     path="/api/modalitatsidiomes/{idioma_id}/{modalitat_id}",
  *     operationId="updateTraduccioModalitat",
- *     tags={"Traduccions de Modalitats per Idioma"},
+ *     tags={"ModalitatsIdiomes"},
  *     summary="Actualitza una traducció específica de modalitat per un idioma donat",
  *     description="Actualitza la informació de la traducció de modalitat segons els identificadors d'idioma i modalitat. Permet actualitzar els camps de la traducció.",
  *     @OA\Parameter(
@@ -240,13 +240,13 @@ class ModalitatsIdiomesController extends Controller
  *     @OA\RequestBody(
  *         required=true,
  *         @OA\JsonContent(
- *             ref="#/components/schemas/ModalitatIdiomaUpdateRequest"
+ *             ref="#/components/schemas/ModalitatsIdiomes"
  *         )
  *     ),
  *     @OA\Response(
  *         response=200,
  *         description="Traducció actualitzada amb èxit",
- *         @OA\JsonContent(ref="#/components/schemas/ModalitatIdioma")
+ *         @OA\JsonContent(ref="#/components/schemas/ModalitatsIdiomes")
  *     ),
  *     @OA\Response(
  *         response=400,
@@ -300,10 +300,10 @@ class ModalitatsIdiomesController extends Controller
 
 /**
  * @OA\Delete(
- *     path="/api/modalitats-idiomes/{idioma_id}/{modalitat_id}",
+ *     path="/api/modalitatsidiomes/{idioma_id}/{modalitat_id}",
  *     summary="Esborra una traducció de modalitat per un idioma específic",
  *     description="Esborra la traducció de la modalitat per l'ID d'idioma i ID de modalitat especificats. Retorna un missatge de confirmació o d'error en cas que no es trobi.",
- *     tags={"Modalitats Idiomes"},
+ *     tags={"ModalitatsIdiomes"},
  *     @OA\Parameter(
  *         name="idioma_id",
  *         in="path",

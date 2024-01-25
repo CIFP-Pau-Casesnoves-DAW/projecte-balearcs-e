@@ -34,7 +34,7 @@ class ServeisController extends Controller
  *             @OA\Property(
  *                 property="data",
  *                 type="array",
- *                 @OA\Items(ref="#/components/schemas/Servei")
+ *                 @OA\Items(ref="#/components/schemas/Serveis")
  *             )
  *         )
  *     ),
@@ -59,7 +59,7 @@ class ServeisController extends Controller
  * )
  *
  * @OA\Schema(
- *     schema="Servei",
+ *     schema="Serveis",
  *     type="object",
  *     @OA\Property(property="id", type="integer", description="Identificador únic del servei"),
  *     @OA\Property(property="nom", type="string", description="Nom del servei"),
@@ -88,7 +88,7 @@ class ServeisController extends Controller
 
 /**
  * @OA\Post(
- *     path="/serveis",
+ *     path="/api/serveis",
  *     operationId="storeServeis",
  *     tags={"Serveis"},
  *     summary="Afegeix un nou servei",
@@ -110,7 +110,7 @@ class ServeisController extends Controller
  *             @OA\Property(
  *                 property="data",
  *                 type="object",
- *                 ref="#/components/schemas/Servei"
+ *                 ref="#/components/schemas/Serveis"
  *             )
  *         )
  *     ),
@@ -193,7 +193,7 @@ class ServeisController extends Controller
  *             @OA\Property(
  *                 property="data",
  *                 type="object",
- *                 ref="#/components/schemas/Servei"
+ *                 ref="#/components/schemas/Serveis"
  *             )
  *         )
  *     ),
@@ -239,11 +239,11 @@ class ServeisController extends Controller
 
     /**
  * @OA\Put(
- *     path="/serveis/{id}",
+ *     path="/api/serveis/{id}",
  *     summary="Actualitza un servei",
  *     description="Actualitza les dades d'un servei existent segons l'ID proporcionat.",
  *     operationId="updateServei",
- *     tags={"serveis"},
+ *     tags={"Serveis"},
  *     @OA\Parameter(
  *         name="id",
  *         in="path",
@@ -267,7 +267,7 @@ class ServeisController extends Controller
  *         description="Servei actualitzat amb èxit",
  *         @OA\JsonContent(
  *             @OA\Property(property="status", type="string", example="success"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Servei")
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Serveis")
  *         )
  *     ),
  *     @OA\Response(
@@ -349,7 +349,7 @@ class ServeisController extends Controller
  *             @OA\Property(
  *                 property="data",
  *                 type="object",
- *                 ref="#/components/schemas/Servei"
+ *                 ref="#/components/schemas/Serveis"
  *             )
  *         )
  *     ),

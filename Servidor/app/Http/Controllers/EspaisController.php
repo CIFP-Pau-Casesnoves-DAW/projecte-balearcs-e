@@ -259,12 +259,12 @@ class EspaisController extends Controller
  *     @OA\RequestBody(
  *         description="Dades actualitzades de l'espai",
  *         required=true,
- *         @OA\JsonContent(ref="#/components/schemas/Espai")
+ *         @OA\JsonContent(ref="#/components/schemas/Espais")
  *     ),
  *     @OA\Response(
  *         response=200,
  *         description="Espai actualitzat correctament",
- *         @OA\JsonContent(ref="#/components/schemas/Espai")
+ *         @OA\JsonContent(ref="#/components/schemas/Espais")
  *     ),
  *     @OA\Response(
  *         response=400,

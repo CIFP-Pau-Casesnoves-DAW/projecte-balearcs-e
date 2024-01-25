@@ -76,7 +76,7 @@ class ServeisIdiomesController extends Controller
  *     summary="Crea un nou servei idioma",
  *     description="Afegeix un nou servei idioma a la base de dades",
  *     operationId="storeServeiIdioma",
- *     tags={"serveisidiomes"},
+ *     tags={"ServeisIdiomes"},
  *     @OA\RequestBody(
  *         required=true,
  *         description="Dades necessàries per a crear un nou servei idioma",
@@ -154,7 +154,7 @@ class ServeisIdiomesController extends Controller
  *     summary="Obté una traducció específica",
  *     description="Retorna una traducció basada en l'ID de l'idioma i del servei",
  *     operationId="showServeiIdioma",
- *     tags={"Serveis Idiomes"},
+ *     tags={"ServeisIdiomes"},
  *     @OA\Parameter(
  *         name="idioma_id",
  *         in="path",
@@ -176,7 +176,7 @@ class ServeisIdiomesController extends Controller
  *     @OA\Response(
  *         response=200,
  *         description="Traducció trobada amb èxit",
- *         @OA\JsonContent(ref="#/components/schemas/ServeiIdioma")
+ *         @OA\JsonContent(ref="#/components/schemas/ServeisIdiomes")
  *     ),
  *     @OA\Response(
  *         response=404,
@@ -206,8 +206,8 @@ class ServeisIdiomesController extends Controller
 
     /**
  * @OA\Put(
- *     path="/serveis/{idioma_id}/{servei_id}",
- *     tags={"Serveis"},
+ *     path="/serveisidiomes/{idioma_id}/{servei_id}",
+ *     tags={"ServeisIdiomes"},
  *     summary="Actualitza una traducció de servei",
  *     description="Actualitza la traducció d'un servei específic basant-se en l'ID d'idioma i l'ID de servei.",
  *     @OA\Parameter(
@@ -305,11 +305,11 @@ class ServeisIdiomesController extends Controller
 
     /**
  * @OA\Delete(
- *     path="/serveis/{idioma_id}/{servei_id}",
+ *     path="/serveisidiomes/{idioma_id}/{servei_id}",
  *     summary="Esborra una traducció específica de servei",
  *     description="Esborra la traducció d'un servei basada en l'ID de l'idioma i el servei",
  *     operationId="destroyTraduccioServei",
- *     tags={"Traduccions"},
+ *     tags={"ServeisIdiomes"},
  *     @OA\Parameter(
  *         name="idioma_id",
  *         in="path",

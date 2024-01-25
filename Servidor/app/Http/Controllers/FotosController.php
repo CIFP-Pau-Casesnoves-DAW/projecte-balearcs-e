@@ -209,11 +209,11 @@ class FotosController extends Controller
 
 /**
  * @OA\Put(
- *     path="/fotos/{id}",
+ *     path="/api/fotos/{id}",
  *     summary="Actualitza una foto",
  *     description="Actualitza les dades d'una foto existent",
  *     operationId="updateFoto",
- *     tags={"fotos"},
+ *     tags={"Fotos"},
  *     @OA\Parameter(
  *         name="id",
  *         in="path",
@@ -241,7 +241,7 @@ class FotosController extends Controller
  *             @OA\Property(
  *                 property="data",
  *                 type="object",
- *                 ref="#/components/schemas/Foto"
+ *                 ref="#/components/schemas/Fotos"
  *             )
  *         )
  *     ),

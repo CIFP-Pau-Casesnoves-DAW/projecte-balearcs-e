@@ -34,7 +34,7 @@ class VisitesController extends Controller
  *             @OA\Property(
  *                 property="data",
  *                 type="array",
- *                 @OA\Items(ref="#/components/schemas/Visita")
+ *                 @OA\Items(ref="#/components/schemas/Visites")
  *             )
  *         )
  *     ),
@@ -58,7 +58,7 @@ class VisitesController extends Controller
  *     )
  * )
  * @OA\Schema(
- *     schema="Visita",
+ *     schema="Visites",
  *     type="object",
  *     @OA\Property(property="id", type="integer", description="Identificador únic de la visita"),
  *     @OA\Property(property="titol", type="string", description="Títol de la visita"),
@@ -124,7 +124,7 @@ class VisitesController extends Controller
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="success"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Visita")
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Visites")
  *         )
  *     ),
  *     @OA\Response(
@@ -210,7 +210,7 @@ class VisitesController extends Controller
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="correcto"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Visita")
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Visites")
  *         )
  *     ),
  *     @OA\Response(
@@ -288,7 +288,7 @@ class VisitesController extends Controller
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="success"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Visita")
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Visites")
  *         )
  *     ),
  *     @OA\Response(
@@ -370,12 +370,12 @@ class VisitesController extends Controller
  *     path="/api/visites/{id}",
  *     tags={"Visites"},
  *     summary="Elimina una visita",
- *     description="Elimina una visita de la base de dades mitjançant l'identificador proporcionat.",
+ *     description="Elimina una visita específica de la base de dades.",
  *     @OA\Parameter(
  *         name="id",
  *         in="path",
  *         required=true,
- *         description="Identificador de la visita a eliminar",
+ *         description="ID de la visita a eliminar",
  *         @OA\Schema(type="integer")
  *     ),
  *     @OA\Response(
@@ -383,28 +383,16 @@ class VisitesController extends Controller
  *         description="Visita eliminada correctament",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(
- *                 property="status",
- *                 type="string",
- *                 example="success"
- *             ),
- *             @OA\Property(
- *                 property="data",
- *                 type="object",
- *                 ref="#/components/schemas/Visites"
- *             )
+ *             @OA\Property(property="status", type="string", example="success"),
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Visites")
  *         )
  *     ),
  *     @OA\Response(
  *         response=400,
- *         description="Error en la sol·licitud",
+ *         description="Visita no trobada",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(
- *                 property="status",
- *                 type="string",
- *                 example="Error"
- *             )
+ *             @OA\Property(property="status", type="string", example="Error")
  *         )
  *     ),
  *     @OA\Response(
@@ -412,19 +400,13 @@ class VisitesController extends Controller
  *         description="Error intern del servidor",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(
- *                 property="status",
- *                 type="string",
- *                 example="error"
- *             ),
- *             @OA\Property(
- *                 property="message",
- *                 type="string"
- *             )
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string")
  *         )
  *     )
  * )
  */
+
     public function destroy($id)
     {
         try {
@@ -438,46 +420,34 @@ class VisitesController extends Controller
         }
     }
 
-    /**
+/**
  * @OA\Delete(
- *     path="/api/visites/{id}",
+ *     path="/api/visites/{id}/marcarBaixa",
  *     tags={"Visites"},
- *     summary="Elimina una visita",
- *     description="Elimina una visita de la base de dades mitjançant l'identificador proporcionat.",
+ *     summary="Marca una visita com a donada de baixa",
+ *     description="Actualitza la data de baixa d'una visita específica, marcant-la com a donada de baixa en el sistema.",
  *     @OA\Parameter(
  *         name="id",
  *         in="path",
  *         required=true,
- *         description="Identificador de la visita a eliminar",
+ *         description="ID de la visita a marcar com a donada de baixa",
  *         @OA\Schema(type="integer")
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Visita eliminada correctament",
+ *         description="Visita marcada com a donada de baixa correctament",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(
- *                 property="status",
- *                 type="string",
- *                 example="success"
- *             ),
- *             @OA\Property(
- *                 property="data",
- *                 type="object",
- *                 ref="#/components/schemas/Visites"
- *             )
+ *             @OA\Property(property="status", type="string", example="success"),
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Visites")
  *         )
  *     ),
  *     @OA\Response(
  *         response=400,
- *         description="Error en la sol·licitud",
+ *         description="Visita no trobada o error en la petició",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(
- *                 property="status",
- *                 type="string",
- *                 example="Error"
- *             )
+ *             @OA\Property(property="status", type="string", example="Error")
  *         )
  *     ),
  *     @OA\Response(
@@ -485,19 +455,13 @@ class VisitesController extends Controller
  *         description="Error intern del servidor",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(
- *                 property="status",
- *                 type="string",
- *                 example="error"
- *             ),
- *             @OA\Property(
- *                 property="message",
- *                 type="string"
- *             )
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string")
  *         )
  *     )
  * )
  */
+
     public function delete($id)
     {
         try {

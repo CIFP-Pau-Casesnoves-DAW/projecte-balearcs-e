@@ -16,7 +16,7 @@ class EspaisServeisController extends Controller
 {
    /**
  * @OA\Get(
- *     path="/espaisserveis",
+ *     path="/EspaisServeis",
  *     summary="Obté llista de tots els espais serveis",
  *     tags={"EspaisServeis"},
  *     @OA\Response(
@@ -98,7 +98,7 @@ class EspaisServeisController extends Controller
 
     /**
  * @OA\Post(
- *     path="/espaisserveis",
+ *     path="/EspaisServeis",
  *     summary="Crea un nou servei associat a un espai",
  *     tags={"EspaisServeis"},
  *     @OA\RequestBody(
@@ -170,7 +170,7 @@ class EspaisServeisController extends Controller
 
     /**
  * @OA\Get(
- *     path="/espaisserveis/{espai_id}/{servei_id}",
+ *     path="/EspaisServeis/{espai_id}/{servei_id}",
  *     summary="Obté un servei específic d'un espai donat",
  *     tags={"EspaisServeis"},
  *     @OA\Parameter(
@@ -223,7 +223,7 @@ class EspaisServeisController extends Controller
 
     /**
  * @OA\Put(
- *     path="/espaisserveis/{espai_id}/{servei_id}",
+ *     path="/EspaisServeis/{espai_id}/{servei_id}",
  *     summary="Actualitza un servei d'un espai específic",
  *     tags={"EspaisServeis"},
  *     @OA\Parameter(
@@ -296,7 +296,7 @@ class EspaisServeisController extends Controller
 
    /**
  * @OA\Delete(
- *     path="/espaisserveis/{espai_id}/{servei_id}",
+ *     path="/EspaisServeis/{espai_id}/{servei_id}",
  *     summary="Elimina un servei d'un espai",
  *     tags={"EspaisServeis"},
  *     @OA\Parameter(

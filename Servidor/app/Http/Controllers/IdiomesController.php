@@ -99,7 +99,7 @@ class IdiomesController extends Controller
  *             @OA\Property(
  *                 property="data",
  *                 type="object",
- *                 ref="#/components/schemas/Idioma"
+ *                 ref="#/components/schemas/Idiomes"
  *             )
  *         )
  *     ),
@@ -242,7 +242,7 @@ class IdiomesController extends Controller
  *             @OA\Property(
  *                 property="data",
  *                 type="object",
- *                 ref="#/components/schemas/Idioma"
+ *                 ref="#/components/schemas/Idiomes"
  *             )
  *         )
  *     ),

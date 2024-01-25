@@ -73,13 +73,13 @@ class AudiosController extends Controller
 
 /**
  * @OA\Post(
- *   path="/audios",
- *   summary="Crea un nou àudio",
- *   description="Guarda un nou àudio a la base de dades",
+ *   path="/api/audios",
+ *   summary="Crea un nou audio",
+ *   description="Guarda un nou audio a la base de dades",
  *   tags={"Audios"},
  *   @OA\RequestBody(
  *       required=true,
- *       description="Dades per al nou àudio",
+ *       description="Dades per al nou audio",
  *       @OA\JsonContent(
  *          required={"url", "punt_interes_id"},
  *          @OA\Property(property="url", type="string", example="http://exemple.com/audio.mp3"),
@@ -88,7 +88,7 @@ class AudiosController extends Controller
  *   ),
  *   @OA\Response(
  *       response=200,
- *       description="Àudio creat amb èxit",
+ *       description="Audio creat amb èxit",
  *       @OA\JsonContent(
  *          @OA\Property(property="status", type="string", example="success"),
  *          @OA\Property(property="data", type="object", ref="#/components/schemas/Audios")
@@ -190,16 +190,16 @@ public function store(Request $request)
 
 /**
  * @OA\Put(
- *     path="/audios/{id}",
- *     summary="Actualitza un àudio",
- *     description="Actualitza les dades d'un àudio segons l'ID",
+ *     path="/api/audios/{id}",
+ *     summary="Actualitza un audio",
+ *     description="Actualitza les dades d'un audio segons l'ID",
  *     operationId="updateAudio",
- *     tags={"audios"},
+ *     tags={"Audios"},
  *     @OA\Parameter(
  *         name="id",
  *         in="path",
  *         required=true,
- *         description="ID de l'àudio a actualitzar",
+ *         description="ID de l'audio a actualitzar",
  *         @OA\Schema(
  *             type="integer",
  *             format="int64"
@@ -207,7 +207,7 @@ public function store(Request $request)
  *     ),
  *     @OA\RequestBody(
  *         required=true,
- *         description="Dades de l'àudio per actualitzar",
+ *         description="Dades de l'audio per actualitzar",
  *         @OA\JsonContent(
  *             required={"url", "punt_interes_id"},
  *             @OA\Property(property="url", type="string", example="http://exemple.com/audio.mp3"),

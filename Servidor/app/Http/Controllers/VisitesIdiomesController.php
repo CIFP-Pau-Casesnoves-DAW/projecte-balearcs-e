@@ -183,7 +183,7 @@ class VisitesIdiomesController extends Controller
  *         description="Traducció trobada amb èxit",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="visita_idioma", ref="#/components/schemas/VisitaIdioma")
+ *             @OA\Property(property="visita_idioma", ref="#/components/schemas/VisitesIdiomes")
  *         )
  *     ),
  *     @OA\Response(
@@ -223,8 +223,8 @@ class VisitesIdiomesController extends Controller
  
     /**
  * @OA\Put(
- *     path="/api/visitaIdioma/{idioma_id}/{visita_id}",
- *     tags={"VisitaIdioma"},
+ *     path="/api/visitesidiomes/{idioma_id}/{visita_id}",
+ *     tags={"VisitesIdiomes"},
  *     summary="Actualitza la traducció d'una visita existent",
  *     @OA\Parameter(
  *         name="idioma_id",
@@ -258,7 +258,7 @@ class VisitesIdiomesController extends Controller
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="success"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/VisitaIdioma")
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/VisitesIdiomes")
  *         )
  *     ),
  *     @OA\Response(
@@ -332,8 +332,8 @@ class VisitesIdiomesController extends Controller
   
     /**
  * @OA\Delete(
- *     path="/api/visites/{idioma_id}/{visita_id}",
- *     tags={"Visites"},
+ *     path="/api/visitesidiomes/{idioma_id}/{visita_id}",
+ *     tags={"VisitesIdiomes"},
  *     summary="Esborra una traducció específica d'una visita",
  *     description="Esborra la traducció d'una visita basant-se en l'idioma i l'identificador de la visita",
  *     @OA\Parameter(

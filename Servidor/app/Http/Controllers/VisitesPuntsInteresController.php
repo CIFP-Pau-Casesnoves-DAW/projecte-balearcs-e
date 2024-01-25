@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\VisitesPuntsInteres;
 use Illuminate\Support\Facades\Validator;
 
+
 /**
  * @OA\Tag(
  *     name="VisitesPuntsInteres",
@@ -21,7 +22,7 @@ class VisitesPuntsInteresController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    /**
+ /**
  * @OA\Get(
  *     path="/api/visitespuntsinteres",
  *     tags={"VisitesPuntsInteres"},
@@ -35,7 +36,7 @@ class VisitesPuntsInteresController extends Controller
  *             @OA\Property(
  *                 property="data",
  *                 type="array",
- *                 @OA\Items(ref="#/components/schemas/VisitaPuntInteres")
+ *                 @OA\Items(ref="#/components/schemas/VisitesPuntsInteres")
  *             )
  *         )
  *     ),
@@ -58,15 +59,18 @@ class VisitesPuntsInteresController extends Controller
  *         )
  *     )
  * )
+ *
+ *
+ *
  * @OA\Schema(
- *     schema="VisitaPuntsInteres",
+ *     schema="VisitesPuntsInteres",
  *     type="object",
  *     @OA\Property(property="visita_id", type="integer", description="Identificador de la visita"),
  *     @OA\Property(property="punt_interes_id", type="integer", description="Identificador del punt d'interès"),
  *     @OA\Property(property="ordre", type="integer", description="Ordre del punt d'interès en la visita")
- *     
  * )
  */
+
 
     public function index()
     {
@@ -87,49 +91,28 @@ class VisitesPuntsInteresController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-  /**
+/**
  * @OA\Post(
- *     path="/api/visitespuntsinteres",
+ *     path="/visitesPuntsInteres",
+ *     summary="Crea una nova relació entre una visita i un punt d'interès",
  *     tags={"VisitesPuntsInteres"},
- *     summary="Crea una nova associació entre una visita i un punt d'interès",
- *     description="Guarda una nova associació entre una visita i un punt d'interès a la base de dades.",
  *     @OA\RequestBody(
  *         required=true,
- *         description="Dades necessàries per a crear la nova associació",
+ *         description="Dades necessàries per a crear una nova relació entre una visita i un punt d'interès",
  *         @OA\JsonContent(
  *             required={"punt_interes_id", "visita_id", "ordre"},
- *             @OA\Property(
- *                 property="punt_interes_id",
- *                 type="integer",
- *                 description="Identificador del punt d'interès"
- *             ),
- *             @OA\Property(
- *                 property="visita_id",
- *                 type="integer",
- *                 description="Identificador de la visita"
- *             ),
- *             @OA\Property(
- *                 property="ordre",
- *                 type="integer",
- *                 description="Ordre del punt d'interès dins de la visita"
- *             )
+ *             @OA\Property(property="punt_interes_id", type="integer", example=1),
+ *             @OA\Property(property="visita_id", type="integer", example=2),
+ *             @OA\Property(property="ordre", type="integer", example=3)
  *         )
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Associació creada correctament",
+ *         description="Relació creada correctament",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(
- *                 property="status",
- *                 type="string",
- *                 example="success"
- *             ),
- *             @OA\Property(
- *                 property="data",
- *                 type="object",
- *                 ref="#/components/schemas/VisitesPuntsInteres"
- *             )
+ *             @OA\Property(property="status", type="string", example="success"),
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/VisitesPuntsInteres")
  *         )
  *     ),
  *     @OA\Response(
@@ -137,18 +120,8 @@ class VisitesPuntsInteresController extends Controller
  *         description="Error en la validació de dades",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(
- *                 property="status",
- *                 type="string",
- *                 example="error"
- *             ),
- *             @OA\Property(
- *                 property="data",
- *                 type="object",
- *                 additionalProperties={
- *                     type="string"
- *                 }
- *             )
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="data", type="object", additionalProperties={"type":"string"})
  *         )
  *     ),
  *     @OA\Response(
@@ -156,19 +129,14 @@ class VisitesPuntsInteresController extends Controller
  *         description="Error intern del servidor",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(
- *                 property="status",
- *                 type="string",
- *                 example="error"
- *             ),
- *             @OA\Property(
- *                 property="message",
- *                 type="string"
- *             )
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string")
  *         )
  *     )
  * )
  */
+
+
 public function store(Request $request)
 {
     try {
@@ -233,7 +201,7 @@ public function store(Request $request)
  *         description="Associació entre la visita i el punt d'interès trobada",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="punts_interes_idioma", type="object", ref="#/components/schemas/VisitaPuntInteres")
+ *             @OA\Property(property="punts_interes_idioma", type="object", ref="#/components/schemas/VisitesPuntsInteres")
  *         )
  *     ),
  *     @OA\Response(
@@ -271,7 +239,7 @@ public function store(Request $request)
 
  /**
  * @OA\Put(
- *     path="/api/visites-punts-interes/{visita_id}/{punt_interes_id}",
+ *     path="/api/visitespuntsinteres/{visita_id}/{punt_interes_id}",
  *     tags={"VisitesPuntsInteres"},
  *     summary="Actualitza una associació entre una visita i un punt d'interès",
  *     description="Actualitza les dades d'una associació específica entre una visita i un punt d'interès, com l'ordre de la visita en aquest punt.",
@@ -304,7 +272,7 @@ public function store(Request $request)
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="success"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/VisitaPuntInteres")
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/VisitesPuntsInteres")
  *         )
  *     ),
  *     @OA\Response(
