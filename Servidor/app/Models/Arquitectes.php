@@ -29,3 +29,4 @@ class Arquitectes extends Model
     }
 }
 
+
