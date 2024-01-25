@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Idiomes;
 use App\Models\Serveis;
+
 class ServeisIdiomes extends Model
 {
     use HasFactory;
@@ -21,10 +22,9 @@ class ServeisIdiomes extends Model
         'data_baixa',
     ];
 
-
     public function idioma()
     {
-        return $this->belongsTo(Idioma::class, 'idioma_id');
+        return $this->belongsTo(Idiomes::class, 'idioma_id');
     }
 
     public function servei()

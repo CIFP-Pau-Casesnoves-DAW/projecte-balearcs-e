@@ -10,7 +10,6 @@ class EspaisServeis extends Pivot
     use HasFactory;
 
     protected $table = 'espais_serveis';
-
     public $incrementing = false;
     protected $primaryKey = ['servei_id', 'espai_id'];
 
@@ -25,7 +24,7 @@ class EspaisServeis extends Pivot
      */
     public function servei()
     {
-        return $this->belongsTo(Servei::class, 'servei_id');
+        return $this->belongsTo(Serveis::class, 'servei_id');
     }
 
     /**
@@ -33,10 +32,10 @@ class EspaisServeis extends Pivot
      */
     public function espai()
     {
-        return $this->belongsTo(Espai::class, 'espai_id');
+        return $this->belongsTo(Espais::class, 'espai_id');
     }
 
-    
+
     /**
      * Obté la clau primària per al model.
      *
@@ -68,8 +67,7 @@ class EspaisServeis extends Pivot
     public function setKeysForSaveQuery($query)
     {
         $query->where('servei_id', $this->getAttribute('servei_id'))
-              ->where('espai_id', $this->getAttribute('espai_id'));
+            ->where('espai_id', $this->getAttribute('espai_id'));
         return $query;
     }
 }
-

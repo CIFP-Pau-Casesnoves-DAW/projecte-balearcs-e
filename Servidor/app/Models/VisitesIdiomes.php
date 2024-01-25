@@ -13,15 +13,12 @@ class VisitesIdiomes extends Model
     protected $primaryKey = ['idioma_id', 'visita_id'];
     public $incrementing = false;
 
-
     protected $fillable = [
         'idioma_id',
         'visita_id',
         'traduccio',
         'data_baixa',
     ];
-
-   
 
     public function idioma()
     {
@@ -30,6 +27,6 @@ class VisitesIdiomes extends Model
 
     public function visita()
     {
-        return $this->belongsTo(Visita::class, 'visita_id');
+        return $this->belongsTo(Visites::class, 'visita_id');
     }
 }

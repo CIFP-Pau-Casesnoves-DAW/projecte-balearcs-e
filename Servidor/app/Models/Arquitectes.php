@@ -10,8 +10,8 @@ class Arquitectes extends Model
     use HasFactory;
 
     // Nom de la taula en la base de dades
-    protected $table = 'arquitectes'; 
-    
+    protected $table = 'arquitectes';
+
 
     /**
      * Atributs que poden ser assignats en massa.
@@ -19,15 +19,13 @@ class Arquitectes extends Model
      * @var array
      */
     protected $fillable = [
-        'nom', 
+        'nom',
         'data_baixa'
     ];
 
     public function espais()
     {
-        return $this->hasMany(Espai::class);
+        return $this->hasMany(Espais::class);
     }
-
 }
-
 

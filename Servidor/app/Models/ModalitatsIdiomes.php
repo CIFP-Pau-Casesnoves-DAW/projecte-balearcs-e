@@ -14,7 +14,6 @@ class ModalitatsIdiomes extends Model
     protected $table = 'modalitats_idiomes';
     protected $primaryKey = ['idioma_id', 'modalitat_id'];
     public $incrementing = false;
-    protected $keyType = 'string';
 
     protected $fillable = [
         'idioma_id',

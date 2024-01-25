@@ -19,7 +19,6 @@ class VisitesPuntsInteres extends Model
         'ordre',
     ];
 
-
     public function puntInteres()
     {
         return $this->belongsTo(PuntsInteres::class, 'punts_interes_id');

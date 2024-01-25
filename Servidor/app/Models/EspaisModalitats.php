@@ -10,10 +10,8 @@ class EspaisModalitats extends Pivot
     use HasFactory;
 
     protected $table = 'espais_modalitats';
-
     public $incrementing = false;
     protected $primaryKey = ['espai_id', 'modalitat_id'];
-
 
     protected $fillable = [
         'espai_id',
@@ -26,7 +24,7 @@ class EspaisModalitats extends Pivot
      */
     public function espai()
     {
-        return $this->belongsTo(Espai::class, 'espai_id');
+        return $this->belongsTo(Espais::class, 'espai_id');
     }
 
     /**
@@ -34,7 +32,7 @@ class EspaisModalitats extends Pivot
      */
     public function modalitat()
     {
-        return $this->belongsTo(Modalitat::class, 'modalitat_id');
+        return $this->belongsTo(Modalitats::class, 'modalitat_id');
     }
 
 
@@ -69,8 +67,7 @@ class EspaisModalitats extends Pivot
     public function setKeysForSaveQuery($query)
     {
         $query->where('espai_id', $this->getAttribute('espai_id'))
-              ->where('modalitat_id', $this->getAttribute('modalitat_id'));
+            ->where('modalitat_id', $this->getAttribute('modalitat_id'));
         return $query;
     }
 }
-

@@ -19,10 +19,9 @@ class Valoracions extends Model
         'espai_id',
     ];
 
-
     public function usuari()
     {
-        return $this->belongsTo(Usuari::class, 'usuari_id');
+        return $this->belongsTo(Usuaris::class, 'usuari_id');
     }
 
     public function espai()
