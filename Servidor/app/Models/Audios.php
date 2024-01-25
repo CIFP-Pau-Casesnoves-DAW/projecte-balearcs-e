@@ -10,7 +10,7 @@ class Audios extends Model
     use HasFactory;
 
     protected $table = 'audios';
-
+    
     protected $fillable = [
         'url',
         'punt_interes_id'
@@ -23,4 +23,6 @@ class Audios extends Model
     {
         return $this->belongsTo(PuntsInteres::class, 'punt_interes_id');
     }
+
+    
 }
