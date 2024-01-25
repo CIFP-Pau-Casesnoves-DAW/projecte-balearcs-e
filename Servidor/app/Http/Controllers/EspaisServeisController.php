@@ -8,27 +8,82 @@ use Illuminate\Support\Facades\Validator;
 
 /**
  * @OA\Tag(
- *     name="EspaiServei",
+ *     name="EspaisServeis",
  *     description="Operacions per a Serveis d'Espais"
  * )
  */
 class EspaisServeisController extends Controller
 {
-    /**
-     * @OA\Get(
-     *     path="/api/EspaisServeis",
-     *     tags={"EspaisServeis"},
-     *     summary="Llista totes les modalitats d'idiomes",
-     *     @OA\Response(
-     *         response=200,
-     *         description="Retorna un llistat de modalitats d'idiomes",
-     *         @OA\JsonContent(
-     *             type="array",
-     *             @OA\Items(ref="#/components/schemas/EspaisServeis")
-     *         )
-     *     )
-     * )
-     */
+   /**
+ * @OA\Get(
+ *     path="/EspaisServeis",
+ *     summary="Obté llista de tots els espais serveis",
+ *     tags={"EspaisServeis"},
+ *     @OA\Response(
+ *         response=200,
+ *         description="Operació realitzada correctament.",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(
+ *                 property="status",
+ *                 type="string",
+ *                 example="correcto"
+ *             ),
+ *             @OA\Property(
+ *                 property="data",
+ *                 type="array",
+ *                 @OA\Items(ref="#/components/schemas/EspaisServeis")
+ *             )
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Error de validació",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(
+ *                 property="status",
+ *                 type="string",
+ *                 example="error"
+ *             ),
+ *             @OA\Property(
+ *                 property="data",
+ *                 type="object",
+ *                 additionalProperties={
+ *                     "type": "array",
+ *                     "items": {"type": "string"}
+ *                 }
+ *             )
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Error intern del servidor",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(
+ *                 property="status",
+ *                 type="string",
+ *                 example="error"
+ *             ),
+ *             @OA\Property(
+ *                 property="message",
+ *                 type="string"
+ *             )
+ *         )
+ *     )
+ * )
+ * 
+ * @OA\Schema(
+ *    schema="EspaisServeis",
+ *    type="object",
+ *        @OA\Property(property="servei_id", type="integer", example=1),
+ *        @OA\Property(property="espai_id", type="integer", example=1),
+ *        @OA\Property(property="data_baixa", type="date", example="2021-03-01"),
+ *        
+ * )
+ */
+
     public function index()
     {
         try {
@@ -42,20 +97,50 @@ class EspaisServeisController extends Controller
     }
 
     /**
-     * @OA\Post(
-     *     path="/api/EspaisServeis",
-     *     tags={"EspaisServeis"},
-     *     summary="Crea una nova modalitat-idioma",
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/EspaisServeis")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Modalitat-idioma creada correctament"
-     *     )
-     * )
-     */
+ * @OA\Post(
+ *     path="/EspaisServeis",
+ *     summary="Crea un nou servei associat a un espai",
+ *     tags={"EspaisServeis"},
+ *     @OA\RequestBody(
+ *         description="Dades necessàries per crear un nou servei per un espai",
+ *         required=true,
+ *         @OA\JsonContent(
+ *             required={"servei_id", "espai_id"},
+ *             @OA\Property(property="servei_id", type="integer", example=1),
+ *             @OA\Property(property="espai_id", type="integer", example=2)
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Servei creat amb èxit",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="status", type="string", example="success"),
+ *             @OA\Property(
+ *                 property="data",
+ *                 type="object",
+ *                 ref="#/components/schemas/EspaisServeis"
+ *             )
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Error de validació",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="data", type="object")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Error intern del servidor",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string")
+ *         )
+ *     ),
+ *     
+ * )
+ */
     public function store(Request $request)
     {
         try {
@@ -84,25 +169,44 @@ class EspaisServeisController extends Controller
     }
 
     /**
-     * @OA\Get(
-     *     path="/api/EspaisServeis/{id}",
-     *     tags={"EspaisServeis"},
-     *     summary="Mostra una modalitat-idioma específica",
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         @OA\Schema(
-     *             type="integer"
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Retorna la modalitat-idioma especificada",
-     *         @OA\JsonContent(ref="#/components/schemas/EspaisServeis")
-     *     )
-     * )
-     */
+ * @OA\Get(
+ *     path="/EspaisServeis/{espai_id}/{servei_id}",
+ *     summary="Obté un servei específic d'un espai donat",
+ *     tags={"EspaisServeis"},
+ *     @OA\Parameter(
+ *         name="espai_id",
+ *         in="path",
+ *         required=true,
+ *         description="ID de l'espai",
+ *         @OA\Schema(
+ *             type="integer"
+ *         )
+ *     ),
+ *     @OA\Parameter(
+ *         name="servei_id",
+ *         in="path",
+ *         required=true,
+ *         description="ID del servei",
+ *         @OA\Schema(
+ *             type="integer"
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Servei trobat amb èxit",
+ *         @OA\JsonContent(ref="#/components/schemas/EspaisServeis")
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Servei no trobat"
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Error del servidor"
+ *     )
+ * )
+ */
+
     public function show($espai_id, $servei_id)
     {
         try {
@@ -116,29 +220,55 @@ class EspaisServeisController extends Controller
         }
     }
 
+
     /**
-     * @OA\Put(
-     *     path="/api/EspaisServeis/{id}",
-     *     tags={"EspaisServeis"},
-     *     summary="Actualitza una modalitat-idioma específica",
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         @OA\Schema(
-     *             type="integer"
-     *         )
-     *     ),
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/EspaisServeis")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Modalitat-idioma actualitzada correctament"
-     *     )
-     * )
-     */
+ * @OA\Put(
+ *     path="/EspaisServeis/{espai_id}/{servei_id}",
+ *     summary="Actualitza un servei d'un espai específic",
+ *     tags={"EspaisServeis"},
+ *     @OA\Parameter(
+ *         name="espai_id",
+ *         in="path",
+ *         required=true,
+ *         description="ID de l'espai",
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\Parameter(
+ *         name="servei_id",
+ *         in="path",
+ *         required=true,
+ *         description="ID del servei",
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\RequestBody(
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="servei_id", type="integer", example=1),
+ *             @OA\Property(property="espai_id", type="integer", example=1)
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Servei actualitzat amb èxit",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="servei_idioma", type="object", ref="#/components/schemas/EspaisServeis")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="No trobat"
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Dades invàlides"
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Error intern del servidor"
+ *     )
+ * )
+ */
+
     public function update(Request $request, $espai_id, $servei_id)
     {
         try {
@@ -164,25 +294,40 @@ class EspaisServeisController extends Controller
         }
     }
 
-    /**
-     * @OA\Delete(
-     *     path="/api/EspaisServeis/{id}",
-     *     tags={"EspaisServeis"},
-     *     summary="Elimina una modalitat-idioma específica",
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         @OA\Schema(
-     *             type="integer"
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Modalitat-idioma eliminada correctament"
-     *     )
-     * )
-     */
+   /**
+ * @OA\Delete(
+ *     path="/EspaisServeis/{espai_id}/{servei_id}",
+ *     summary="Elimina un servei d'un espai",
+ *     tags={"EspaisServeis"},
+ *     @OA\Parameter(
+ *         name="espai_id",
+ *         in="path",
+ *         required=true,
+ *         description="ID de l'espai",
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\Parameter(
+ *         name="servei_id",
+ *         in="path",
+ *         required=true,
+ *         description="ID del servei",
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Servei eliminat correctament"
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="No trobat"
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Error del servidor"
+ *     )
+ * )
+ */
+
     public function destroy($espai_id, $servei_id)
     {
         try {

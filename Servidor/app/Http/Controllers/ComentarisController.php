@@ -7,11 +7,53 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
+/**
+     * @OA\Tag(
+     *    name="Comentaris",
+     *   description="Operacions per a Comentaris"
+     * )
+     */
 class ComentarisController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    
+     /**
+ * @OA\Get(
+ *     path="/api/comentaris",
+ *     tags={"Comentaris"},
+ *     summary="Llista tots els comentaris",
+ *     @OA\Response(
+ *         response=200,
+ *         description="Llista de comentaris recuperada amb èxit",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="correcto"),
+ *             @OA\Property(
+ *                 property="data",
+ *                 type="array",
+ *                 @OA\Items(ref="#/components/schemas/Comentaris")
+ *             )
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Comentari no trobat",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="Comentari no trobat")
+ *         )
+ *     )
+ * )
+ * @OA\Schema(
+ *     schema="Comentaris",
+ *     type="object",
+ *     @OA\Property(property="id", type="integer", description="Identificador únic del comentari"),
+ *     @OA\Property(property="text", type="string", description="Text del comentari"),
+ *     @OA\Property(property="usuari_id", type="integer", description="Identificador de l'usuari que ha fet el comentari"),
+ *     @OA\Property(property="audio_id", type="integer", description="Identificador de l'audio al qual pertany el comentari"),
+ *     @OA\Property(property="creat_a", type="string", format="date-time", description="Data i hora de creació del comentari")
+ * )
+ */
+
     public function index()
     {
         try {
@@ -23,8 +65,49 @@ class ComentarisController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.   
-     */
+ * @OA\Post(
+ *     path="/api/comentaris",
+ *     tags={"Comentaris"},
+ *     summary="Crea un nou comentari",
+ *     @OA\RequestBody(
+ *         required=true,
+ *         description="Dades necessàries per a crear un nou comentari",
+ *         @OA\JsonContent(
+ *             required={"comentari", "espai_id"},
+ *             @OA\Property(property="comentari", type="string", description="Text del comentari", maxLength=2000),
+ *             @OA\Property(property="espai_id", type="integer", description="Identificador de l'espai associat al comentari"),
+ *             @OA\Property(property="md_id", type="integer", description="Identificador de l'usuari que fa el comentari (opcional)")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Nou comentari creat correctament",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="correcte"),
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Comentaris")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Error en la validació de dades",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="data", type="object", additionalProperties={"type":"string"})
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Error intern del servidor",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string")
+ *         )
+ *     )
+ * )
+ */
     public function store(Request $request)
     {
         try {
@@ -60,8 +143,38 @@ class ComentarisController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
+ * @OA\Get(
+ *     path="/api/comentaris/{id}",
+ *     tags={"Comentaris"},
+ *     summary="Obté les dades d'un comentari específic",
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="path",
+ *         required=true,
+ *         description="Identificador únic del comentari",
+ *         @OA\Schema(
+ *             type="integer"
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Dades del comentari trobades",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="correcto"),
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Comentaris")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Comentari no trobat",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="No trobat")
+ *         )
+ *     )
+ * )
+ */
     public function show($id)
     {
         try {
@@ -72,9 +185,62 @@ class ComentarisController extends Controller
         }
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+/**
+ * @OA\Put(
+ *     path="/api/comentaris/{id}",
+ *     tags={"Comentaris"},
+ *     summary="Actualitza un comentari existent",
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="path",
+ *         required=true,
+ *         description="Identificador únic del comentari a actualitzar",
+ *         @OA\Schema(
+ *             type="integer"
+ *         )
+ *     ),
+ *     @OA\RequestBody(
+ *         required=true,
+ *         description="Dades del comentari a actualitzar",
+ *         @OA\JsonContent(
+ *             required={},
+ *             @OA\Property(property="comentari", type="string", description="Text del comentari", maxLength=2000),
+ *             @OA\Property(property="espai_id", type="integer", description="Identificador de l'espai associat al comentari"),
+ *             @OA\Property(property="validat", type="boolean", description="Estat de validació del comentari (només administradors)"),
+ *             @OA\Property(property="usuari_id", type="integer", description="Identificador de l'usuari que ha fet el comentari (només administradors)")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Dades del comentari actualitzades correctament",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="success"),
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Comentaris")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Error en la validació de dades",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="data", type="object", additionalProperties={"type":"string"})
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Error intern del servidor",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string")
+ *         )
+ *     )
+ * )
+ */
+
+
     public function update(Request $request, $id)
     {
         try {
@@ -122,8 +288,47 @@ class ComentarisController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
-     */
+ * @OA\Delete(
+ *     path="/api/comentaris/{id}",
+ *     tags={"Comentaris"},
+ *     summary="Elimina un comentari existent",
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="path",
+ *         required=true,
+ *         description="Identificador únic del comentari a eliminar",
+ *         @OA\Schema(
+ *             type="integer"
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Comentari eliminat correctament",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="success"),
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Comentaris")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Comentari no trobat o error en l'eliminació",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="Error")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Error intern del servidor",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string")
+ *         )
+ *     )
+ * )
+ */
     public function destroy($id)
     {
         try {

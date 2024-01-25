@@ -8,27 +8,61 @@ use Illuminate\Support\Facades\Validator;
 
 /**
  * @OA\Tag(
- *     name="Idioma",
+ *     name="Idiomes",
  *     description="Operacions per a Idiomes"
  * )
  */
 class IdiomesController extends Controller
 {
     /**
-     * @OA\Get(
-     *     path="/api/idiomes",
-     *     tags={"Idioma"},
-     *     summary="Llista tots els idiomes",
-     *     @OA\Response(
-     *         response=200,
-     *         description="Retorna un llistat de tots els idiomes",
-     *         @OA\JsonContent(
-     *             type="array",
-     *             @OA\Items(ref="#/components/schemas/Idioma")
-     *         )
-     *     )
-     * )
-     */
+ * @OA\Get(
+ *     path="/api/idiomes",
+ *     tags={"Idiomes"},
+ *     summary="Llista tots els idiomes",
+ *     @OA\Response(
+ *         response=200,
+ *         description="Llista d'idiomes recuperada amb èxit",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="correcto"),
+ *             @OA\Property(
+ *                 property="data",
+ *                 type="array",
+ *                 @OA\Items(ref="#/components/schemas/Idiomes")
+ *             )
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Error en la sol·licitud",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="data", type="object")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Error intern del servidor",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string")
+ *         )
+ *     )
+ * )
+ * @OA\Schema(
+ *     schema="Idiomes",
+ *     type="object",
+ *     @OA\Property(property="id", type="integer", description="Identificador únic de l'idioma"),
+ *     @OA\Property(property="nom", type="string", description="Nom de l'idioma"),
+ *     @OA\Property(property="zona", type="string", description="Zona de l'idioma"),
+ *     @OA\Property(property="data_baixa", type="string", format="date", description="Data de baixa de l'idioma")
+ * 
+ * )
+ */
+
+
     public function index()
     {
         try {
@@ -41,37 +75,58 @@ class IdiomesController extends Controller
         }
     }
 
-    /**
-     * @OA\Post(
-     *     path="/api/idiomes",
-     *     tags={"Idioma"},
-     *     summary="Crea un nou idioma",
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(
-     *             required={"nom"},
-     *             @OA\Property(property="nom", type="string", example="Català")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Idioma creat correctament",
-     *         @OA\JsonContent(ref="#/components/schemas/Idioma")
-     *     ),
-     *     @OA\Response(
-     *         response=400,
-     *         description="Error de validació",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="errors", type="object")
-     *         )
-     *     )
-     * )
-     */
+/**
+ * @OA\Post(
+ *     path="/idiomes",
+ *     summary="Crea un nou idioma",
+ *     description="Afegeix un nou idioma a la base de dades",
+ *     operationId="storeIdioma",
+ *     tags={"Idiomes"},
+ *     @OA\RequestBody(
+ *         description="Dades de l'idioma per crear",
+ *         required=true,
+ *         @OA\JsonContent(
+ *             required={"idioma"},
+ *             @OA\Property(property="idioma", type="string", maxLength=255, example="Català"),
+ *             @OA\Property(property="data_baixa", type="string", format="date", example="2024-01-24")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Idioma creat amb èxit",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="status", type="string", example="success"),
+ *             @OA\Property(
+ *                 property="data",
+ *                 type="object",
+ *                 ref="#/components/schemas/Idiomes"
+ *             )
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Error de validació",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="data", type="object")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Error del servidor",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string")
+ *         )
+ *     )
+ * )
+ */
     public function store(Request $request)
     {
         try {
             $reglesValidacio = [
                 'idioma' => 'required|string|max:255',
+                'data_baixa' => 'nullable|date',
             ];
             $missatges = [
                 'required' => 'El camp :attribute és obligatori.',
@@ -82,7 +137,6 @@ class IdiomesController extends Controller
             if ($validacio->fails()) {
                 throw new \Illuminate\Validation\ValidationException($validacio);
             }
-
             if (!empty($request->data_baixa)) {
                 $request->merge(['data_baixa' => now()]);
             } else if (empty($request->data_baixa)) {
@@ -102,30 +156,48 @@ class IdiomesController extends Controller
 
 
     /**
-     * @OA\Get(
-     *     path="/api/idiomes/{id}",
-     *     tags={"Idioma"},
-     *     summary="Mostra un idioma específic",
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Retorna l'idioma específic",
-     *         @OA\JsonContent(ref="#/components/schemas/Idioma")
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Idioma no trobat",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Idioma no trobat")
-     *         )
-     *     )
-     * )
-     */
+ * @OA\Get(
+ *     path="/api/idiomes/{id}",
+ *     tags={"Idiomes"},
+ *     summary="Obté les dades d'un idioma específic",
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="path",
+ *         required=true,
+ *         description="Identificador únic de l'idioma",
+ *         @OA\Schema(
+ *             type="integer"
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Dades de l'idioma trobades",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="correcto"),
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Idiomes")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Idioma no trobat",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="No trobat")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Error intern del servidor",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string")
+ *         )
+ *     )
+ * )
+ */
+
     public function show($id)
     {
         try {
@@ -138,51 +210,60 @@ class IdiomesController extends Controller
         }
     }
 
-    /**
-     * @OA\Put(
-     *     path="/api/idiomes/{id}",
-     *     tags={"Idioma"},
-     *     summary="Actualitza un idioma específic",
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(
-     *             required={"nom"},
-     *             @OA\Property(property="nom", type="string", example="Anglès")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Idioma actualitzat correctament",
-     *         @OA\JsonContent(ref="#/components/schemas/Idioma")
-     *     ),
-     *     @OA\Response(
-     *         response=400,
-     *         description="Error de validació",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="errors", type="object")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Idioma no trobat",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Idioma no trobat")
-     *         )
-     *     )
-     * )
-     */
+/**
+ * @OA\Put(
+ *     path="/idiomes/{id}",
+ *     tags={"Idiomes"},
+ *     summary="Actualitza un idioma",
+ *     description="Actualitza les dades d'un idioma específic a partir de l'ID",
+ *     @OA\Parameter(
+ *         name="id",
+ *         description="ID de l'idioma a actualitzar",
+ *         required=true,
+ *         in="path",
+ *         @OA\Schema(
+ *             type="integer"
+ *         )
+ *     ),
+ *     @OA\RequestBody(
+ *         required=true,
+ *         description="Dades de l'idioma per actualitzar",
+ *         @OA\JsonContent(
+ *             required={"idioma"},
+ *             @OA\Property(property="idioma", type="string", example="Català", description="Nom de l'idioma"),
+ *             @OA\Property(property="data_baixa", type="string", format="date", example="2024-01-24", description="Data de baixa de l'idioma")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Idioma actualitzat amb èxit",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="status", type="string", example="success"),
+ *             @OA\Property(
+ *                 property="data",
+ *                 type="object",
+ *                 ref="#/components/schemas/Idiomes"
+ *             )
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Error de validació"
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Error intern del servidor"
+ *     )
+ * )
+ */
+
     public function update(Request $request, $id)
     {
         try {
             $tupla = Idiomes::findOrFail($id);
             $reglesValidacio = [
                 'idioma' => 'nullable|string|max:255',
+            
             ];
             $missatges = [
                 'required' => 'El camp :attribute és obligatori.',
@@ -193,7 +274,6 @@ class IdiomesController extends Controller
             if ($validacio->fails()) {
                 throw new \Illuminate\Validation\ValidationException($validacio);
             }
-
             if (!empty($request->data_baixa)) {
                 $request->merge(['data_baixa' => now()]);
             } else if (empty($request->data_baixa)) {
@@ -211,32 +291,47 @@ class IdiomesController extends Controller
     }
 
     /**
-     * @OA\Delete(
-     *     path="/api/idiomes/{id}",
-     *     tags={"Idioma"},
-     *     summary="Elimina un idioma específic",
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Idioma eliminat correctament",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Idioma eliminat correctament")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Idioma no trobat",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Idioma no trobat")
-     *         )
-     *     )
-     * )
-     */
+ * @OA\Delete(
+ *     path="/api/idiomes/{id}",
+ *     tags={"Idiomes"},
+ *     summary="Elimina un idioma existent",
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="path",
+ *         required=true,
+ *         description="Identificador únic de l'idioma a eliminar",
+ *         @OA\Schema(
+ *             type="integer"
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Idioma eliminat correctament",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="success"),
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Idiomes")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Idioma no trobat o error en l'eliminació",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="Error")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Error intern del servidor",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", example="error"),
+ *             @OA\Property(property="message", type="string")
+ *         )
+ *     )
+ * )
+ */
     public function destroy($id)
     {
         try {
