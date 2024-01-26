@@ -80,24 +80,24 @@ Executa les migracions per crear la base de dades:
 - Audios
 - Comentaris
 - Espais
-- Espaisidiomes
+- EspaisIdiomes
 - EspaisModalitats
 - EspaisServeis
 - Fotos
 - Idiomes
-- Illa
+- Illes
 - Login
 - Modalitats
-- Modalitatsidiomes
+- ModalitatsIdiomes
 - Municipis
-- Puntsinteres
+- PuntsInteres
 - Serveis
-- Serveisidiomes
+- ServeisIdiomes
 - Tipus
 - Usuaris
 - Valoracions
 - Visites
-- Visitesidiomes
+- VisitesIdiomes
 - VisitesPuntsInteres
 
 ## Controladors
@@ -106,19 +106,19 @@ Executa les migracions per crear la base de dades:
 - AudiosController
 - ComentarisController
 - EspaisController
-- EspaisidiomesController
+- EspaisIdiomesController
 - EspaisModalitatsController
 - EspaisServeisController
 - FotosController
 - IdiomesController
-- IllaController
+- IllesController
 - LoginController
 - ModalitatsController
-- ModalitatsidiomesController
+- ModalitatsIdiomesController
 - MunicipisController
-- PuntsinteresController
+- PuntsInteresController
 - ServeisController
-- ServeisidiomesController
+- ServeisIdiomesController
 - TipusController
 - UsuarisController
 - ValoracionsController
@@ -172,4 +172,4 @@ contrasenya: TomeuCampaner123
 
 rol: administrador
 
-No està loggeat, recoman primer fer Login
+No està loguejat, recoman primer fer Login per tenir el token
