@@ -167,6 +167,9 @@ Aquest projecte està pujat a http://balearc.aurorakachau.com/public/api/nom_tau
 ## Usuari Tomeu
 
 mail: TomeuCampaner@gmail.com
+
 contrasenya: TomeuCampaner123
+
 rol: administrador
+
 No està loggeat, recoman primer fer Login
