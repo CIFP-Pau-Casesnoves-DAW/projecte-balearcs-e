@@ -159,3 +159,7 @@ Si vols contribuir al projecte, segueix aquests passos:
 ## Llicència
 
 Aquest projecte està sota la [Llicència CIFP PAUCASESNOVES](LICENSE).
+
+## DonDominio
+
+Aquest projecte està pujat a http://balearc.aurorakachau.com/public/api/nom_taula
