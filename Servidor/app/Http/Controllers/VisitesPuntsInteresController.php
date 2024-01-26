@@ -224,14 +224,14 @@ class VisitesPuntsInteresController extends Controller
      * )
      */
 
-    public function show($visita_id, $punts_interes_id)
+    public function show($visita_id, $punt_interes_id)
     {
         try {
-            $visitapuntinteres = VisitesPuntsInteres::where('visita_id', $visita_id)->where('punts_interes_id', $punts_interes_id)->first();
+            $visitapuntinteres = VisitesPuntsInteres::where('visita_id', $visita_id)->where('punt_interes_id', $punt_interes_id)->first();
             if (!$visitapuntinteres) {
-                return response()->json(['message' => 'Traducció no trobada'], 404);
+                return response()->json(['message' => 'No trobat'], 404);
             }
-            return response()->json(['punts_interes_idioma' => $visitapuntinteres], 200);
+            return response()->json(['punt_interes_idioma' => $visitapuntinteres], 200);
         } catch (\Exception $exception) {
             return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
         }

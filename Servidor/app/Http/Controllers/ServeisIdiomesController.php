@@ -15,48 +15,48 @@ use Illuminate\Support\Facades\Validator;
 class ServeisIdiomesController extends Controller
 {
     /**
- * @OA\Get(
- *     path="/serveisIdiomes",
- *     summary="Obté una llista de tots els serveis i idiomes",
- *     tags={"ServeisIdiomes"},
- *     @OA\Response(
- *         response=200,
- *         description="Operació exitosa",
- *         @OA\JsonContent(
- *             type="object",
- *             @OA\Property(
- *                 property="status",
- *                 type="string",
- *                 example="correcto"
- *             ),
- *             @OA\Property(
- *                 property="data",
- *                 type="array",
- *                 @OA\Items(ref="#/components/schemas/ServeisIdiomes")
- *             )
- *         )
- *     ),
- *     @OA\Response(
- *         response=400,
- *         description="Error de validació"
- *     ),
- *     @OA\Response(
- *         response=500,
- *         description="Error del servidor"
- *     )
- * )
- *
- * @OA\Schema(
- *     schema="ServeisIdiomes",
- *     type="object",
- *     @OA\Property(property="id", type="integer", format="int64", description="Identificador únic del servei o idioma"),
- *     @OA\Property(property="idioma_id", type="integer", format="int64", description="Identificador únic de l'idioma"),
- *     @OA\Property(property="servei_id", type="integer", format="int64", description="Identificador únic del servei"),
- *     @OA\Property(property="traduccio", type="string", description="Traducció del servei en l'idioma"),
- *     @OA\Property(property="data_baixa", type="string", format="date", nullable=true, description="Data de baixa del servei en l'idioma")
- * )
- * 
- */
+     * @OA\Get(
+     *     path="/serveisIdiomes",
+     *     summary="Obté una llista de tots els serveis i idiomes",
+     *     tags={"ServeisIdiomes"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Operació exitosa",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="status",
+     *                 type="string",
+     *                 example="correcto"
+     *             ),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="array",
+     *                 @OA\Items(ref="#/components/schemas/ServeisIdiomes")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Error de validació"
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Error del servidor"
+     *     )
+     * )
+     *
+     * @OA\Schema(
+     *     schema="ServeisIdiomes",
+     *     type="object",
+     *     @OA\Property(property="id", type="integer", format="int64", description="Identificador únic del servei o idioma"),
+     *     @OA\Property(property="idioma_id", type="integer", format="int64", description="Identificador únic de l'idioma"),
+     *     @OA\Property(property="servei_id", type="integer", format="int64", description="Identificador únic del servei"),
+     *     @OA\Property(property="traduccio", type="string", description="Traducció del servei en l'idioma"),
+     *     @OA\Property(property="data_baixa", type="string", format="date", nullable=true, description="Data de baixa del servei en l'idioma")
+     * )
+     * 
+     */
     public function index()
     {
         try {
@@ -69,50 +69,50 @@ class ServeisIdiomesController extends Controller
         }
     }
 
- 
+
     /**
- * @OA\Post(
- *     path="/serveisidiomes",
- *     summary="Crea un nou servei idioma",
- *     description="Afegeix un nou servei idioma a la base de dades",
- *     operationId="storeServeiIdioma",
- *     tags={"ServeisIdiomes"},
- *     @OA\RequestBody(
- *         required=true,
- *         description="Dades necessàries per a crear un nou servei idioma",
- *         @OA\JsonContent(
- *              required={"idioma_id", "servei_id", "traduccio"},
- *              @OA\Property(property="idioma_id", type="integer", format="int64", example="1"),
- *              @OA\Property(property="servei_id", type="integer", format="int64", example="1"),
- *              @OA\Property(property="traduccio", type="string", example="Traducció de prova")
- *         ),
- *     ),
- *     @OA\Response(
- *         response=200,
- *         description="Servei idioma creat amb èxit",
- *         @OA\JsonContent(
- *             @OA\Property(property="status", type="string", example="success"),
- *             @OA\Property(property="data", type="object")
- *         )
- *     ),
- *     @OA\Response(
- *         response=400,
- *         description="Dades invàlides",
- *         @OA\JsonContent(
- *             @OA\Property(property="status", type="string", example="error"),
- *             @OA\Property(property="data", type="object")
- *         )
- *     ),
- *     @OA\Response(
- *         response=500,
- *         description="Error del servidor",
- *         @OA\JsonContent(
- *             @OA\Property(property="status", type="string", example="error"),
- *             @OA\Property(property="message", type="string")
- *         )
- *     ),
- * )
- */
+     * @OA\Post(
+     *     path="/serveisidiomes",
+     *     summary="Crea un nou servei idioma",
+     *     description="Afegeix un nou servei idioma a la base de dades",
+     *     operationId="storeServeiIdioma",
+     *     tags={"ServeisIdiomes"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         description="Dades necessàries per a crear un nou servei idioma",
+     *         @OA\JsonContent(
+     *              required={"idioma_id", "servei_id", "traduccio"},
+     *              @OA\Property(property="idioma_id", type="integer", format="int64", example="1"),
+     *              @OA\Property(property="servei_id", type="integer", format="int64", example="1"),
+     *              @OA\Property(property="traduccio", type="string", example="Traducció de prova")
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Servei idioma creat amb èxit",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="data", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Dades invàlides",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="data", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Error del servidor",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string")
+     *         )
+     *     ),
+     * )
+     */
     public function store(Request $request)
     {
         try {
@@ -149,46 +149,46 @@ class ServeisIdiomesController extends Controller
 
 
     /**
- * @OA\Get(
- *     path="/serveisIdiomes/{idioma_id}/{servei_id}",
- *     summary="Obté una traducció específica",
- *     description="Retorna una traducció basada en l'ID de l'idioma i del servei",
- *     operationId="showServeiIdioma",
- *     tags={"ServeisIdiomes"},
- *     @OA\Parameter(
- *         name="idioma_id",
- *         in="path",
- *         description="ID de l'idioma",
- *         required=true,
- *         @OA\Schema(
- *             type="integer"
- *         )
- *     ),
- *     @OA\Parameter(
- *         name="servei_id",
- *         in="path",
- *         description="ID del servei",
- *         required=true,
- *         @OA\Schema(
- *             type="integer"
- *         )
- *     ),
- *     @OA\Response(
- *         response=200,
- *         description="Traducció trobada amb èxit",
- *         @OA\JsonContent(ref="#/components/schemas/ServeisIdiomes")
- *     ),
- *     @OA\Response(
- *         response=404,
- *         description="Traducció no trobada"
- *     ),
- *     @OA\Response(
- *         response=500,
- *         description="Error intern del servidor"
- *     )
- * )
- *
- */
+     * @OA\Get(
+     *     path="/serveisIdiomes/{idioma_id}/{servei_id}",
+     *     summary="Obté una traducció específica",
+     *     description="Retorna una traducció basada en l'ID de l'idioma i del servei",
+     *     operationId="showServeiIdioma",
+     *     tags={"ServeisIdiomes"},
+     *     @OA\Parameter(
+     *         name="idioma_id",
+     *         in="path",
+     *         description="ID de l'idioma",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *     @OA\Parameter(
+     *         name="servei_id",
+     *         in="path",
+     *         description="ID del servei",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Traducció trobada amb èxit",
+     *         @OA\JsonContent(ref="#/components/schemas/ServeisIdiomes")
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Traducció no trobada"
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Error intern del servidor"
+     *     )
+     * )
+     *
+     */
     public function show($idioma_id, $servei_id)
     {
         try {
@@ -205,66 +205,66 @@ class ServeisIdiomesController extends Controller
 
 
     /**
- * @OA\Put(
- *     path="/serveisidiomes/{idioma_id}/{servei_id}",
- *     tags={"ServeisIdiomes"},
- *     summary="Actualitza una traducció de servei",
- *     description="Actualitza la traducció d'un servei específic basant-se en l'ID d'idioma i l'ID de servei.",
- *     @OA\Parameter(
- *         name="idioma_id",
- *         in="path",
- *         required=true,
- *         description="ID de l'idioma",
- *         @OA\Schema(
- *             type="integer"
- *         )
- *     ),
- *     @OA\Parameter(
- *         name="servei_id",
- *         in="path",
- *         required=true,
- *         description="ID del servei",
- *         @OA\Schema(
- *             type="integer"
- *         )
- *     ),
- *     @OA\RequestBody(
- *         required=true,
- *         description="Dades de la traducció a actualitzar",
- *         @OA\JsonContent(
- *             required={"traduccio"},
- *             @OA\Property(
- *                 property="traduccio",
- *                 type="string",
- *                 description="Text de la traducció del servei"
- *             )
- *         )
- *     ),
- *     @OA\Response(
- *         response=200,
- *         description="Traducció actualitzada amb èxit",
- *         @OA\JsonContent(
- *             @OA\Property(
- *                 property="modalitat_idioma",
- *                 description="Informació de la traducció actualitzada",
- *                 type="object"
- *             )
- *         )
- *     ),
- *     @OA\Response(
- *         response=400,
- *         description="Error de validació"
- *     ),
- *     @OA\Response(
- *         response=404,
- *         description="Traducció no trobada"
- *     ),
- *     @OA\Response(
- *         response=500,
- *         description="Error intern del servidor"
- *     )
- * )
- */
+     * @OA\Put(
+     *     path="/serveisidiomes/{idioma_id}/{servei_id}",
+     *     tags={"ServeisIdiomes"},
+     *     summary="Actualitza una traducció de servei",
+     *     description="Actualitza la traducció d'un servei específic basant-se en l'ID d'idioma i l'ID de servei.",
+     *     @OA\Parameter(
+     *         name="idioma_id",
+     *         in="path",
+     *         required=true,
+     *         description="ID de l'idioma",
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *     @OA\Parameter(
+     *         name="servei_id",
+     *         in="path",
+     *         required=true,
+     *         description="ID del servei",
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         description="Dades de la traducció a actualitzar",
+     *         @OA\JsonContent(
+     *             required={"traduccio"},
+     *             @OA\Property(
+     *                 property="traduccio",
+     *                 type="string",
+     *                 description="Text de la traducció del servei"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Traducció actualitzada amb èxit",
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 property="modalitat_idioma",
+     *                 description="Informació de la traducció actualitzada",
+     *                 type="object"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Error de validació"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Traducció no trobada"
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Error intern del servidor"
+     *     )
+     * )
+     */
     //funciona
     public function update(Request $request, $idioma_id, $servei_id)
     {
@@ -304,44 +304,44 @@ class ServeisIdiomesController extends Controller
 
 
     /**
- * @OA\Delete(
- *     path="/serveisidiomes/{idioma_id}/{servei_id}",
- *     summary="Esborra una traducció específica de servei",
- *     description="Esborra la traducció d'un servei basada en l'ID de l'idioma i el servei",
- *     operationId="destroyTraduccioServei",
- *     tags={"ServeisIdiomes"},
- *     @OA\Parameter(
- *         name="idioma_id",
- *         in="path",
- *         description="ID de l'idioma de la traducció a esborrar",
- *         required=true,
- *         @OA\Schema(
- *             type="integer"
- *         )
- *     ),
- *     @OA\Parameter(
- *         name="servei_id",
- *         in="path",
- *         description="ID del servei de la traducció a esborrar",
- *         required=true,
- *         @OA\Schema(
- *             type="integer"
- *         )
- *     ),
- *     @OA\Response(
- *         response=200,
- *         description="Traducció esborrada correctament"
- *     ),
- *     @OA\Response(
- *         response=404,
- *         description="Traducció no trobada"
- *     ),
- *     @OA\Response(
- *         response=500,
- *         description="Error intern del servidor"
- *     )
- * )
- */
+     * @OA\Delete(
+     *     path="/serveisidiomes/{idioma_id}/{servei_id}",
+     *     summary="Esborra una traducció específica de servei",
+     *     description="Esborra la traducció d'un servei basada en l'ID de l'idioma i el servei",
+     *     operationId="destroyTraduccioServei",
+     *     tags={"ServeisIdiomes"},
+     *     @OA\Parameter(
+     *         name="idioma_id",
+     *         in="path",
+     *         description="ID de l'idioma de la traducció a esborrar",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *     @OA\Parameter(
+     *         name="servei_id",
+     *         in="path",
+     *         description="ID del servei de la traducció a esborrar",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Traducció esborrada correctament"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Traducció no trobada"
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Error intern del servidor"
+     *     )
+     * )
+     */
     //funciona
     public function destroy($idioma_id, $servei_id)
     {

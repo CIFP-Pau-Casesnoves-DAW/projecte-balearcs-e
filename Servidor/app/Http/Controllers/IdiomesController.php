@@ -126,7 +126,6 @@ class IdiomesController extends Controller
         try {
             $reglesValidacio = [
                 'idioma' => 'required|string|max:255',
-                'data_baixa' => 'nullable|date',
             ];
             $missatges = [
                 'required' => 'El camp :attribute és obligatori.',
