@@ -9,14 +9,13 @@ class Comentaris extends Model
 {
     use HasFactory;
     protected $table = 'comentaris';
-
-    public $incrementing = true; // Si tens una clau primària autoincrementada
-    protected $primaryKey = 'id'; 
+    protected $primaryKey = 'id';
 
     protected $fillable = [
-        'usuari_id',
+        'comentari',
         'espai_id',
-        'data'
+        'usuari_id',
+        'data',
     ];
 
     /**
@@ -28,7 +27,7 @@ class Comentaris extends Model
     }
 
     /**
-     * Relació amb el model Idioma.
+     * Relació amb el model Usuari.
      */
     public function usuari()
     {

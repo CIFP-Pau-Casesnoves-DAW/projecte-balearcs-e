@@ -16,8 +16,6 @@ class Modalitats extends Model
         'data_baixa'
     ];
 
-
-
     /**
      * Relació amb el model EspaiModalitat.
      */

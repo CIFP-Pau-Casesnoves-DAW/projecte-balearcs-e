@@ -8,10 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Municipis extends Model
 {
     use HasFactory;
-    protected $table ='municipis';
+    protected $table = 'municipis';
     protected $primaryKey = 'id';
-    public $timestamps = false;
-    public $incrementing = false;
     /**
      * Atributos que pueden ser asignados en masa.
      *
@@ -22,4 +20,9 @@ class Municipis extends Model
         'illa_id',
         'data_baixa',
     ];
+
+    public function illa()
+    {
+        return $this->belongsTo(Illes::class, 'illa_id');
+    }
 }

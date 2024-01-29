@@ -10,6 +10,7 @@ class Idiomes extends Model
     use HasFactory;
 
     protected $table = 'idiomes';
+    protected $primaryKey = 'id';
 
     protected $fillable = [
         'idioma',
@@ -24,7 +25,7 @@ class Idiomes extends Model
      */
     public function espaisIdiomes()
     {
-        return $this->hasMany(EspaisIdiomes::class);
+        return $this->hasMany(EspaisIdiomes::class, 'idioma_id');
     }
 
     /**
@@ -32,7 +33,7 @@ class Idiomes extends Model
      */
     public function serveisIdiomes()
     {
-        return $this->hasMany(ServeisIdiomes::class);
+        return $this->hasMany(ServeisIdiomes::class, 'idioma_id');
     }
 
     /**
@@ -51,4 +52,3 @@ class Idiomes extends Model
         return $this->hasMany(ModalitatsIdiomes::class, 'idioma_id');
     }
 }
-

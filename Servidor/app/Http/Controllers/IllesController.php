@@ -3,42 +3,51 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Idiomes;
+use App\Models\Illes;
 use Illuminate\Support\Facades\Validator;
 
 /**
  * @OA\Tag(
- *     name="Idiomes",
- *     description="Operacions per a Idiomes"
+ *     name="Illes",
+ *     description="Operacions relacionades amb les Illes"
  * )
  */
-class IdiomesController extends Controller
+class IllesController extends Controller
 {
     /**
+     * Muestra una lista de todas las islas.
+     *
+     * @return \Illuminate\Http\Response
+     */
+
+    /**
  * @OA\Get(
- *     path="/api/idiomes",
- *     tags={"Idiomes"},
- *     summary="Llista tots els idiomes",
+ *     path="/api/illes",
+ *     tags={"Illes"},
+ *     summary="Llista totes les illes",
  *     @OA\Response(
  *         response=200,
- *         description="Llista d'idiomes recuperada amb èxit",
+ *         description="Llista d'illes recuperada amb èxit",
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="correcto"),
  *             @OA\Property(
  *                 property="data",
  *                 type="array",
- *                 @OA\Items(ref="#/components/schemas/Idiomes")
+ *                 @OA\Items(ref="#/components/schemas/Illes")
  *             )
  *         )
  *     ),
  *     @OA\Response(
  *         response=400,
- *         description="Error en la sol·licitud",
+ *         description="Error de validació",
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="error"),
- *             @OA\Property(property="data", type="object")
+ *             @OA\Property(property="data", type="object", example={
+ *                 "camp_1": {"El camp 1 és obligatori."},
+ *                 "camp_2": {"El camp 2 ha de ser una cadena de text."}
+ *             })
  *         )
  *     ),
  *     @OA\Response(
@@ -52,21 +61,19 @@ class IdiomesController extends Controller
  *     )
  * )
  * @OA\Schema(
- *     schema="Idiomes",
+ *     schema="Illes",
  *     type="object",
- *     @OA\Property(property="id", type="integer", description="Identificador únic de l'idioma"),
- *     @OA\Property(property="nom", type="string", description="Nom de l'idioma"),
- *     @OA\Property(property="zona", type="string", description="Zona de l'idioma"),
- *     @OA\Property(property="data_baixa", type="string", format="date", description="Data de baixa de l'idioma")
- * 
+ *     @OA\Property(property="id", type="integer", description="Identificador únic de l'illa"),
+ *     @OA\Property(property="nom", type="string", description="Nom de l'illa"),
+ *     @OA\Property(property="zona", type="string", description="Zona de l'illa"),
+ *     @OA\Property(property="data_baixa", type="string", format="date", description="Data de baixa de l'illa", nullable=true)
  * )
  */
-
 
     public function index()
     {
         try {
-            $tuples = Idiomes::all();
+            $tuples = Illes::all();
             return response()->json(['status' => 'correcto', 'data' => $tuples], 200);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json(['status' => 'error', 'data' => $e->errors()], 400);
@@ -75,57 +82,63 @@ class IdiomesController extends Controller
         }
     }
 
+    /**
+     * Almacena una nueva isla en la base de datos.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+
 /**
  * @OA\Post(
- *     path="/idiomes",
- *     summary="Crea un nou idioma",
- *     description="Afegeix un nou idioma a la base de dades",
- *     operationId="storeIdioma",
- *     tags={"Idiomes"},
- *     @OA\RequestBody(
- *         description="Dades de l'idioma per crear",
- *         required=true,
- *         @OA\JsonContent(
- *             required={"idioma"},
- *             @OA\Property(property="idioma", type="string", maxLength=255, example="Català"),
- *             @OA\Property(property="data_baixa", type="string", format="date", example="2024-01-24")
- *         )
- *     ),
- *     @OA\Response(
- *         response=200,
- *         description="Idioma creat amb èxit",
- *         @OA\JsonContent(
- *             @OA\Property(property="status", type="string", example="success"),
- *             @OA\Property(
- *                 property="data",
- *                 type="object",
- *                 ref="#/components/schemas/Idiomes"
- *             )
- *         )
- *     ),
- *     @OA\Response(
- *         response=400,
- *         description="Error de validació",
- *         @OA\JsonContent(
- *             @OA\Property(property="status", type="string", example="error"),
- *             @OA\Property(property="data", type="object")
- *         )
- *     ),
- *     @OA\Response(
- *         response=500,
- *         description="Error del servidor",
- *         @OA\JsonContent(
- *             @OA\Property(property="status", type="string", example="error"),
- *             @OA\Property(property="message", type="string")
- *         )
+ *   path="/api/illes",
+ *   summary="Crea una nova illa",
+ *   description="Aquest endpoint permet crear una nova illa amb les dades proporcionades.",
+ *   operationId="storeIlla",
+ *   tags={"Illes"},
+ *   @OA\RequestBody(
+ *     required=true,
+ *     description="Dades de la nova illa",
+ *     @OA\JsonContent(
+ *       required={"nom", "zona"},
+ *       @OA\Property(property="nom", type="string", example="Mallorca", description="El nom de l'illa"),
+ *       @OA\Property(property="zona", type="string", example="Llevant", description="La zona de l'illa"),
+ *       @OA\Property(property="data_baixa", type="string", format="date-time", example="2024-01-24T00:00:00", description="Data de baixa de l'illa (opcional)")
  *     )
+ *   ),
+ *   @OA\Response(
+ *     response=200,
+ *     description="Illa creada amb èxit",
+ *     @OA\JsonContent(
+ *       @OA\Property(property="status", type="string", example="success"),
+ *       @OA\Property(property="data", type="object", ref="#/components/schemas/Illes")
+ *     )
+ *   ),
+ *   @OA\Response(
+ *     response=400,
+ *     description="Error de validació",
+ *     @OA\JsonContent(
+ *       @OA\Property(property="status", type="string", example="error"),
+ *       @OA\Property(property="data", type="object", description="Detalls dels errors de validació")
+ *     )
+ *   ),
+ *   @OA\Response(
+ *     response=500,
+ *     description="Error intern del servidor",
+ *     @OA\JsonContent(
+ *       @OA\Property(property="status", type="string", example="error"),
+ *       @OA\Property(property="message", type="string", description="Missatge d'error")
+ *     )
+ *   )
  * )
  */
     public function store(Request $request)
     {
         try {
             $reglesValidacio = [
-                'idioma' => 'required|string|max:255',
+                'nom' => 'required|string|max:255',
+                'zona' => 'required|string|max:255',
+                
             ];
             $missatges = [
                 'required' => 'El camp :attribute és obligatori.',
@@ -142,7 +155,7 @@ class IdiomesController extends Controller
                 $request->merge(['data_baixa' => NULL]);
             }
 
-            $tupla = Idiomes::create($request->all());
+            $tupla = Illes::create($request->all());
 
             return response()->json(['status' => 'success', 'data' => $tupla], 200);
         } catch (\Illuminate\Validation\ValidationException $validationException) {
@@ -152,34 +165,40 @@ class IdiomesController extends Controller
         }
     }
 
+    /**
+     * Muestra la isla especificada.
+     *
+     * @param  \App\Models\Illes  $illa
+     * @return \Illuminate\Http\Response
+     */
 
-
+    
     /**
  * @OA\Get(
- *     path="/api/idiomes/{id}",
- *     tags={"Idiomes"},
- *     summary="Obté les dades d'un idioma específic",
+ *     path="/api/illes/{id}",
+ *     tags={"Illes"},
+ *     summary="Obté les dades d'una illa específica",
  *     @OA\Parameter(
  *         name="id",
  *         in="path",
  *         required=true,
- *         description="Identificador únic de l'idioma",
+ *         description="Identificador únic de l'illa",
  *         @OA\Schema(
  *             type="integer"
  *         )
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Dades de l'idioma trobades",
+ *         description="Dades de l'illa trobades",
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="correcto"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Idiomes")
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Illes")
  *         )
  *     ),
  *     @OA\Response(
  *         response=400,
- *         description="Idioma no trobat",
+ *         description="Illa no trobada",
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="No trobat")
@@ -195,12 +214,12 @@ class IdiomesController extends Controller
  *         )
  *     )
  * )
+ *
  */
-
     public function show($id)
     {
         try {
-            $tupla = Idiomes::findOrFail($id);
+            $tupla = Illes::findOrFail($id);
             return response()->json(['status' => 'correcto', 'data' => $tupla], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json(['status' => 'No trobat'], 400);
@@ -209,49 +228,55 @@ class IdiomesController extends Controller
         }
     }
 
+    /**
+     * Actualiza la isla especificada en la base de datos.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Illes  $illa
+     * @return \Illuminate\Http\Response
+     */
+
+  
 /**
  * @OA\Put(
- *     path="/idiomes/{id}",
- *     tags={"Idiomes"},
- *     summary="Actualitza un idioma",
- *     description="Actualitza les dades d'un idioma específic a partir de l'ID",
+ *     path="/api/illes/{id}",
+ *     tags={"Illes"},
+ *     summary="Actualitza una illa",
+ *     operationId="updateIlla",
+ *     description="Actualitza les dades d'una illa existent. Només els camps proporcionats seran actualitzats.",
  *     @OA\Parameter(
  *         name="id",
- *         description="ID de l'idioma a actualitzar",
- *         required=true,
  *         in="path",
+ *         description="ID de la illa a actualitzar",
+ *         required=true,
  *         @OA\Schema(
- *             type="integer"
+ *             type="integer",
+ *             format="int64"
  *         )
  *     ),
  *     @OA\RequestBody(
+ *         description="Dades de la illa per actualitzar",
  *         required=true,
- *         description="Dades de l'idioma per actualitzar",
  *         @OA\JsonContent(
- *             required={"idioma"},
- *             @OA\Property(property="idioma", type="string", example="Català", description="Nom de l'idioma"),
- *             @OA\Property(property="data_baixa", type="string", format="date", example="2024-01-24", description="Data de baixa de l'idioma")
+ *             ref="#/components/schemas/Illes"
  *         )
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Idioma actualitzat amb èxit",
- *         @OA\JsonContent(
- *             @OA\Property(property="status", type="string", example="success"),
- *             @OA\Property(
- *                 property="data",
- *                 type="object",
- *                 ref="#/components/schemas/Idiomes"
- *             )
- *         )
+ *         description="Illa actualitzada amb èxit",
+ *         @OA\JsonContent(ref="#/components/schemas/Illes")
  *     ),
  *     @OA\Response(
  *         response=400,
- *         description="Error de validació"
+ *         description="Petició incorrecta o error en la validació de dades"
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Illa no trobada"
  *     ),
  *     @OA\Response(
  *         response=500,
- *         description="Error intern del servidor"
+ *         description="Error del servidor"
  *     )
  * )
  */
@@ -259,10 +284,11 @@ class IdiomesController extends Controller
     public function update(Request $request, $id)
     {
         try {
-            $tupla = Idiomes::findOrFail($id);
+            $tupla = Illes::findOrFail($id);
             $reglesValidacio = [
-                'idioma' => 'nullable|string|max:255',
-            
+                'nom' => 'nullable|string|max:255',
+                'zona' => 'nullable|string|max:255',
+               
             ];
             $missatges = [
                 'required' => 'El camp :attribute és obligatori.',
@@ -290,34 +316,42 @@ class IdiomesController extends Controller
     }
 
     /**
+     * Elimina la isla especificada de la base de datos.
+     *
+     * @param  \App\Models\Illes  $illa
+     * @return \Illuminate\Http\Response
+     */
+
+
+    /**
  * @OA\Delete(
- *     path="/api/idiomes/{id}",
- *     tags={"Idiomes"},
- *     summary="Elimina un idioma existent",
+ *     path="/api/illes/{id}",
+ *     tags={"Illes"},
+ *     summary="Elimina una illa existent",
  *     @OA\Parameter(
  *         name="id",
  *         in="path",
  *         required=true,
- *         description="Identificador únic de l'idioma a eliminar",
+ *         description="Identificador únic de l'illa a eliminar",
  *         @OA\Schema(
  *             type="integer"
  *         )
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Idioma eliminat correctament",
+ *         description="Illa eliminada amb èxit",
  *         @OA\JsonContent(
  *             type="object",
  *             @OA\Property(property="status", type="string", example="success"),
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Idiomes")
+ *             @OA\Property(property="data", type="object", ref="#/components/schemas/Illes")
  *         )
  *     ),
  *     @OA\Response(
  *         response=400,
- *         description="Idioma no trobat o error en l'eliminació",
+ *         description="Illa no trobada",
  *         @OA\JsonContent(
  *             type="object",
- *             @OA\Property(property="status", type="string", example="Error")
+ *             @OA\Property(property="status", type="string", example="Illa no trobada")
  *         )
  *     ),
  *     @OA\Response(
@@ -330,11 +364,12 @@ class IdiomesController extends Controller
  *         )
  *     )
  * )
+ *
  */
     public function destroy($id)
     {
         try {
-            $tupla = Idiomes::findOrFail($id);
+            $tupla = Illes::findOrFail($id);
             $tupla->delete();
             return response()->json(['status' => 'success', 'data' => $tupla], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {

@@ -10,19 +10,13 @@ class VisitesPuntsInteres extends Model
     use HasFactory;
 
     protected $table = 'visites_punts_interes';
-
-    protected $fillable = [
-        'punts_interes_id',
-        'visita_id',
-        'ordre',
-        'data_baixa',
-    ];
-
     protected $primaryKey = ['punts_interes_id', 'visita_id'];
     public $incrementing = false;
 
-    protected $dates = [
-        'data_baixa',
+    protected $fillable = [
+        'punt_interes_id',
+        'visita_id',
+        'ordre',
     ];
 
     public function puntInteres()

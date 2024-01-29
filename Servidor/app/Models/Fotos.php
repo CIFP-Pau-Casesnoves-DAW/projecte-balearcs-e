@@ -16,7 +16,6 @@ class Fotos extends Model
         'punt_interes_id',
         'espai_id',
         'comentari',
-        'data_baixa'
     ];
 
     /**

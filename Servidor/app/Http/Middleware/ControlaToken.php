@@ -18,6 +18,7 @@ class Controlatoken
             }
             $user = Usuaris::where('api_token', $token)->first();
             if (!empty($user)) {
+                $request->merge(['md_rol' => $user->rol, 'md_id' => $user->id]);
                 return $next($request); // Usuari trobat. Token correcta. Continuam am la petició
             } else {
                 return response()->json(['error' => 'Accés no autoritzat'], 401); // token incorrecta

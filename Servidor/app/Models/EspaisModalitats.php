@@ -10,9 +10,8 @@ class EspaisModalitats extends Pivot
     use HasFactory;
 
     protected $table = 'espais_modalitats';
-
-    public $incrementing = true; // Si tens una clau primària autoincrementada
-    protected $primaryKey = ['espai_id', 'modalitat_id']; // Defineix la clau primària composta
+    public $incrementing = false;
+    protected $primaryKey = ['espai_id', 'modalitat_id'];
 
     protected $fillable = [
         'espai_id',
@@ -68,8 +67,7 @@ class EspaisModalitats extends Pivot
     public function setKeysForSaveQuery($query)
     {
         $query->where('espai_id', $this->getAttribute('espai_id'))
-              ->where('modalitat_id', $this->getAttribute('modalitat_id'));
+            ->where('modalitat_id', $this->getAttribute('modalitat_id'));
         return $query;
     }
 }
-

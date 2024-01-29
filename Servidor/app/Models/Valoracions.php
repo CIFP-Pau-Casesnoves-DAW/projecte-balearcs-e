@@ -19,11 +19,6 @@ class Valoracions extends Model
         'espai_id',
     ];
 
-    protected $dates = [
-        'data',
-        'data_baixa',
-    ];
-
     public function usuari()
     {
         return $this->belongsTo(Usuaris::class, 'usuari_id');

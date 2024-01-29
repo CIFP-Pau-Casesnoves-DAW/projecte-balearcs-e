@@ -10,9 +10,8 @@ class EspaisServeis extends Pivot
     use HasFactory;
 
     protected $table = 'espais_serveis';
-
-    public $incrementing = true; // Si tens una clau primària autoincrementada
-    protected $primaryKey = ['servei_id', 'espai_id']; // Defineix la clau primària composta
+    public $incrementing = false;
+    protected $primaryKey = ['servei_id', 'espai_id'];
 
     protected $fillable = [
         'servei_id',
@@ -36,7 +35,7 @@ class EspaisServeis extends Pivot
         return $this->belongsTo(Espais::class, 'espai_id');
     }
 
-    
+
     /**
      * Obté la clau primària per al model.
      *
@@ -68,8 +67,7 @@ class EspaisServeis extends Pivot
     public function setKeysForSaveQuery($query)
     {
         $query->where('servei_id', $this->getAttribute('servei_id'))
-              ->where('espai_id', $this->getAttribute('espai_id'));
+            ->where('espai_id', $this->getAttribute('espai_id'));
         return $query;
     }
 }
-
