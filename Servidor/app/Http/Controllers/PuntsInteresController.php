@@ -30,7 +30,7 @@ class PuntsInteresController extends Controller
      *         description="Llista de punts d'interès recuperada amb èxit",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="status", type="string", example="correcto"),
+     *             @OA\Property(property="status", type="string", example="success"),
      *             @OA\Property(
      *                 property="data",
      *                 type="array",
@@ -53,7 +53,7 @@ class PuntsInteresController extends Controller
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string")
+     *             @OA\Property(property="data", type="string")
      *         )
      *     )
      * )
@@ -74,11 +74,11 @@ class PuntsInteresController extends Controller
     {
         try {
             $tuples = PuntsInteres::all();
-            return response()->json(['status' => 'correcto', 'data' => $tuples], 200);
+            return response()->json(['status' => 'success', 'data' => $tuples], 200);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json(['status' => 'error', 'data' => $e->errors()], 400);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 
@@ -125,7 +125,7 @@ class PuntsInteresController extends Controller
      *         description="Error intern del servidor",
      *         @OA\JsonContent(
      *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string", example="Missatge d'error")
+     *             @OA\Property(property="data", type="string", example="Missatge d'error")
      *         )
      *     )
      * )
@@ -139,6 +139,8 @@ class PuntsInteresController extends Controller
                 'espai_id' => 'required|exists:espais,id',
             ];
             $missatges = [
+                'filled' => 'El camp :attribute no pot estar buit',
+                'exists' => ':attribute ha de existir',
                 'required' => 'El camp :attribute és obligatori.',
                 'max' => 'El :attribute ha de tenir màxim :max caràcters.'
             ];
@@ -154,7 +156,7 @@ class PuntsInteresController extends Controller
         } catch (\Illuminate\Validation\ValidationException $validationException) {
             return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 
@@ -186,7 +188,7 @@ class PuntsInteresController extends Controller
      *         description="Dades del punt d'interès trobades amb èxit",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="status", type="string", example="correcto"),
+     *             @OA\Property(property="status", type="string", example="success"),
      *             @OA\Property(property="data", type="object", ref="#/components/schemas/PuntsInteres")
      *         )
      *     ),
@@ -204,7 +206,7 @@ class PuntsInteresController extends Controller
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string")
+     *             @OA\Property(property="data", type="string")
      *         )
      *     ),
      *     
@@ -216,11 +218,11 @@ class PuntsInteresController extends Controller
     {
         try {
             $tupla = PuntsInteres::findOrFail($id);
-            return response()->json(['status' => 'correcto', 'data' => $tupla], 200);
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json(['status' => 'No trobat'], 400);
+            return response()->json(['status' => 'error', 'data' => $e], 400);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 
@@ -287,11 +289,13 @@ class PuntsInteresController extends Controller
         try {
             $tupla = PuntsInteres::findOrFail($id);
             $reglesValidacio = [
-                'titol' => 'nullable|string|max:255',
+                'titol' => 'filled|string|max:255',
                 'descripcio' => 'nullable|string|max:2000',
-                'espai_id' => 'nullable|exists:espais,id',
+                'espai_id' => 'filled|exists:espais,id',
             ];
             $missatges = [
+                'filled' => 'El camp :attribute no pot estar buit',
+                'exists' => ':attribute ha de existir',
                 'required' => 'El camp :attribute és obligatori.',
                 'max' => 'El :attribute ha de tenir màxim :max caràcters.'
             ];
@@ -316,7 +320,7 @@ class PuntsInteresController extends Controller
         } catch (\Illuminate\Validation\ValidationException $validationException) {
             return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 
@@ -346,7 +350,7 @@ class PuntsInteresController extends Controller
      *         description="Punt d'interès eliminat amb èxit",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="status", type="string", example="correcto"),
+     *             @OA\Property(property="status", type="string", example="success"),
      *             @OA\Property(property="data", type="object")
      *         )
      *     ),
@@ -365,7 +369,7 @@ class PuntsInteresController extends Controller
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string")
+     *             @OA\Property(property="data", type="string")
      *         )
      *     )
      * )
@@ -377,9 +381,9 @@ class PuntsInteresController extends Controller
             $tupla->delete();
             return response()->json(['status' => 'success', 'data' => $tupla], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json(['status' => 'Error'], 400);
+            return response()->json(['status' => 'error', 'data' => $e], 400);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 
@@ -402,7 +406,7 @@ class PuntsInteresController extends Controller
      *         description="Eliminació lògica del punt d'interès realitzada amb èxit",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="status", type="string", example="correcto"),
+     *             @OA\Property(property="status", type="string", example="success"),
      *             @OA\Property(property="data", type="object")
      *         )
      *     ),
@@ -421,7 +425,7 @@ class PuntsInteresController extends Controller
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string")
+     *             @OA\Property(property="data", type="string")
      *         )
      *     )
      * )
@@ -434,9 +438,9 @@ class PuntsInteresController extends Controller
             $puntinteres->save();
             return response()->json(['status' => 'success', 'data' => $puntinteres], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json(['status' => 'Error'], 400);
+            return response()->json(['status' => 'error', 'data' => $e], 400);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 }

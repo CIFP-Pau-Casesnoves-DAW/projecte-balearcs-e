@@ -62,11 +62,11 @@ class ArquitectesController extends Controller
     {
         try {
             $tuples = Arquitectes::all();
-            return response()->json(['status' => 'correcto', 'data' => $tuples], 200);
+            return response()->json(['status' => 'success', 'data' => $tuples], 200);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json(['status' => 'error', 'data' => $e->errors()], 400);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 
@@ -142,7 +142,7 @@ class ArquitectesController extends Controller
         } catch (\Illuminate\Validation\ValidationException $validationException) {
             return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 
@@ -192,11 +192,11 @@ class ArquitectesController extends Controller
     {
         try {
             $tupla = Arquitectes::findOrFail($id);
-            return response()->json(['status' => 'correcto', 'data' => $tupla], 200);
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json(['status' => 'No trobat'], 400);
+            return response()->json(['status' => 'error', 'data' => $e], 400);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 
@@ -250,9 +250,10 @@ class ArquitectesController extends Controller
         try {
             $tupla = Arquitectes::findOrFail($id);
             $reglesValidacio = [
-                'nom' => 'nullable|string|max:255',
+                'nom' => 'filled|string|max:255',
             ];
             $missatges = [
+                'filled' => 'El camp :attribute no pot estar buit',
                 'required' => 'El camp :attribute és obligatori.',
                 'max' => 'El :attribute ha de tenir màxim :max caràcters.'
             ];
@@ -273,7 +274,7 @@ class ArquitectesController extends Controller
         } catch (\Illuminate\Validation\ValidationException $validationException) {
             return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 
@@ -327,9 +328,9 @@ class ArquitectesController extends Controller
             $tupla->delete();
             return response()->json(['status' => 'success', 'data' => $tupla], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json(['status' => 'Error'], 400);
+            return response()->json(['status' => 'error', 'data' => $e], 400);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 }

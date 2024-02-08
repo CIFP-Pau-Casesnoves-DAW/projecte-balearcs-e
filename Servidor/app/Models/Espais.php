@@ -24,7 +24,11 @@ class Espais extends Model
         'web',
         'mail',
         'grau_acc',
-        'any_cons'
+        'any_cons',
+        'arquitecte_id',
+        // 'gestor_id',
+        'tipus_id',
+        'municipi_id'
     ];
 
     /**

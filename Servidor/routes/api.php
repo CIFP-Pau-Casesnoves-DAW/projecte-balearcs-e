@@ -4,7 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\UsuarisController;
-use App\Http\Middleware\Controlatoken;
+use App\Http\Middleware\ControlaToken;
 use App\Http\Middleware\ControlaAdministrador;
 use App\Http\Middleware\ControlaDadesUsuari;
 use App\Http\Middleware\ControlaRegistreUsuaris;
@@ -34,6 +34,7 @@ use App\Http\Controllers\FotosController;
 use App\Http\Controllers\IdiomesController;
 use App\Http\Controllers\ModalitatsController;
 use App\Http\Controllers\ComentarisController;
+use App\Http\Controllers\LogoutController;
 use App\Http\Middleware\ControlaDadesAudios;
 use App\Http\Middleware\ControlaDadesFotos;
 use App\Http\Middleware\ControlaDadesPuntsInteres;
@@ -57,6 +58,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 //login
 $router->post('login', [LoginController::class, 'login']);
+
+//logout
+$router->post('logout/{id}', [LogoutController::class, 'logout']);
 
 // Rutes per a llistar, crear, emmagatzemar, mostrar, editar, actualitzar i eliminar arquitectes
 $router->group(['prefix' => 'arquitectes', 'middleware' => ControlaAdministrador::class], function () use ($router) {
@@ -89,7 +93,7 @@ $router->group(['prefix' => 'comentaris'], function () use ($router) {
 // Rutes per a llistar, crear, emmagatzemar, mostrar, editar, actualitzar i eliminar espais
 $router->group(['prefix' => 'espais', 'middleware' => ControlaAdministrador::class], function () use ($router) {
     $router->get('', [EspaisController::class, 'index'])->withoutMiddleware([ControlaAdministrador::class]);
-    $router->get('{id}', [EspaisController::class, 'show'])->withoutMiddleware([ControlaAdministrador::class])->middleware(ControlaDadesEspais::class);
+    $router->get('{id}', [EspaisController::class, 'show'])->withoutMiddleware([ControlaAdministrador::class]);
     $router->post('', [EspaisController::class, 'store']);
     $router->put('{id}', [EspaisController::class, 'update'])->withoutMiddleware([ControlaAdministrador::class])->middleware(ControlaDadesEspais::class);
     $router->put('delete/{id}', [EspaisController::class, 'delete']);
@@ -135,8 +139,8 @@ $router->group(['prefix' => 'fotos'], function () use ($router) {
 
 // Rutes per a llistar, crear, emmagatzemar, mostrar, editar, actualitzar i eliminar idiomes
 $router->group(['prefix' => 'idiomes', 'middleware' => ControlaAdministrador::class], function () use ($router) {
-    $router->get('', [IdiomesController::class, 'index']);
-    $router->get('{id}', [IdiomesController::class, 'show']);
+    $router->get('', [IdiomesController::class, 'index'])->withoutMiddleware([ControlaAdministrador::class]);
+    $router->get('{id}', [IdiomesController::class, 'show'])->withoutMiddleware([ControlaAdministrador::class]);
     $router->post('', [IdiomesController::class, 'store']);
     $router->put('{id}', [IdiomesController::class, 'update']);
     $router->delete('{id}', [IdiomesController::class, 'destroy']);

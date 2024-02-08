@@ -25,7 +25,7 @@ class ModalitatsIdiomesController extends Controller
      *         description="Llista d'associacions recuperada amb èxit",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="status", type="string", example="correcto"),
+     *             @OA\Property(property="status", type="string", example="success"),
      *             @OA\Property(
      *                 property="data",
      *                 type="array",
@@ -48,7 +48,7 @@ class ModalitatsIdiomesController extends Controller
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string")
+     *             @OA\Property(property="data", type="string")
      *         )
      *     )
      * )
@@ -65,11 +65,11 @@ class ModalitatsIdiomesController extends Controller
     {
         try {
             $tuples = ModalitatsIdiomes::all();
-            return response()->json(['status' => 'correcto', 'data' => $tuples], 200);
+            return response()->json(['status' => 'success', 'data' => $tuples], 200);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json(['status' => 'error', 'data' => $e->errors()], 400);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 
@@ -109,7 +109,7 @@ class ModalitatsIdiomesController extends Controller
      *         description="Error del servidor",
      *         @OA\JsonContent(
      *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string", description="Missatge d'error del servidor")
+     *             @OA\Property(property="data", type="string", description="Missatge d'error del servidor")
      *         )
      *     )
      * )
@@ -144,7 +144,7 @@ class ModalitatsIdiomesController extends Controller
         } catch (\Illuminate\Validation\ValidationException $validationException) {
             return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 
@@ -184,7 +184,7 @@ class ModalitatsIdiomesController extends Controller
      *         description="Traducció no trobada",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="message", type="string", example="Traducció no trobada")
+     *             @OA\Property(property="data", type="string", example="Traducció no trobada")
      *         )
      *     ),
      *     @OA\Response(
@@ -193,7 +193,7 @@ class ModalitatsIdiomesController extends Controller
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string")
+     *             @OA\Property(property="data", type="string")
      *         )
      *     )
      * )
@@ -204,11 +204,11 @@ class ModalitatsIdiomesController extends Controller
         try {
             $modalitatidioma = ModalitatsIdiomes::where('idioma_id', $idioma_id)->where('modalitat_id', $modalitat_id)->first();
             if (!$modalitatidioma) {
-                return response()->json(['message' => 'Traducció no trobada'], 404);
+                return response()->json(['status' => 'error', 'data' => 'Traducció no trobada'], 404);
             }
-            return response()->json(['modalitat_idioma' => $modalitatidioma], 200);
+            return response()->json(['status' => 'success', 'data' => $modalitatidioma], 200);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 
@@ -274,10 +274,7 @@ class ModalitatsIdiomesController extends Controller
         ];
         $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
         if ($validacio->fails()) {
-            return response()->json([
-                'status' => 'error',
-                'errors' => $validacio->errors()
-            ], 400);
+            return response()->json(['status' => 'error', 'data' => $validacio->errors()], 400);
         } else {
             try {
                 $traduccio_modalitat = ModalitatsIdiomes::where('idioma_id', $idioma_id)->where('modalitat_id', $modalitat_id);
@@ -288,14 +285,10 @@ class ModalitatsIdiomesController extends Controller
                 }
                 $traduccio_modalitat->update($request->all());
                 return response()->json([
-                    'status' => 'success',
-                    'data' => $traduccio_modalitat
+                    'status' => 'success', 'data' => $traduccio_modalitat
                 ], 200);
             } catch (\Exception $e) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'La traduccio del modalitat amb la id ' . $modalitat_id . 'amb idioma' . $idioma_id . 'no existeix'
-                ], 404);
+                return response()->json(['status' => 'error', 'data' => 'La traduccio del modalitat amb la id ' . $modalitat_id . 'amb idioma' . $idioma_id . 'no existeix'], 404);
             }
         }
     }
@@ -343,7 +336,7 @@ class ModalitatsIdiomesController extends Controller
      *         description="Error del servidor",
      *         @OA\JsonContent(
      *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string")
+     *             @OA\Property(property="data", type="string")
      *         )
      *     )
      * )
@@ -354,12 +347,12 @@ class ModalitatsIdiomesController extends Controller
             $traduccio_modalitat = ModalitatsIdiomes::where('idioma_id', $idioma_id)->where('modalitat_id', $modalitat_id);
             $traduccio_modalitat->delete();
             if ($traduccio_modalitat) {
-                return response()->json(['status' => ' Esborrat correctament'], 200);
+                return response()->json(['status' => 'success', 'data' => ' Esborrat correctament'], 200);
             } else {
-                return response()->json(['status' => 'No trobat'], 404);
+                return response()->json(['status' => 'error', 'data' => 'No trobat'], 404);
             }
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 }

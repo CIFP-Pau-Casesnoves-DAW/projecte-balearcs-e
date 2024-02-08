@@ -48,7 +48,7 @@ class AudiosController extends Controller
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string")
+     *             @OA\Property(property="data", type="string")
      *         )
      *     )
      * )
@@ -64,11 +64,11 @@ class AudiosController extends Controller
     {
         try {
             $tuples = Audios::all();
-            return response()->json(['status' => 'correcto', 'data' => $tuples], 200);
+            return response()->json(['status' => 'success', 'data' => $tuples], 200);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json(['status' => 'error', 'data' => $e->errors()], 400);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 
@@ -112,9 +112,10 @@ class AudiosController extends Controller
         try {
             $reglesValidacio = [
                 'url' => 'required|string',
-                'punt_interes_id' => 'required|exists:punts_interes,id',
+                'punt_interes_id' => 'required|int|exists:punts_interes,id',
             ];
             $missatges = [
+                'exists' => ':attribute ha de existir',
                 'required' => 'El camp :attribute és obligatori.',
                 'max' => 'El :attribute ha de tenir màxim :max caràcters.'
             ];
@@ -130,7 +131,7 @@ class AudiosController extends Controller
         } catch (\Illuminate\Validation\ValidationException $validationException) {
             return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 
@@ -172,7 +173,7 @@ class AudiosController extends Controller
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string")
+     *             @OA\Property(property="data", type="string")
      *         )
      *     )
      * )
@@ -181,11 +182,11 @@ class AudiosController extends Controller
     {
         try {
             $tupla = Audios::findOrFail($id);
-            return response()->json(['status' => 'correcto', 'data' => $tupla], 200);
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json(['status' => 'No trobat'], 400);
+            return response()->json(['status' => 'error', 'data' => $e], 400);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 
@@ -236,7 +237,7 @@ class AudiosController extends Controller
      *         description="Error intern del servidor",
      *         @OA\JsonContent(
      *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string")
+     *             @OA\Property(property="data", type="string")
      *         )
      *     ),
      * )
@@ -247,10 +248,12 @@ class AudiosController extends Controller
         try {
             $tupla = Audios::findOrFail($id);
             $reglesValidacio = [
-                'url' => 'nullable|string',
-                'punt_interes_id' => 'nullable|exists:punts_interes,id',
+                'url' => 'filled|string',
+                'punt_interes_id' => 'filled|int|exists:punts_interes,id',
             ];
             $missatges = [
+                'exists' => ':attribute ha de existir',
+                'filled' => 'El camp :attribute no pot estar buit',
                 'required' => 'El camp :attribute és obligatori.',
                 'max' => 'El :attribute ha de tenir màxim :max caràcters.'
             ];
@@ -271,7 +274,7 @@ class AudiosController extends Controller
         } catch (\Illuminate\Validation\ValidationException $validationException) {
             return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 
@@ -314,7 +317,7 @@ class AudiosController extends Controller
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string")
+     *             @OA\Property(property="data", type="string")
      *         )
      *     )
      * )
@@ -326,9 +329,9 @@ class AudiosController extends Controller
             $tupla->delete();
             return response()->json(['status' => 'success', 'data' => $tupla], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json(['status' => 'Error'], 400);
+            return response()->json(['status' => 'error', 'data' => $e], 400);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 
@@ -340,9 +343,9 @@ class AudiosController extends Controller
             $audio->save();
             return response()->json(['status' => 'success', 'data' => $audio], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json(['status' => 'Error'], 400);
+            return response()->json(['status' => 'error', 'data' => $e], 400);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 }

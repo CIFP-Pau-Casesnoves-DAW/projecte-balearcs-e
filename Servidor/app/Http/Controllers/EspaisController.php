@@ -32,6 +32,7 @@ class EspaisController extends Controller
      *                 type="array",
      *                 @OA\Items(ref="#/components/schemas/Espais")
      *             )
+     * 
      *         )
      *     ),
      *     @OA\Response(
@@ -74,11 +75,11 @@ class EspaisController extends Controller
     {
         try {
             $tuples = Espais::all();
-            return response()->json(['status' => 'correcto', 'data' => $tuples], 200);
+            return response()->json(['status' => 'success', 'data' => $tuples], 200);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json(['status' => 'error', 'data' => $e->errors()], 400);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 
@@ -135,11 +136,6 @@ class EspaisController extends Controller
     public function store(Request $request)
     {
         try {
-            $defaultValues = [
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ];
-
             $reglesValidacio = [
                 'nom' => 'required|string|max:255',
                 'descripcio' => 'required|string',
@@ -148,13 +144,17 @@ class EspaisController extends Controller
                 'pis_porta' => 'nullable|string|max:50',
                 'web' => 'nullable|string|max:255',
                 'mail' => 'required|email|max:255',
-                'grau_acc' => 'nullable|in:baix,mig,alt',
-                'any_cons' => 'nullable|integer'
+                'grau_acc' => 'filled|in:baix,mig,alt',
+                'any_cons' => 'filled|integer',
+                'arquitecte_id' => 'filled|int|exists:arquitectes,id',
+                'tipus_id' => 'required|int|exists:tipus,id',
+                'gestor_id' => 'filled|int|exists:usuaris,id',
+                'municipi_id' => 'filled|int|exists:municipis,id'
             ];
 
-            $request->merge($defaultValues);
-
             $missatges = [
+                'exists' => ':attribute ha de existir',
+                'filled' => 'El camp :attribute no pot estar buit',
                 'required' => 'El camp :attribute és obligatori.',
                 'string' => 'El camp :attribute ha de ser una cadena de caràcters.',
                 'max' => 'El camp :attribute no pot tenir més de :max caràcters.',
@@ -162,7 +162,6 @@ class EspaisController extends Controller
                 'email' => 'Introduïu una adreça de correu electrònic vàlida.',
                 'in' => 'El camp :attribute ha de ser baix, mig o alt.',
                 'date' => 'El camp :attribute ha de ser una data vàlida.',
-                'exists' => 'El :attribute seleccionat no és vàlid.',
                 'boolean' => 'El camp :attribute ha de ser un valor booleà.',
                 'year' => 'El camp :attribute ha de ser un any vàlid.'
             ];
@@ -175,11 +174,15 @@ class EspaisController extends Controller
 
             $tupla = Espais::create($request->all());
 
-            return response()->json(['status' => 'correcte', 'data' => $tupla], 200);
+            if ($request->filled('gestor_id')) {
+                $tupla->gestor_id = $request->input('gestor_id');
+                $tupla->save();
+            }
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
         } catch (\Illuminate\Validation\ValidationException $validationException) {
             return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 
@@ -231,11 +234,11 @@ class EspaisController extends Controller
     {
         try {
             $tupla = Espais::findOrFail($id);
-            return response()->json(['status' => 'correcto', 'data' => $tupla], 200);
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json(['status' => 'Espai no trobat'], 400);
+            return response()->json(['status' => 'error', 'data' => $e], 400);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 
@@ -288,23 +291,24 @@ class EspaisController extends Controller
             $tupla = Espais::findOrFail($id);
 
             $reglesValidacio = [
-                'nom' => 'nullable|string|max:255',
-                'descripcio' => 'nullable|string',
-                'carrer' => 'nullable|string|max:255',
-                'numero' => 'nullable|string|max:10',
+                'nom' => 'filled|string|max:255',
+                'descripcio' => 'filled|string',
+                'carrer' => 'filled|string|max:255',
+                'numero' => 'filled|string|max:10',
                 'pis_porta' => 'nullable|string|max:50',
                 'web' => 'nullable|string|max:255',
-                'mail' => 'nullable|email|max:255',
-                'grau_acc' => 'nullable|in:baix,mig,alt',
-                'arquitecte_id' => 'nullable|exists:arquitectes,id',
-                'gestor_id' => 'nullable|exists:usuaris,id',
-                'tipus_id' => 'nullable|exists:tipus,id',
-                'municipi_id' => 'nullable|exists:municipis,id',
-                'destacat' => 'nullable|boolean',
-                'any_cons' => 'nullable|integer'
+                'mail' => 'filled|email|max:255',
+                'grau_acc' => 'filled|in:baix,mig,alt',
+                'any_cons' => 'filled|integer',
+                'arquitecte_id' => 'filled|int|exists:arquitectes,id',
+                'tipus_id' => 'filled|int|exists:tipus,id',
+                'gestor_id' => 'filled|int|exists:usuaris,id',
+                'municipi_id' => 'filled|int|exists:municipis,id'
             ];
 
             $missatges = [
+                'exists' => ':attribute ha de existir',
+                'filled' => 'El camp :attribute no pot estar buit',
                 'required' => 'El camp :attribute és obligatori.',
                 'string' => 'El camp :attribute ha de ser una cadena de caràcters.',
                 'max' => 'El camp :attribute no pot tenir més de :max caràcters.',
@@ -312,7 +316,6 @@ class EspaisController extends Controller
                 'email' => 'Introduïu una adreça de correu electrònic vàlida.',
                 'in' => 'El camp :attribute ha de ser baix, mig o alt.',
                 'date' => 'El camp :attribute ha de ser una data vàlida.',
-                'exists' => 'El :attribute seleccionat no és vàlid.',
                 'boolean' => 'El camp :attribute ha de ser un valor booleà.',
                 'year' => 'El camp :attribute ha de ser un any vàlid.'
             ];
@@ -324,34 +327,14 @@ class EspaisController extends Controller
                 throw new \Illuminate\Validation\ValidationException($validacio);
             }
 
-            if ($request->filled('arquitecte_id') && $mdRol == 'administrador') {
-                $espai = Espais::find($id);
-                $espai->arquitecte_id = $request->input('arquitecte_id');
-                $espai->save();
-            }
-
             if ($request->filled('gestor_id') && $mdRol == 'administrador') {
-                $espai = Espais::find($id);
-                $espai->gestor_id = $request->input('gestor_id');
-                $espai->save();
-            }
-
-            if ($request->filled('tipus_id') && $mdRol == 'administrador') {
-                $espai = Espais::find($id);
-                $espai->tipus_id = $request->input('tipus_id');
-                $espai->save();
-            }
-
-            if ($request->filled('municipi_id') && $mdRol == 'administrador') {
-                $espai = Espais::find($id);
-                $espai->municipi_id = $request->input('municipi_id');
-                $espai->save();
+                $tupla->gestor_id = $request->input('gestor_id');
+                $tupla->save();
             }
 
             if ($request->filled('destacat') && $mdRol == 'administrador') {
-                $espai = Espais::find($id);
-                $espai->destacat = $request->input('destacat');
-                $espai->save();
+                $tupla->destacat = $request->input('destacat');
+                $tupla->save();
             }
 
             if (empty($request->data_baixa) && $mdRol == 'administrador') {
@@ -364,7 +347,7 @@ class EspaisController extends Controller
         } catch (\Illuminate\Validation\ValidationException $validationException) {
             return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 
@@ -418,9 +401,9 @@ class EspaisController extends Controller
             $espai->delete();
             return response()->json(['status' => 'success', 'data' => $espai], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json(['status' => 'Error'], 400);
+            return response()->json(['status' => 'error', 'data' => $e], 400);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 
@@ -476,9 +459,9 @@ class EspaisController extends Controller
             $espai->save();
             return response()->json(['status' => 'success', 'data' => $espai], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json(['status' => 'Error'], 400);
+            return response()->json(['status' => 'error', 'data' => $e], 400);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 }

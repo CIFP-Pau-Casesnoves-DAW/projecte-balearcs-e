@@ -30,7 +30,7 @@ class VisitesController extends Controller
      *         description="Llista de visites recuperada amb èxit",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="status", type="string", example="correcto"),
+     *             @OA\Property(property="status", type="string", example="success"),
      *             @OA\Property(
      *                 property="data",
      *                 type="array",
@@ -53,7 +53,7 @@ class VisitesController extends Controller
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string")
+     *             @OA\Property(property="data", type="string")
      *         )
      *     )
      * )
@@ -81,11 +81,11 @@ class VisitesController extends Controller
     {
         try {
             $tuples = Visites::all();
-            return response()->json(['status' => 'correcto', 'data' => $tuples], 200);
+            return response()->json(['status' => 'success', 'data' => $tuples], 200);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json(['status' => 'error', 'data' => $e->errors()], 400);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 
@@ -142,7 +142,7 @@ class VisitesController extends Controller
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string")
+     *             @OA\Property(property="data", type="string")
      *         )
      *     )
      * )
@@ -156,14 +156,16 @@ class VisitesController extends Controller
                 'descripcio' => 'required|string',
                 'inscripcio_previa' => 'required|boolean',
                 'n_places' => 'required|integer',
-                'total_visitants' => 'nullable|integer',
+                'total_visitants' => 'filled|integer',
                 'data_inici' => 'required|date',
                 'data_fi' => 'required|date',
                 'horari' => 'required|string',
                 'data_baixa' => 'nullable|date',
-                'espai_id' => 'required|int',
+                'espai_id' => 'required|int|exists:espais,id',
             ];
             $missatges = [
+                'filled' => 'El camp :attribute no pot estar buit',
+                'exists' => ':attribute ha de existir',
                 'required' => 'El camp :attribute és obligatori.',
                 'max' => 'El :attribute ha de tenir màxim :max caràcters.'
             ];
@@ -179,7 +181,7 @@ class VisitesController extends Controller
         } catch (\Illuminate\Validation\ValidationException $validationException) {
             return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 
@@ -209,7 +211,7 @@ class VisitesController extends Controller
      *         description="Dades de la visita trobades",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="status", type="string", example="correcto"),
+     *             @OA\Property(property="status", type="string", example="success"),
      *             @OA\Property(property="data", type="object", ref="#/components/schemas/Visites")
      *         )
      *     ),
@@ -227,7 +229,7 @@ class VisitesController extends Controller
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string")
+     *             @OA\Property(property="data", type="string")
      *         )
      *     )
      * )
@@ -236,11 +238,11 @@ class VisitesController extends Controller
     {
         try {
             $tupla = Visites::findOrFail($id);
-            return response()->json(['status' => 'correcto', 'data' => $tupla], 200);
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json(['status' => 'No trobat'], 400);
+            return response()->json(['status' => 'error', 'data' => $e], 400);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 
@@ -306,7 +308,7 @@ class VisitesController extends Controller
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string")
+     *             @OA\Property(property="data", type="string")
      *         )
      *     )
      * )
@@ -317,17 +319,19 @@ class VisitesController extends Controller
         try {
             $tupla = Visites::findOrFail($id);
             $reglesValidacio = [
-                'titol' => 'nullable|string|max:255',
-                'descripcio' => 'nullable|string',
-                'inscripcio_previa' => 'nullable|boolean',
-                'n_places' => 'nullable|integer',
-                'total_visitants' => 'nullable|integer',
-                'data_inici' => 'nullable|date',
-                'data_fi' => 'nullable|date',
-                'horari' => 'nullable|string',
-                'espai_id' => 'nullable|int',
+                'titol' => 'filled|string|max:255',
+                'descripcio' => 'filled|string',
+                'inscripcio_previa' => 'filled|boolean',
+                'n_places' => 'filled|integer',
+                'total_visitants' => 'filled|integer',
+                'data_inici' => 'filled|date',
+                'data_fi' => 'filled|date',
+                'horari' => 'filled|string',
+                'espai_id' => 'filled|int|exists:espais,id',
             ];
             $missatges = [
+                'filled' => 'El camp :attribute no pot estar buit',
+                'exists' => ':attribute ha de existir',
                 'required' => 'El camp :attribute és obligatori.',
                 'max' => 'El :attribute ha de tenir màxim :max caràcters.'
             ];
@@ -353,7 +357,7 @@ class VisitesController extends Controller
         } catch (\Illuminate\Validation\ValidationException $validationException) {
             return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 
@@ -401,7 +405,7 @@ class VisitesController extends Controller
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string")
+     *             @OA\Property(property="data", type="string")
      *         )
      *     )
      * )
@@ -414,9 +418,9 @@ class VisitesController extends Controller
             $tupla->delete();
             return response()->json(['status' => 'success', 'data' => $tupla], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json(['status' => 'Error'], 400);
+            return response()->json(['status' => 'error', 'data' => $e], 400);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 
@@ -456,7 +460,7 @@ class VisitesController extends Controller
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string")
+     *             @OA\Property(property="data", type="string")
      *         )
      *     )
      * )
@@ -470,9 +474,9 @@ class VisitesController extends Controller
             $visites->save();
             return response()->json(['status' => 'success', 'data' => $visites], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json(['status' => 'Error'], 400);
+            return response()->json(['status' => 'error', 'data' => $e], 400);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 }

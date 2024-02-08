@@ -25,7 +25,7 @@ class MunicipisController extends Controller
      *         description="Llista de municipis recuperada amb èxit",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="status", type="string", example="correcto"),
+     *             @OA\Property(property="status", type="string", example="success"),
      *             @OA\Property(
      *                 property="data",
      *                 type="array",
@@ -48,7 +48,7 @@ class MunicipisController extends Controller
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string")
+     *             @OA\Property(property="data", type="string")
      *         )
      *     )
      * )
@@ -67,11 +67,11 @@ class MunicipisController extends Controller
     {
         try {
             $tuples = Municipis::all();
-            return response()->json(['status' => 'correcto', 'data' => $tuples], 200);
+            return response()->json(['status' => 'success', 'data' => $tuples], 200);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json(['status' => 'error', 'data' => $e->errors()], 400);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 
@@ -114,7 +114,7 @@ class MunicipisController extends Controller
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string")
+     *             @OA\Property(property="data", type="string")
      *         )
      *     )
      * )
@@ -125,10 +125,12 @@ class MunicipisController extends Controller
         try {
             $reglesValidacio = [
                 'nom' => 'required|string|max:255',
-                'illa_id' => 'required|int',
+                'illa_id' => 'required|int|exists:illes,id',
 
             ];
             $missatges = [
+                'filled' => 'El camp :attribute no pot estar buit',
+                'exists' => ':attribute ha de existir',
                 'required' => 'El camp :attribute és obligatori.',
                 'max' => 'El :attribute ha de tenir màxim :max caràcters.',
                 'int' => 'El :attribute ha de ser un número vàlid',
@@ -147,9 +149,9 @@ class MunicipisController extends Controller
 
             return response()->json(['status' => 'success', 'data' => $tupla], 200);
         } catch (\Illuminate\Validation\ValidationException $validationException) {
-            return response()->json(['status' => 'No trobat'], 400);
+            return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 
@@ -172,7 +174,7 @@ class MunicipisController extends Controller
      *         description="Dades del municipi trobades",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="status", type="string", example="correcto"),
+     *             @OA\Property(property="status", type="string", example="success"),
      *             @OA\Property(property="data", type="object", ref="#/components/schemas/Municipis")
      *         )
      *     ),
@@ -190,11 +192,11 @@ class MunicipisController extends Controller
     {
         try {
             $tupla = Municipis::findOrFail($id);
-            return response()->json(['status' => 'correcto', 'data' => $tupla], 200);
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json(['status' => 'No trobat'], 400);
+            return response()->json(['status' => 'error', 'data' => $e], 400);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 
@@ -244,7 +246,7 @@ class MunicipisController extends Controller
      *         description="Error del servidor",
      *         @OA\JsonContent(
      *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string")
+     *             @OA\Property(property="data", type="string")
      *         )
      *     )
      * )
@@ -254,11 +256,13 @@ class MunicipisController extends Controller
         try {
             $tupla = Municipis::findOrFail($id);
             $reglesValidacio = [
-                'nom' => 'nullable|string|max:255',
-                'illa_id' => 'nullable|int',
+                'nom' => 'filled|string|max:255',
+                'illa_id' => 'filled|int|exists:illes,id',
 
             ];
             $missatges = [
+                'filled' => 'El camp :attribute no pot estar buit',
+                'exists' => ':attribute ha de existir',
                 'required' => 'El camp :attribute és obligatori.',
                 'max' => 'El :attribute ha de tenir màxim :max caràcters.',
                 'int' => 'El :attribute ha de ser un número vàlid',
@@ -280,7 +284,7 @@ class MunicipisController extends Controller
         } catch (\Illuminate\Validation\ValidationException $validationException) {
             return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 
@@ -321,7 +325,7 @@ class MunicipisController extends Controller
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string")
+     *             @OA\Property(property="data", type="string")
      *         )
      *     )
      * )
@@ -333,9 +337,9 @@ class MunicipisController extends Controller
             $tupla->delete();
             return response()->json(['status' => 'success', 'data' => $tupla], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json(['status' => 'Error'], 400);
+            return response()->json(['status' => 'error', 'data' => $e], 400);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 }
