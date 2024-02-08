@@ -1,33 +1,43 @@
-import React, { useState, useEffect, Fragment } from "react";
+import React, { useState, useEffect } from "react";
 import { ListGroup, Row, Col, Spinner, Button } from 'react-bootstrap';
 import { useNavigate } from "react-router-dom";
+import { AgGridReact } from 'ag-grid-react';
+// import { AgGridColumn } from 'ag-grid-react';
+import "ag-grid-community/styles/ag-grid.css";
+import "ag-grid-community/styles/ag-theme-quartz.css";
 
 export default function Comentaris() {
     const [comentaris, setComentaris] = useState([]);
-    const [descarregant, setDescarregant] = useState(true);
+    const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
+    const [columnes, setColumnes] = useState([
+        {field: "id", headerName: "Codi", width: 100},
+        {field: "comentari", headerName: "Comentari", width: 600, sortable: true, filter: true},
+        { field: "data", headerName: "Data update", width: 150 },
+        { field: "validat", headerName: "Validat", width: 80 },
+        { field: "created_at", headerName: "Data creació", width: 150 },
+    ]);
 
-    useEffect(() => { 
-        descarrega();
+    useEffect(() => {
+        descarregaComentaris();
     }, []);
 
-    // Funció per carregar els comentaris des de l'API
-    const descarrega = async () => {
+    const descarregaComentaris = async () => {
         try {
-             const resposta = await fetch('http://balearc.aurorakachau.com/public/api/comentaris');
-            const jsonresposta = await resposta.json();
-            setComentaris(jsonresposta.data);
+             const response = await fetch('http://balearc.aurorakachau.com/public/api/comentaris');
+            const data = await response.json();
+            setComentaris(data.data);
         } catch (error) {
-            console.log(error);
+            console.error('Error en descarregar els comentaris:', error);
         }
-        setDescarregant(false);
-    }
+        setLoading(false);
+    };
 
-    if (descarregant) {
+    if (loading) {
         return (
             <div>
                 <h1>Comentaris</h1>
-                <Spinner />
+                <Spinner animation="border" variant="primary" />
             </div>
         );
     } else {
@@ -43,7 +53,7 @@ export default function Comentaris() {
                             variant="warning"
                             type="button"
                             onClick={() => {
-                                navigate("/Comentaris/afegir");
+                                navigate("/comentaris/afegir");
                             }}
                         >
                             Afegir comentari
@@ -51,32 +61,21 @@ export default function Comentaris() {
                     </Col>
                 </Row>
                 <br />
-                <ListGroup>
-                    <ListGroup.Item variant="info">
-                        <Row md={4}>
-                            <Col><strong>Id</strong></Col>
-                            <Col><strong>Comentari</strong></Col>
-                            <Col><strong>Data</strong></Col>
-                            <Col><strong>Accions</strong></Col>
-                        </Row>
-                    </ListGroup.Item>
-                    {comentaris.map(function (comentari, index) {
-                        return (
-                            <Fragment key={index}>
-                                <ListGroup.Item variant="primary" >
-                                    <Row md={4}>
-                                        <Col>{comentari.id}</Col>
-                                        <Col>{comentari.comentari}</Col>
-                                        <Col>{comentari.data}</Col>
-                                        <Col>
-                                            <Button variant="info" onClick={() => { navigate("/Comentaris/" + comentari.id) }}>Editar</Button>
-                                        </Col>
-                                    </Row>
-                                </ListGroup.Item>
-                            </Fragment>
-                        );
-                    })}
-                </ListGroup>
+                <div className="ag-theme-quartz" style={{ height: 550, width: '100%' }}>
+                    <AgGridReact
+                        rowData={comentaris}
+                        columnDefs={columnes}
+                        pagination={true}
+                        paginationPageSize={9}
+                        onRowClicked={(row) => {
+                            navigate(`/comentaris/${row.data.id}`);
+                        }}
+                    >
+                        {/* <AgGridColumn field="id" headerName="ID" width={100} />
+                        <AgGridColumn field="comentari" headerName="Comentari" width={300} />
+                        <AgGridColumn field="data" headerName="Data" width={200} /> */}
+                    </AgGridReact>
+                </div>
             </>
         );
     }

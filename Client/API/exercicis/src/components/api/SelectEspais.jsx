@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Form,Row,Col,Alert, Spinner } from "react-bootstrap";
+
 function SelectEspais(props) {
   const [espais,setEspais]=useState([]);
     const [descarrega,setDescarrega]=useState(true);

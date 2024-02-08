@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { storage } from '../../utils/storage';
 
-export default function MunicipisCRUD(props) {
+export default function MunicipisCRUD() {
     const [nom, setNom] = useState("");
     const [illa_id, setIlla_id] = useState(null);
     const [error, setError] = useState('');
@@ -12,34 +12,59 @@ export default function MunicipisCRUD(props) {
     const navigate=useNavigate();
     const { id } = useParams();
     const [descarregant, setDescarregant] = useState(false);
+    const [illa_actual, setIlla_actual] = useState("");
     const token = storage.get('api_token');
 
-    useEffect(()=>{if (id!==-1) {descarrega()}},[]);
+    useEffect(() => {
+        if (id !== "-1") {
+            descarrega();
+        } else {
+            setEdita(false);
+        }
+    }, [id]);
 
     const descarrega=async ()=>{
         setDescarregant(true);
         setEdita(true);
         try {
-            const resposta = await fetch(`http://balearc.aurorakachau.com/public/api/municipis/${id}`);
+            const resposta = await fetch(`http://balearc.aurorakachau.com/public/api/municipis/${id}`,{
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
             const jsonresposta = await resposta.json();
             setNom(jsonresposta.data.nom);
             setIlla_id(jsonresposta.data.illa_id);
+
+            const respostaIlles = await fetch(`http://balearc.aurorakachau.com/public/api/illes/${jsonresposta.data.illa_id}`,{
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            const jsonrespostaIlles = await respostaIlles.json();
+            setIlla_actual(jsonrespostaIlles.data.nom);
         } catch (error) {
             console.log(error);
         }
         setDescarregant(false);
     }
 
-    const guarda=()=>{
+    const guardaMunicipi=()=>{
         if (edita) {
-            modifica();
+            modificaMunicipi();
         } else {
-            crea();
+            creaMunicipi();
         }
     }
 
 
-    const crea=()=>{
+    const creaMunicipi=()=>{
         fetch('http://balearc.aurorakachau.com/public/api/municipis',{
             method:'POST',
             headers:{
@@ -61,7 +86,7 @@ export default function MunicipisCRUD(props) {
         })
     }
 
-    const modifica=()=>{
+    const modificaMunicipi=()=>{
         fetch(`http://balearc.aurorakachau.com/public/api/municipis/${id}`,{
             method:'PUT',
             headers:{
@@ -72,10 +97,10 @@ export default function MunicipisCRUD(props) {
                 nom:nom,
                 illa_id:illa_id
             })
-        }).then(resposta=>resposta.json())
-        .then((respostajson)=>{
-            if (respostajson.error) {
-                setError("Error: "+getMsgError(respostajson.error));
+        }).then(response=>response.json())
+        .then((data)=>{
+            if (data.error) {
+                setError("Error: "+getMsgError(data.error));
             } else {
                 setError('');
                 navigate('/municipis');
@@ -83,18 +108,18 @@ export default function MunicipisCRUD(props) {
         })
     }
 
-    const esborra=()=>{
+    const esborraMunicipi=()=>{
         fetch(`http://balearc.aurorakachau.com/public/api/municipis/${id}`,{
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             }
-        }).then(resposta=>{
-            if (resposta.status===200) {
-                navigate('/municipis');
+        }).then(response=>{
+            if (response.error===200) {
+                setError("Error: "+response.status);
             } else {
-                setError("Error: "+resposta.status);
+                navigate('/municipis');
             }
         })
         .catch((error)=>{
@@ -132,10 +157,10 @@ export default function MunicipisCRUD(props) {
                     />
                 </Form.Group>
                 <Form.Group className="mb-3">
-                    <Form.Label>Illa({illa_id})</Form.Label>
+                    <Form.Label>Illa actual: <strong>{illa_actual}</strong></Form.Label>
                     <SelectIlles id={illa_id} onChange={(e) => { setIlla_id(e.target.value) }} />
                 </Form.Group>
-                <Button variant="primary" type="button" onClick={guarda}>
+                <Button variant="primary" type="button" onClick={guardaMunicipi}>
                     {edita ? "Guarda" : "Crea"}
                 </Button>
                 &nbsp;&nbsp;
@@ -144,7 +169,7 @@ export default function MunicipisCRUD(props) {
                 </Button>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 {edita &&
-                    <Button variant="danger" type="button" onClick={esborra}>
+                    <Button variant="danger" type="button" onClick={esborraMunicipi}>
                         Esborra
                     </Button>
                 }

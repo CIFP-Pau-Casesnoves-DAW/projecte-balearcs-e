@@ -6,6 +6,7 @@ import SelectEspais from "./SelectEspais";
 
 export default function ComentarisCRUD() {
     const [comentari, setComentari] = useState("");
+    const [validat, setValidat] = useState("");
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const [edita, setEdita] = useState(false);
@@ -29,6 +30,7 @@ export default function ComentarisCRUD() {
             const resposta = await fetch(`http://balearc.aurorakachau.com/public/api/comentaris/${id}`);
             const jsonresposta = await resposta.json();
             setComentari(jsonresposta.data.comentari);
+            setValidat(jsonresposta.data.validat);
             setEspai_id(jsonresposta.data.espai_id);
 
             const respostaEspais = await fetch(`http://balearc.aurorakachau.com/public/api/espais/${jsonresposta.data.espai_id}`);
@@ -65,6 +67,7 @@ export default function ComentarisCRUD() {
             body: JSON.stringify({
                 comentari: comentari,
                 espai_id: espai_id,
+                validat: validat
             })
         })
         .then(response => response.json())
@@ -91,6 +94,7 @@ export default function ComentarisCRUD() {
             body: JSON.stringify({
                 comentari: comentari,
                 espai_id: espai_id,
+                validat: validat
             })
         })
         .then(response => response.json())
@@ -152,6 +156,19 @@ export default function ComentarisCRUD() {
                     <Form.Label>Espai actual: <strong>{espai_actual}</strong></Form.Label>
                     <SelectEspais id={espai_id} onChange={(e) => { setEspai_id(e.target.value) }} />
                 </Form.Group>
+                <Form.Group className="mb-3">
+                    <Form.Label>
+                        Si marques aquesta opció, el comentari es publicarà a la pàgina web.
+                        <br />
+                    </Form.Label>
+                    <Form.Check
+                        type="checkbox"
+                        label="Validat"
+                        name="validat"
+                        checked={validat}
+                        onChange={(e) => setValidat(e.target.checked)}
+                    />
+                </Form.Group>    
                 <Button variant="primary" type="button" onClick={guardaComentari}>
                     {edita ? "Guarda" : "Crea"}
                 </Button>

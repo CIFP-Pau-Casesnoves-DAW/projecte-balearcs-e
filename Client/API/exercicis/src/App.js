@@ -1,17 +1,16 @@
 import Ajuda from "./components/Ajuda.jsx";
 import Menu from "./components/Menu.jsx";
-import Municipis from "./components/municipis/Municipis.jsx";
-import MunicipisEdita from "./components/municipis/MunicipisEdita.jsx";
+import MunicipisAfegeix from "./components/municipis/MunicipisAfegeix.jsx";
 import MunicipisCRUD from "./components/municipis/MunicipisCRUD.jsx";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useEffect, useState } from "react";
-import MunicipisTable from "./components/municipis/MunicipisTable.jsx";
-import Comentaris from "./components/api/Comentaris.jsx";
+import Municipis from "./components/municipis/Municipis.jsx";
 import ComentarisAfegeix from "./components/api/ComentarisAfegeix.jsx";
 import ComentarisCRUD from "./components/api/ComentarisCRUD.jsx";
-import ComentarisTable from "./components/api/ComentarisTable.jsx";
+import Comentaris from "./components/api/Comentaris.jsx";
 import Login from "./components/login/Login.jsx";
 import Logout from "./components/login/Logout.jsx";
+import Usuari from "./components/Usuari.jsx";
 import Inici from "./components/Inici.jsx";
 import { storage } from "./utils/storage.js"; 
 /**
@@ -75,24 +74,23 @@ function App() {
         <Route path="/" element={<Menu api_token={api_token} usuari_id={usuari_id} usuari_rol={usuari_rol} usuari_nom={usuari_nom}/>} >
         {/* Routes sols per a usuaris logats*/}
         {api_token && <>
-            <Route path="/inici" element={<Inici/>} />
+            <Route path="/usuari" element={<Usuari/>} />
             {/* MUNICIPIS */}
             <Route path="/municipis" element={<Municipis/>} />
-            <Route path="/municipistable" element={<MunicipisTable/>} />
-            <Route path="/municipis/afegir" element={<MunicipisEdita />} />
-            <Route path="/municipis/:id" element={<MunicipisCRUD api_token={api_token}/>}/>
+            <Route path="/municipis/afegir" element={<MunicipisAfegeix/>} />
+            <Route path="/municipis/:id" element={<MunicipisCRUD/>}/>
             {/* LOGOUT */}
             <Route path="/logout" element={<Logout/>}/>
             {/* COMENTARIS API */}
-            <Route path="/comentaris" element={<Comentaris />} />
             <Route path="/comentaris/afegir" element={<ComentarisAfegeix />} />
             <Route path="/comentaris/:id" element={<ComentarisCRUD />}/>
-            <Route path="/comentaristable" element={<ComentarisTable/>} />
+            <Route path="/comentaris" element={<Comentaris/>} />
         </>} 
         {/* Routes sols per a usuaris NO logats*/}
         {!api_token && <Route path="/login" element={<Login guardausuari_id={ferGuardausuari_id} guardaapi_token={ferGuardaapi_token} guardausuari_rol={ferGuardausuari_rol} guardausuari_nom={ferGuardausuari_nom}/>} /> } 
         {/* Routes per a tots els usuaris*/}
           <Route path="/ajuda" element={<Ajuda />} />
+          <Route path="/inici" element={<Inici />} />
           <Route path="*" element={<h1>Opció incorrecta</h1>} />
         </Route>
       </Routes>

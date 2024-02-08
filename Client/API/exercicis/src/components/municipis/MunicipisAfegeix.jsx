@@ -4,15 +4,19 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { storage } from '../../utils/storage';
 
-export default function MunicipisEdita() {
+export default function MunicipisAfegeix() {
     const [nom, setNom] = useState("");
-    const [municipis, setMunicipis] = useState([]);
-    const [illa_id, setIlla_id] = useState(null);
+    const [illa_id, setIlla_id] = useState("");
     const [error, setError] = useState('');
     const navigate=useNavigate();
-    const token = storage.get('api_token'); 
+    const token = storage.get('api_token');
 
-    const guarda=()=>{
+    const guardaMunicipi=()=>{
+        if(nom.trim() === '' || illa_id.trim() === '' || illa_id === "-1"){
+            setError("Tots els camps són obligatoris.");
+            return;
+        }
+
         fetch('http://balearcs.dawpaucasesnoves.com/balearcsapi/public/api/municipis',{
             method:'POST',
             headers:{
@@ -23,27 +27,28 @@ export default function MunicipisEdita() {
                 nom:nom,
                 illa_id:illa_id
             })
-        }).then(resposta=>resposta.json())
-        .then((respostajson)=>{
-            if (respostajson.error) {
-                setError("Error: "+getMsgError(respostajson.error));
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                setError("Error al guardar el municipi.");
             } else {
                 setError('');
                 navigate('/municipis');
             }
         })
+        .catch(error => {
+            console.error('Error:', error);
+            setError("Error al guardar el comentari.");
+        });
     }
-
-    const getMsgError=(llistaErrors)=>{
-        let msg=''
-        for (let clau in llistaErrors) {
-           msg=msg+llistaErrors[clau]+'. ';
-        }
-        return msg;
-    }
-
+    console.log(nom);
+console.log(illa_id);
     return (
         <div>
+            <hr />
+            <h1>Afegir Municipi</h1>
+            <hr />
             <Form>
                 <Form.Group className="mb-3">
                     <Form.Label>Municipi</Form.Label>
@@ -56,10 +61,10 @@ export default function MunicipisEdita() {
                     />
                 </Form.Group>
                 <Form.Group className="mb-3">
-                    <Form.Label>Illa({illa_id})</Form.Label>
+                    <Form.Label>Illa:</Form.Label>
                     <SelectIlles id={illa_id} onChange={(e) => { setIlla_id(e.target.value) }} />
                 </Form.Group>
-                <Button variant="primary" type="button" onClick={guarda}>
+                <Button variant="primary" type="button" onClick={guardaMunicipi}>
                     Guarda
                 </Button>
                 &nbsp;&nbsp;

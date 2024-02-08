@@ -1,14 +1,20 @@
 import React, { useState, useEffect, Fragment } from "react";
 import { ListGroup, Row, Col, Spinner, Button } from 'react-bootstrap';
 import { useNavigate } from "react-router-dom";
+import { AgGridReact } from 'ag-grid-react'; // React Grid Logic
+import "ag-grid-community/styles/ag-grid.css"; // Core CSS
+import "ag-grid-community/styles/ag-theme-quartz.css"; // Theme
 import { storage } from '../../utils/storage';
 
 export default function Municipis() {
     const [municipis, setMunicipis] = useState([]);
     const [descarregant, setDescarregant] = useState(true);
     const navigate = useNavigate();
-    const token = storage.get('api_token'); 
-
+    const token = storage.get('api_token');
+    const [columnes, setColumnes] = useState([
+        {field: "id", headerName: "Codi", width: 100},
+        {field: "nom", headerName: "Municipi", width: 200, sortable: true, filter: true},
+    ]);
 
     useEffect(() => { descarrega() }, []);
     // Exemple de ftech amb async/await
@@ -21,8 +27,7 @@ export default function Municipis() {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 }
-            });
-
+            });            
             const jsonresposta = await resposta.json();
             setMunicipis(jsonresposta.data);
         } catch (error) {
@@ -54,27 +59,22 @@ export default function Municipis() {
                             onClick={() => {
                                 navigate("/municipis/afegir");
                             }}
-                        >
-                            +
+                        >Afegir municipi
                         </Button>
                     </Col>
                 </Row>
                 <br />
-                <ListGroup>
-                    {municipis && municipis.map(function (element, index) {
-                        return (
-                            <Fragment key={index}>   
-                                <ListGroup.Item variant="primary" >
-                                    <Row md={4}>
-                                        <Col>{element.nom}</Col>
-                                        <Col>{element.illa_id}</Col>
-                                        <Col><Button variant="info" onClick={() => { navigate("/municipis/" + element.id) }}>...</Button></Col>
-                                    </Row>
-                                </ListGroup.Item>
-                            </Fragment>
-                        );
-                    })}
-                </ListGroup>
+                <div className="ag-theme-quartz" style={{ height: 550, width: '100%' }}>
+                    <AgGridReact
+                        rowData={municipis}
+                        columnDefs={columnes}
+                        pagination={true}
+                        paginationPageSize={9}
+                        onRowClicked={(e) => {
+                            navigate("/municipis/" + e.data.id);
+                        }}
+                    />  
+                </div>
             </>
         );
     }

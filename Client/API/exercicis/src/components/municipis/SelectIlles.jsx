@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Form,Row,Col,Alert, Spinner } from "react-bootstrap";
+import { storage } from '../../utils/storage';
+
 function SelectIlles(props) {
   const [illes,setIlles]=useState([]);
     const [descarrega,setDescarrega]=useState(true);
@@ -11,10 +13,16 @@ function SelectIlles(props) {
         }); 
     }
 
-    useEffect(
-      () => {
-        fetch('http://balearc.aurorakachau.com/public/api/illes')
-            .then(response => {
+    useEffect(() => {
+        fetch('http://balearc.aurorakachau.com/public/api/illes',{
+          method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${storage.get('api_token')}`
+            }
+
+        }).then(response => {
                 return response.json(response);
             })
             .then(jsonresposta => {
@@ -25,9 +33,7 @@ function SelectIlles(props) {
             .catch(function (error) {
                 console.log(error);
             })
-    }
-      ,
-      []
+    },[]
   );
 
  if (descarrega) {

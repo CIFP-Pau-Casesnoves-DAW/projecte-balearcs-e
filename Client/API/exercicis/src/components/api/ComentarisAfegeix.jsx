@@ -17,7 +17,6 @@ export default function ComentarisAfegeix() {
             setError("Tots els camps són obligatoris.");
             return;
         }
-    // const guardaComentari = () => {
          fetch('http://balearc.aurorakachau.com/public/api/comentaris', {
             method: 'POST',
             headers: {
