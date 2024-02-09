@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { storage } from '../../utils/storage';
 
-export default function MunicipisCRUD() {
+export default function MunicipisCRUD(props) {
     const [nom, setNom] = useState("");
     const [illa_id, setIlla_id] = useState(null);
     const [error, setError] = useState('');
@@ -13,7 +13,7 @@ export default function MunicipisCRUD() {
     const { id } = useParams();
     const [descarregant, setDescarregant] = useState(false);
     const [illa_actual, setIlla_actual] = useState("");
-    const token = storage.get('api_token');
+    const token = props.api_token;
 
     useEffect(() => {
         if (id !== "-1") {

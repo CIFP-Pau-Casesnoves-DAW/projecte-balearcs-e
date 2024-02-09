@@ -4,7 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { storage } from '../../utils/storage';
 import SelectEspais from "./SelectEspais";
 
-export default function ComentarisCRUD() {
+export default function ComentarisCRUD(props) {
     const [comentari, setComentari] = useState("");
     const [validat, setValidat] = useState("");
     const [error, setError] = useState('');
@@ -12,7 +12,7 @@ export default function ComentarisCRUD() {
     const [edita, setEdita] = useState(false);
     const navigate = useNavigate();
     const { id } = useParams();
-    const token = storage.get('api_token'); 
+    const token = props.api_token;
     const [espai_id, setEspai_id] = useState("");
     const [espai_actual, setEspai_actual] = useState("");
 

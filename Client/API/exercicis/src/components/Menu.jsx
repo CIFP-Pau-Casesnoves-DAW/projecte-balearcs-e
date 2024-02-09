@@ -1,24 +1,29 @@
 import {Link, Outlet} from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {Navbar, Nav, Container} from 'react-bootstrap';
+import { Navbar, Nav, Container, NavDropdown } from 'react-bootstrap';
 import logo from '../images/logoBalearcs.jpeg'; // Import the image
 
-export default function Menu({api_token, usuari_nom}) {
+export default function Menu({ api_token, usuari_nom }) {
     return (
         <>
             <Navbar bg="dark" className="color-nav" variant="dark" expand="sm" sticky="top">
-                <Nav className="mr-auto align-items-center"> 
+                <Nav className="mr-auto align-items-center">
                     <Link className='nav-link' to="/inici">
-                        <img style={{ width: '80px', height: '80px', borderRadius: '30px'}} 
-                            src={logo} alt="Foto del header" 
-                        /> 
+                        <img style={{ width: '80px', height: '80px', borderRadius: '30px', border: '2px solid black' }}
+                            src={logo} alt="Foto del header"
+                        />
                     </Link>
                     <Link className="nav-link" to="/inici">Inici</Link>
                     <Link className="nav-link" to="/ajuda">Ajuda</Link>
                     {api_token && <>
                         <Link className="nav-link" to="/usuari">Usuari</Link>
-                        <Link className="nav-link" to="/municipis">Municipis</Link>
-                        <Link className="nav-link" to="/comentaris">Comentaris</Link>
+                        <NavDropdown title="CRUD Taules" id="basic-nav-dropdown">
+                            <NavDropdown.Item href="/municipis">Municipis</NavDropdown.Item>
+                            <NavDropdown.Item href="/comentaris">Comentaris</NavDropdown.Item>
+                            <NavDropdown.Item href="/serveis">Serveis</NavDropdown.Item>
+                            <NavDropdown.Item href="/tipus">Tipus</NavDropdown.Item>
+                            <NavDropdown.Item href="/idiomes">Idiomes</NavDropdown.Item>
+                        </NavDropdown>
                         <Link className="nav-link" to="/logout">Logout</Link>
                     </>}
                     {!api_token && <Link className="nav-link" to="/login">Login</Link>}
@@ -35,3 +40,4 @@ export default function Menu({api_token, usuari_nom}) {
         </>
     );
 }
+

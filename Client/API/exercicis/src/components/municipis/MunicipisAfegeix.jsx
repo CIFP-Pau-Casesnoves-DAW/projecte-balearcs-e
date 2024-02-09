@@ -4,12 +4,12 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { storage } from '../../utils/storage';
 
-export default function MunicipisAfegeix() {
+export default function MunicipisAfegeix(props) {
     const [nom, setNom] = useState("");
     const [illa_id, setIlla_id] = useState("");
     const [error, setError] = useState('');
     const navigate=useNavigate();
-    const token = storage.get('api_token');
+    const token = props.api_token;
 
     const guardaMunicipi=()=>{
         if(nom.trim() === '' || illa_id.trim() === '' || illa_id === "-1"){
@@ -17,7 +17,7 @@ export default function MunicipisAfegeix() {
             return;
         }
 
-        fetch('http://balearcs.dawpaucasesnoves.com/balearcsapi/public/api/municipis',{
+        fetch('http://balearc.aurorakachau.com/public/api/municipis',{
             method:'POST',
             headers:{
                 'Content-Type':'application/json',

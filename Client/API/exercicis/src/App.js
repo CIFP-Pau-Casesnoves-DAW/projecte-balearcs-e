@@ -5,14 +5,23 @@ import MunicipisCRUD from "./components/municipis/MunicipisCRUD.jsx";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Municipis from "./components/municipis/Municipis.jsx";
-import ComentarisAfegeix from "./components/api/ComentarisAfegeix.jsx";
-import ComentarisCRUD from "./components/api/ComentarisCRUD.jsx";
-import Comentaris from "./components/api/Comentaris.jsx";
+import ComentarisAfegeix from "./components/comentaris/ComentarisAfegeix.jsx";
+import ComentarisCRUD from "./components/comentaris/ComentarisCRUD.jsx";
+import Comentaris from "./components/comentaris/Comentaris.jsx";
 import Login from "./components/login/Login.jsx";
 import Logout from "./components/login/Logout.jsx";
 import Usuari from "./components/Usuari.jsx";
 import Inici from "./components/Inici.jsx";
 import { storage } from "./utils/storage.js"; 
+import Serveis from "./components/serveis/Serveis.jsx";
+import ServeisAfegeix from "./components/serveis/ServeisAfegeix.jsx";
+import ServeisCRUD from "./components/serveis/ServeisCRUD.jsx";
+import Tipus from "./components/tipus/Tipus.jsx";
+import TipusCRUD from "./components/tipus/TipusCRUD.jsx";
+import TipusAfegeix from "./components/tipus/TipusAfegeix.jsx";
+import Idiomes from "./components/idiomes/Idiomes.jsx";
+import IdiomesCRUD from "./components/idiomes/IdiomesCRUD.jsx";
+import IdiomesAfegeix from "./components/idiomes/IdiomesAfegeix.jsx";
 /**
  * Component principal de l'aplicació.
  * Aquest component és responsable de renderitzar les rutes de l'aplicació utilitzant React Router.
@@ -74,17 +83,31 @@ function App() {
         <Route path="/" element={<Menu api_token={api_token} usuari_id={usuari_id} usuari_rol={usuari_rol} usuari_nom={usuari_nom}/>} >
         {/* Routes sols per a usuaris logats*/}
         {api_token && <>
+            {/* INICI */}
             <Route path="/usuari" element={<Usuari/>} />
-            {/* MUNICIPIS */}
-            <Route path="/municipis" element={<Municipis/>} />
-            <Route path="/municipis/afegir" element={<MunicipisAfegeix/>} />
-            <Route path="/municipis/:id" element={<MunicipisCRUD/>}/>
             {/* LOGOUT */}
             <Route path="/logout" element={<Logout/>}/>
+            {/* MUNICIPIS */}
+            <Route path="/municipis" element={<Municipis api_token = {api_token}/>} />
+            <Route path="/municipis/afegir" element={<MunicipisAfegeix api_token = {api_token}/>} />
+            <Route path="/municipis/:id" element={<MunicipisCRUD api_token = {api_token}/>}/>
             {/* COMENTARIS API */}
-            <Route path="/comentaris/afegir" element={<ComentarisAfegeix />} />
-            <Route path="/comentaris/:id" element={<ComentarisCRUD />}/>
-            <Route path="/comentaris" element={<Comentaris/>} />
+            <Route path="/comentaris/afegir" element={<ComentarisAfegeix api_token = {api_token}/>} />
+            <Route path="/comentaris/:id" element={<ComentarisCRUD api_token = {api_token}/>}/>
+            <Route path="/comentaris" element={<Comentaris api_token = {api_token}/>} />
+            {/* SERVEIS */}
+            <Route path="/serveis" element={<Serveis api_token = {api_token}/>} />
+            <Route path="/serveis/afegir" element={<ServeisAfegeix api_token = {api_token}/>} />
+            <Route path="/serveis/:id" element={<ServeisCRUD api_token = {api_token}/>}/>
+            {/* TIPUS */}
+            <Route path="/tipus" element={<Tipus api_token = {api_token}/>} />
+            <Route path="/tipus/afegir" element={<TipusAfegeix api_token = {api_token}/>} />
+            <Route path="/tipus/:id" element={<TipusCRUD api_token = {api_token}/>}/>
+            {/* IDIOMES */}
+            <Route path="/idiomes" element={<Idiomes api_token = {api_token}/>} />
+            <Route path="/idiomes/afegir" element={<IdiomesAfegeix api_token = {api_token}/>} />
+            <Route path="/idiomes/:id" element={<IdiomesCRUD api_token = {api_token}/>}/>
+
         </>} 
         {/* Routes sols per a usuaris NO logats*/}
         {!api_token && <Route path="/login" element={<Login guardausuari_id={ferGuardausuari_id} guardaapi_token={ferGuardaapi_token} guardausuari_rol={ferGuardausuari_rol} guardausuari_nom={ferGuardausuari_nom}/>} /> } 

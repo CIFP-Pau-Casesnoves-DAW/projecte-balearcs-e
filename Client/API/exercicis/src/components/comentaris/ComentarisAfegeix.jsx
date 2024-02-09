@@ -4,11 +4,11 @@ import { useNavigate } from "react-router-dom";
 import { storage } from '../../utils/storage';
 import SelectEspais from "./SelectEspais";
 
-export default function ComentarisAfegeix() {
+export default function ComentarisAfegeix(props) {
     const [comentari, setComentari] = useState("");
     const [error, setError] = useState('');
     const navigate = useNavigate();
-    const token = storage.get('api_token'); 
+    const token = props.api_token;
     const id = storage.get('usuari_id');
     const [espai_id, setEspai_id] = useState("");
 

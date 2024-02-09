@@ -13,7 +13,7 @@ export default function Logout(){
         return  (
             <Container>
             <h2>Sortir de la sessió?</h2>
-            <Form onSubmit={tancar} action="/login">
+            <Form onSubmit={tancar} action="/inici">
             <Button variant="primary" type="submit">
                 Sortir
             </Button>
