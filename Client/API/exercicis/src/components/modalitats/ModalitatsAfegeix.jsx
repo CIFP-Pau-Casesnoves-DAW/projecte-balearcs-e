@@ -2,19 +2,19 @@ import React, { useState } from "react";
 import { Form, Button, Alert } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
-export default function IdiomesAfegeix(props) {
-    const [idioma, setIdioma] = useState("");
+export default function ModalitatsAfegeix(props) {
+    const [modalitat, setModalitat] = useState("");
     const [error, setError] = useState('');
     const navigate = useNavigate();
     const token = props.api_token;
 
-    const guardaIdioma = () => {
-        if (idioma.trim() === '') {
-            setError("El nom de l'idioma és obligatori.");
+    const guardaModalitat = () => {
+        if (modalitat.trim() === '') {
+            setError("El nom de la modalitat és obligatori.");
             return;
         }
 
-        fetch('http://balearc.aurorakachau.com/public/api/idiomes', {
+        fetch('http://balearc.aurorakachau.com/public/api/modalitats', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -22,45 +22,45 @@ export default function IdiomesAfegeix(props) {
                 'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify({
-                idioma: idioma
+                nom_modalitat: modalitat
             })
         })
             .then(response => response.json())
             .then(data => {
                 if (data.error) {
-                    setError("Error en guardar l'idioma.");
+                    setError("Error en guardar la modalitat.");
                 } else {
                     setError('');
-                    navigate('/idiomes');
+                    navigate('/modalitats');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                setError("Error en guardar l'idioma.");
+                setError("Error en guardar la modalitat.");
             });
     }
 
     return (
         <div>
             <hr />
-            <h1>Afegir Idioma</h1>
+            <h1>Afegir Modalitat</h1>
             <hr />
             <Form>
                 <Form.Group className="mb-3">
-                    <Form.Label>Nom de l'Idioma</Form.Label>
+                    <Form.Label>Nom de la Modalitat</Form.Label>
                     <Form.Control
                         type="text"
-                        placeholder="Nom de l'idioma"
-                        name="idioma"
-                        value={idioma}
-                        onChange={(e) => setIdioma(e.target.value)}
+                        placeholder="Nom de la modalitat"
+                        name="modalitat"
+                        value={modalitat}
+                        onChange={(e) => setModalitat(e.target.value)}
                     />
                 </Form.Group>
-                <Button variant="primary" type="button" onClick={guardaIdioma}>
+                <Button variant="primary" type="button" onClick={guardaModalitat}>
                     Guarda
                 </Button>
                 &nbsp;&nbsp;
-                <Button variant="warning" type="button" onClick={() => navigate("/idiomes")}>
+                <Button variant="warning" type="button" onClick={() => navigate("/modalitats")}>
                     Cancel·la
                 </Button>
             </Form>

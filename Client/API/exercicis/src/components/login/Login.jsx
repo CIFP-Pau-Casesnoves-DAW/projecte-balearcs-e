@@ -79,6 +79,10 @@ export default function Login(props) {
             </Form>
             {error && <Alert variant="danger">Usuari o contrasenya incorrectes.</Alert>}
             {loading && <Alert variant="info"><Spinner animation="border" /></Alert>}
+            {/* Proves */}
+            <p>juanperez@gmail.com</p>
+            <p>JuanPerez123</p>
+            
         </>
     );
 }

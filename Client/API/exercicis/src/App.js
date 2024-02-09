@@ -22,6 +22,9 @@ import TipusAfegeix from "./components/tipus/TipusAfegeix.jsx";
 import Idiomes from "./components/idiomes/Idiomes.jsx";
 import IdiomesCRUD from "./components/idiomes/IdiomesCRUD.jsx";
 import IdiomesAfegeix from "./components/idiomes/IdiomesAfegeix.jsx";
+import Modalitats from "./components/modalitats/Modalitats.jsx";
+import ModalitatsAfegeix from "./components/modalitats/ModalitatsAfegeix.jsx";
+import ModalitatsCRUD from "./components/modalitats/ModalitatsCRUD.jsx";
 /**
  * Component principal de l'aplicació.
  * Aquest component és responsable de renderitzar les rutes de l'aplicació utilitzant React Router.
@@ -84,7 +87,7 @@ function App() {
         {/* Routes sols per a usuaris logats*/}
         {api_token && <>
             {/* INICI */}
-            <Route path="/usuari" element={<Usuari/>} />
+            <Route path="/usuari" element={<Usuari api_token = {api_token} usuari_nom={usuari_nom} usuari_id={usuari_id}/>} />
             {/* LOGOUT */}
             <Route path="/logout" element={<Logout/>}/>
             {/* MUNICIPIS */}
@@ -107,6 +110,10 @@ function App() {
             <Route path="/idiomes" element={<Idiomes api_token = {api_token}/>} />
             <Route path="/idiomes/afegir" element={<IdiomesAfegeix api_token = {api_token}/>} />
             <Route path="/idiomes/:id" element={<IdiomesCRUD api_token = {api_token}/>}/>
+            {/* MODALITATS */}
+            <Route path="/modalitats" element={<Modalitats api_token = {api_token}/>} />
+            <Route path="/modalitats/afegir" element={<ModalitatsAfegeix api_token = {api_token}/>} />
+            <Route path="/modalitats/:id" element={<ModalitatsCRUD api_token = {api_token}/>}/>
 
         </>} 
         {/* Routes sols per a usuaris NO logats*/}

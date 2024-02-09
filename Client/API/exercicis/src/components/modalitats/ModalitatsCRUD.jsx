@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Form, Button, Alert, Spinner } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
 
-export default function IdiomesCRUD(props) {
-    const [idioma, setIdioma] = useState("");
+export default function ModalitatsCRUD(props) {
+    const [modalitat, setModalitat] = useState("");
     const [error, setError] = useState('');
     const [edita, setEdita] = useState(false);
     const [descarregant, setDescarregant] = useState(false);
@@ -13,17 +13,17 @@ export default function IdiomesCRUD(props) {
 
     useEffect(() => {
         if (id !== "-1") {
-            descarregaIdioma();
+            descarregaModalitat();
         } else {
             setEdita(false);
         }
     }, [id]);
 
-    const descarregaIdioma = async () => {
+    const descarregaModalitat = async () => {
         setDescarregant(true);
         setEdita(true);
         try {
-            const response = await fetch(`http://balearc.aurorakachau.com/public/api/idiomes/${id}`, {
+            const response = await fetch(`http://balearc.aurorakachau.com/public/api/modalitats/${id}`, {
                 method: 'GET',
                 headers: {
                     'Accept': 'application/json',
@@ -32,65 +32,65 @@ export default function IdiomesCRUD(props) {
                 }
             });
             const responseData = await response.json();
-            setIdioma(responseData.data.idioma);
+            setModalitat(responseData.data.nom_modalitat);
         } catch (error) {
             console.log(error);
         }
         setDescarregant(false);
     }
 
-    const guardaIdioma = () => {
+    const guardaModalitat = () => {
         if (edita) {
-            modificaIdioma();
+            modificaModalitat();
         } else {
-            creaIdioma();
+            creaModalitat();
         }
     }
 
-    const creaIdioma = () => {
-        fetch('http://balearc.aurorakachau.com/public/api/idiomes', {
+    const creaModalitat = () => {
+        fetch('http://balearc.aurorakachau.com/public/api/modalitats', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify({
-                idioma: idioma
+                nom_modalitat: modalitat
             })
         }).then(response => response.json())
             .then((data) => {
                 if (data.error) {
-                    setError("Error al crear l'idioma.");
+                    setError("Error al crear la modalitat.");
                 } else {
                     setError('');
-                    navigate('/idiomes');
+                    navigate('/modalitats');
                 }
             })
     }
 
-    const modificaIdioma = () => {
-        fetch(`http://balearc.aurorakachau.com/public/api/idiomes/${id}`, {
+    const modificaModalitat = () => {
+        fetch(`http://balearc.aurorakachau.com/public/api/modalitats/${id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify({
-                idioma: idioma
+                nom_modalitat: modalitat
             })
         }).then(response => response.json())
             .then((data) => {
                 if (data.error) {
-                    setError("Error al modificar l'idioma.");
+                    setError("Error al modificar la modalitat.");
                 } else {
                     setError('');
-                    navigate('/idiomes');
+                    navigate('/modalitats');
                 }
             })
     }
 
-    const esborraIdioma = () => {
-        fetch(`http://balearc.aurorakachau.com/public/api/idiomes/${id}`, {
+    const esborraModalitat = () => {
+        fetch(`http://balearc.aurorakachau.com/public/api/modalitats/${id}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -99,14 +99,14 @@ export default function IdiomesCRUD(props) {
         }).then(response => response.json())
             .then(data => {
                 if (data.error) {
-                    setError("Error al eliminar l'idioma.");
+                    setError("Error al eliminar la modalitat.");
                 } else {
-                    navigate('/idiomes');
+                    navigate('/modalitats');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                setError("Error al eliminar l'idioma.");
+                setError("Error al eliminar la modalitat.");
             });
     }
 
@@ -124,23 +124,23 @@ export default function IdiomesCRUD(props) {
                     </Form.Group>
                 }
                 <Form.Group className="mb-3">
-                    <Form.Label>Nom de l'Idioma</Form.Label>
+                    <Form.Label>Nom de la Modalitat</Form.Label>
                     <Form.Control
                         type="text"
-                        placeholder="Nom de l'idioma"
-                        value={idioma}
-                        onChange={(e) => setIdioma(e.target.value)}
+                        placeholder="Nom de la modalitat"
+                        value={modalitat}
+                        onChange={(e) => setModalitat(e.target.value)}
                     />
                 </Form.Group>
-                <Button variant="primary" type="button" onClick={guardaIdioma}>
+                <Button variant="primary" type="button" onClick={guardaModalitat}>
                     {edita ? "Guarda" : "Crea"}
                 </Button>
                 &nbsp;&nbsp;
-                <Button variant="warning" type="button" onClick={() => navigate("/idiomes")}>
+                <Button variant="warning" type="button" onClick={() => navigate("/modalitats")}>
                     Cancel·la
                 </Button>
                 {edita &&
-                    <Button variant="danger" type="button" onClick={esborraIdioma}>
+                    <Button variant="danger" type="button" onClick={esborraModalitat}>
                         Esborra
                     </Button>
                 }

@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Navbar, Nav, Container, NavDropdown } from 'react-bootstrap';
 import logo from '../images/logoBalearcs.jpeg'; // Import the image
 
-export default function Menu({ api_token, usuari_nom }) {
+export default function Menu({ api_token, usuari_nom, usuari_rol }) {
     return (
         <>
             <Navbar bg="dark" className="color-nav" variant="dark" expand="sm" sticky="top">
@@ -15,16 +15,18 @@ export default function Menu({ api_token, usuari_nom }) {
                     </Link>
                     <Link className="nav-link" to="/inici">Inici</Link>
                     <Link className="nav-link" to="/ajuda">Ajuda</Link>
-                    {api_token && <>
+                    <Link className="nav-link" to="/usuari">Usuari</Link>
+                    <Link className="nav-link" to="/logout">Logout</Link>
+                    {api_token && usuari_rol=='administrador'&& <>
                         <Link className="nav-link" to="/usuari">Usuari</Link>
-                        <NavDropdown title="CRUD Taules" id="basic-nav-dropdown">
+                        <NavDropdown title="Modificar Taules" id="basic-nav-dropdown">
                             <NavDropdown.Item href="/municipis">Municipis</NavDropdown.Item>
                             <NavDropdown.Item href="/comentaris">Comentaris</NavDropdown.Item>
                             <NavDropdown.Item href="/serveis">Serveis</NavDropdown.Item>
                             <NavDropdown.Item href="/tipus">Tipus</NavDropdown.Item>
                             <NavDropdown.Item href="/idiomes">Idiomes</NavDropdown.Item>
+                            <NavDropdown.Item href="/modalitats">Modalitats</NavDropdown.Item>
                         </NavDropdown>
-                        <Link className="nav-link" to="/logout">Logout</Link>
                     </>}
                     {!api_token && <Link className="nav-link" to="/login">Login</Link>}
                 </Nav>
