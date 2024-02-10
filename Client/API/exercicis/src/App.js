@@ -25,6 +25,9 @@ import IdiomesAfegeix from "./components/idiomes/IdiomesAfegeix.jsx";
 import Modalitats from "./components/modalitats/Modalitats.jsx";
 import ModalitatsAfegeix from "./components/modalitats/ModalitatsAfegeix.jsx";
 import ModalitatsCRUD from "./components/modalitats/ModalitatsCRUD.jsx";
+import Espais from "./components/espais/Espais.jsx";
+import EspaisCRUD from "./components/espais/EspaisCRUD.jsx";
+import EspaisAfegeix from "./components/espais/EspaisAfegeix.jsx";
 /**
  * Component principal de l'aplicació.
  * Aquest component és responsable de renderitzar les rutes de l'aplicació utilitzant React Router.
@@ -84,12 +87,8 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Menu api_token={api_token} usuari_id={usuari_id} usuari_rol={usuari_rol} usuari_nom={usuari_nom}/>} >
-        {/* Routes sols per a usuaris logats*/}
-        {api_token && <>
-            {/* INICI */}
-            <Route path="/usuari" element={<Usuari api_token = {api_token} usuari_nom={usuari_nom} usuari_id={usuari_id}/>} />
-            {/* LOGOUT */}
-            <Route path="/logout" element={<Logout/>}/>
+        {/* Routes sols per a usuaris logats administradors*/}
+        {api_token && usuari_rol== 'adiministrador' && <>
             {/* MUNICIPIS */}
             <Route path="/municipis" element={<Municipis api_token = {api_token}/>} />
             <Route path="/municipis/afegir" element={<MunicipisAfegeix api_token = {api_token}/>} />
@@ -102,7 +101,7 @@ function App() {
             <Route path="/serveis" element={<Serveis api_token = {api_token}/>} />
             <Route path="/serveis/afegir" element={<ServeisAfegeix api_token = {api_token}/>} />
             <Route path="/serveis/:id" element={<ServeisCRUD api_token = {api_token}/>}/>
-            {/* TIPUS */}
+            {/* TIPUS */}JuanPerez123
             <Route path="/tipus" element={<Tipus api_token = {api_token}/>} />
             <Route path="/tipus/afegir" element={<TipusAfegeix api_token = {api_token}/>} />
             <Route path="/tipus/:id" element={<TipusCRUD api_token = {api_token}/>}/>
@@ -114,14 +113,24 @@ function App() {
             <Route path="/modalitats" element={<Modalitats api_token = {api_token}/>} />
             <Route path="/modalitats/afegir" element={<ModalitatsAfegeix api_token = {api_token}/>} />
             <Route path="/modalitats/:id" element={<ModalitatsCRUD api_token = {api_token}/>}/>
-
+            {/* ESPAIS */}
+            <Route path="/espais" element={<Espais api_token = {api_token}/>} />
+            <Route path="/espais/afegir" element={<EspaisAfegeix api_token = {api_token}/>} />
+            <Route path="/espais/:id" element={<EspaisCRUD api_token = {api_token}/>}/>
+        </>} 
+        {/* Routes sols per a usuaris logats*/}
+        {api_token && <>
+            {/* INICI */}
+            <Route path="/usuari" element={<Usuari api_token = {api_token} usuari_nom={usuari_nom} usuari_id={usuari_id}/>} />
+            {/* LOGOUT */}
+            <Route path="/logout" element={<Logout/>}/>
         </>} 
         {/* Routes sols per a usuaris NO logats*/}
         {!api_token && <Route path="/login" element={<Login guardausuari_id={ferGuardausuari_id} guardaapi_token={ferGuardaapi_token} guardausuari_rol={ferGuardausuari_rol} guardausuari_nom={ferGuardausuari_nom}/>} /> } 
         {/* Routes per a tots els usuaris*/}
           <Route path="/ajuda" element={<Ajuda />} />
           <Route path="/inici" element={<Inici />} />
-          <Route path="*" element={<h1>Opció incorrecta</h1>} />
+          <Route path="*" element={<h1>Ups! Opció incorrecta</h1>} />
         </Route>
       </Routes>
     </BrowserRouter>

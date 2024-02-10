@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Form, Button, Alert, Spinner } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
-import { storage } from '../../utils/storage';
 
 export default function ServeisCRUD(props) {
     const [nomServei, setNomServei] = useState("");
