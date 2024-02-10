@@ -88,7 +88,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Menu api_token={api_token} usuari_id={usuari_id} usuari_rol={usuari_rol} usuari_nom={usuari_nom}/>} >
         {/* Routes sols per a usuaris logats administradors*/}
-        {api_token && usuari_rol== 'adiministrador' && <>
+        {api_token && usuari_rol=="administrador" && <>
             {/* MUNICIPIS */}
             <Route path="/municipis" element={<Municipis api_token = {api_token}/>} />
             <Route path="/municipis/afegir" element={<MunicipisAfegeix api_token = {api_token}/>} />
@@ -101,7 +101,7 @@ function App() {
             <Route path="/serveis" element={<Serveis api_token = {api_token}/>} />
             <Route path="/serveis/afegir" element={<ServeisAfegeix api_token = {api_token}/>} />
             <Route path="/serveis/:id" element={<ServeisCRUD api_token = {api_token}/>}/>
-            {/* TIPUS */}JuanPerez123
+            {/* TIPUS */}
             <Route path="/tipus" element={<Tipus api_token = {api_token}/>} />
             <Route path="/tipus/afegir" element={<TipusAfegeix api_token = {api_token}/>} />
             <Route path="/tipus/:id" element={<TipusCRUD api_token = {api_token}/>}/>
