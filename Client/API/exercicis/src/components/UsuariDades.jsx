@@ -8,7 +8,6 @@ export default function UsuariDades() {
     const [dni, setDni] = useState('');
     const [email, setEmail] = useState('');
     const [contrasenya, setContrasenya] = useState('');
-    const [contrasenyaactual, setContrasenyaactual] = useState('');
     const [confirmationMessage, setConfirmationMessage] = useState('');
     const [error, setError] = useState('');
     const [showForm, setShowForm] = useState(false);
@@ -36,8 +35,6 @@ export default function UsuariDades() {
             setNom(data.data.nom);
             setDni(data.data.dni);
             setEmail(data.data.mail);
-            setContrasenya(data.data.contrasenya);
-            setContrasenyaactual(data.data.contrasenya);
         } catch (error) {
             setError('Error al descarregar les dades de l\'usuari');
             console.error('Error en descarregar les dades de l\'usuari:', error);
@@ -49,25 +46,46 @@ export default function UsuariDades() {
         e.preventDefault();
         setLoading(true);
         try {
-            const response = await fetch(`http://balearc.aurorakachau.com/public/api/usuaris/${id}`, {
-                method: 'PUT',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    nom: nom,
-                    llinatges: llinatges,
-                    // dni: dni
-                    //email: email
-                })
-            });
-            const responseData = await response.json();
-            if (response.ok) {
-                setConfirmationMessage('Dades personals actualitzades! La propera vegada que inicieu sessió veureu les dades actualitzades.');
-            } else {
-                setError(responseData.message || 'Error al actualitzar les dades personals');
+            if(contrasenya==='' || contrasenya===null){
+                const response = await fetch(`http://balearc.aurorakachau.com/public/api/usuaris/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        nom: nom,
+                        llinatges: llinatges,
+                    })
+                });
+                const responseData = await response.json();
+                if (response.ok) {
+                    setConfirmationMessage('Dades personals actualitzades! La propera vegada que inicieu sessió veureu les dades actualitzades.');
+                } else {
+                    setError(responseData.message || 'Error al actualitzar les dades personals');
+                }
+            }
+            else{
+                const response = await fetch(`http://balearc.aurorakachau.com/public/api/usuaris/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        nom: nom,
+                        llinatges: llinatges,
+                        contrasenya: contrasenya
+                    })
+                });
+                const responseData = await response.json();
+                if (response.ok) {
+                    setConfirmationMessage('Dades personals actualitzades! La propera vegada que inicieu sessió veureu les dades actualitzades.');
+                } else {
+                    setError(responseData.message || 'Error al actualitzar les dades personals');
+                }
             }
         } catch (error) {
             setError('Error al actualitzar les dades personals');
@@ -100,7 +118,6 @@ export default function UsuariDades() {
                     <Form.Control
                         type="text"
                         value={dni}
-                        // onChange={(e) => setDni(e.target.value)}
                         readOnly
                         disabled
                     />
@@ -110,30 +127,17 @@ export default function UsuariDades() {
                     <Form.Control
                         type="text"
                         value={email}
-                        // onChange={(e) => setEmail(e.target.value)}
                         readOnly
                         disabled
                     />
                 </Form.Group>
-                <Form.Group className="mb-3">
-                    <Form.Label>Contrasenya actual:</Form.Label>
-                    <Form.Control
-                        type="text"
-                        value={contrasenyaactual}
-                        // onChange={(e) => setEmail(e.target.value)}
-                        readOnly
-                        disabled
-                    />
-                    <br />
-                   <Form.Label>Nova Contrasenya:</Form.Label>
-                    <Form.Control
-                        type="text"
-                        value={contrasenya}
-                        // onChange={(e) => setEmail(e.target.value)}
-                        readOnly
-                        disabled
-                    />
-                    
+                <Form.Group className='mb-3'>
+                    <Form.Label>Cambiar Contrasenya:</Form.Label>
+                        <Form.Control
+                            type="text"
+                            placeholder='Contrasenya'
+                            onChange={(e) => setContrasenya(e.target.value)}
+                        />
                 </Form.Group>
                 <Button type="submit" disabled={loading}>
                     Guardar
