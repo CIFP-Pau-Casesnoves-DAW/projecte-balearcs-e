@@ -7,6 +7,8 @@ export default function UsuariDades() {
     const [nom, setNom] = useState('');
     const [dni, setDni] = useState('');
     const [email, setEmail] = useState('');
+    const [contrasenya, setContrasenya] = useState('');
+    const [contrasenyaactual, setContrasenyaactual] = useState('');
     const [confirmationMessage, setConfirmationMessage] = useState('');
     const [error, setError] = useState('');
     const [showForm, setShowForm] = useState(false);
@@ -34,6 +36,8 @@ export default function UsuariDades() {
             setNom(data.data.nom);
             setDni(data.data.dni);
             setEmail(data.data.mail);
+            setContrasenya(data.data.contrasenya);
+            setContrasenyaactual(data.data.contrasenya);
         } catch (error) {
             setError('Error al descarregar les dades de l\'usuari');
             console.error('Error en descarregar les dades de l\'usuari:', error);
@@ -110,6 +114,26 @@ export default function UsuariDades() {
                         readOnly
                         disabled
                     />
+                </Form.Group>
+                <Form.Group className="mb-3">
+                    <Form.Label>Contrasenya actual:</Form.Label>
+                    <Form.Control
+                        type="text"
+                        value={contrasenyaactual}
+                        // onChange={(e) => setEmail(e.target.value)}
+                        readOnly
+                        disabled
+                    />
+                    <br />
+                   <Form.Label>Nova Contrasenya:</Form.Label>
+                    <Form.Control
+                        type="text"
+                        value={contrasenya}
+                        // onChange={(e) => setEmail(e.target.value)}
+                        readOnly
+                        disabled
+                    />
+                    
                 </Form.Group>
                 <Button type="submit" disabled={loading}>
                     Guardar

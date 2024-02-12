@@ -25,9 +25,9 @@ import IdiomesAfegeix from "./components/idiomes/IdiomesAfegeix.jsx";
 import Modalitats from "./components/modalitats/Modalitats.jsx";
 import ModalitatsAfegeix from "./components/modalitats/ModalitatsAfegeix.jsx";
 import ModalitatsCRUD from "./components/modalitats/ModalitatsCRUD.jsx";
-import Espais from "./components/espais/Espais.jsx";
-import EspaisCRUD from "./components/espais/EspaisCRUD.jsx";
-import EspaisAfegeix from "./components/espais/EspaisAfegeix.jsx";
+import Arquitectes from "./components/arquitectes/Arquitectes.jsx";
+import ArquitectesCRUD from "./components/arquitectes/ArquitectesCRUD.jsx";
+import ArquitectesAfegeix from "./components/arquitectes/ArquitectesAfegeix.jsx";
 /**
  * Component principal de l'aplicació.
  * Aquest component és responsable de renderitzar les rutes de l'aplicació utilitzant React Router.
@@ -113,10 +113,10 @@ function App() {
             <Route path="/modalitats" element={<Modalitats api_token = {api_token}/>} />
             <Route path="/modalitats/afegir" element={<ModalitatsAfegeix api_token = {api_token}/>} />
             <Route path="/modalitats/:id" element={<ModalitatsCRUD api_token = {api_token}/>}/>
-            {/* ESPAIS */}
-            <Route path="/espais" element={<Espais api_token = {api_token}/>} />
-            <Route path="/espais/afegir" element={<EspaisAfegeix api_token = {api_token}/>} />
-            <Route path="/espais/:id" element={<EspaisCRUD api_token = {api_token}/>}/>
+            {/* ARQUITECTES */}
+            <Route path="/arquitectes" element={<Arquitectes api_token = {api_token}/>} />
+            <Route path="/arquitectes/afegir" element={<ArquitectesAfegeix api_token = {api_token}/>} />
+            <Route path="/arquitectes/:id" element={<ArquitectesCRUD api_token = {api_token}/>} />
         </>} 
         {/* Routes sols per a usuaris logats*/}
         {api_token && <>
