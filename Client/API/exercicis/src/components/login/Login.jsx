@@ -80,8 +80,10 @@ export default function Login(props) {
             {error && <Alert variant="danger">Usuari o contrasenya incorrectes.</Alert>}
             {loading && <Alert variant="info"><Spinner animation="border" /></Alert>}
             {/* Proves */}
+            <h4>Usuari normal</h4>
             <p>juanperez@gmail.com</p>
             <p>JuanPerez123</p>
+            <h4>Usuari gestor</h4>
             
         </>
     );

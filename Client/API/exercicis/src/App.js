@@ -28,6 +28,9 @@ import ModalitatsCRUD from "./components/modalitats/ModalitatsCRUD.jsx";
 import Arquitectes from "./components/arquitectes/Arquitectes.jsx";
 import ArquitectesCRUD from "./components/arquitectes/ArquitectesCRUD.jsx";
 import ArquitectesAfegeix from "./components/arquitectes/ArquitectesAfegeix.jsx";
+import Espais from "./components/espais/Espais.jsx";
+import EspaisAfegir from "./components/espais/EspaisAfegir.jsx";
+import EspaisCRUD from "./components/espais/EspaisCRUD.jsx";
 /**
  * Component principal de l'aplicació.
  * Aquest component és responsable de renderitzar les rutes de l'aplicació utilitzant React Router.
@@ -117,6 +120,10 @@ function App() {
             <Route path="/arquitectes" element={<Arquitectes api_token = {api_token}/>} />
             <Route path="/arquitectes/afegir" element={<ArquitectesAfegeix api_token = {api_token}/>} />
             <Route path="/arquitectes/:id" element={<ArquitectesCRUD api_token = {api_token}/>} />
+            {/* ESPAIS */}
+            <Route path="/espais" element={<Espais api_token={api_token}/>} />
+            <Route path="/espais/afegir" element={<EspaisAfegir api_token={api_token}/>} />
+            <Route path="/espais/:id" element={<EspaisCRUD api_token={api_token}/>} />
         </>} 
         {/* Routes sols per a usuaris logats*/}
         {api_token && <>

@@ -28,6 +28,7 @@ export default function Menu({ api_token, usuari_nom, usuari_rol }) {
                             <NavDropdown.Item href="/idiomes">Idiomes</NavDropdown.Item>
                             <NavDropdown.Item href="/modalitats">Modalitats</NavDropdown.Item>
                             <NavDropdown.Item href="/arquitectes">Arquitectes</NavDropdown.Item>
+                            <NavDropdown.Item href="/espais">Espais</NavDropdown.Item>
                         </NavDropdown>
                     </>}
                     {!api_token && <Link className="nav-link" to="/login">Login</Link>}
