@@ -1,20 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { Spinner } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { storage } from "../utils/storage.js"; 
 
-export default function ValoracionsUsuari({ userId }) {
+export default function ValoracionsUsuari(props) {
   const [valoracions, setValoracions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [espais, setEspais] = useState({});
-  const token = storage.get('api_token');
+  const token = props.api_token;
 
   useEffect(() => {
     const fetchValoracions = async () => {
       setLoading(true);
       try {
-        // Fetch de les valoracions de l'usuari
-        const responseValoracions = await fetch(`http://balearc.aurorakachau.com/public/api/valoracions?usuari_id=${userId}`, {
+        const responseValoracions = await fetch(`http://balearc.aurorakachau.com/public/api/usuaris/${props.userId}`, {
           method: 'GET',
           headers: {
             'Accept': 'application/json',
@@ -23,33 +21,34 @@ export default function ValoracionsUsuari({ userId }) {
           }
         });
         const dataValoracions = await responseValoracions.json();
-        setValoracions(dataValoracions.data);
+        // Dins valoracions tenim un array de valoracions del usuari
+        setValoracions(dataValoracions.data.valoracions);
 
-        // Recollir els noms dels espais
-        const espaisIds = dataValoracions.data.map(valoracio => valoracio.espai_id);
-        const fetchEspaisPromises = espaisIds.map(async espaiId => {
-          const responseEspai = await fetch(`http://balearc.aurorakachau.com/public/api/espais/${espaiId}`, {
-            method: 'GET',
-            headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`
-            }
-          });
-          const dataEspai = await responseEspai.json();
-          return { [espaiId]: dataEspai.data.nom };
+        const responseEspais = await fetch('http://balearc.aurorakachau.com/public/api/espais', {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
         });
-        const espaisData = await Promise.all(fetchEspaisPromises);
-        const espaisObject = espaisData.reduce((acc, espai) => ({ ...acc, ...espai }), {});
-        setEspais(espaisObject);
+        const dataEspais = await responseEspais.json();
+        const espaisMap = {};
+        dataEspais.data.forEach(espai => {
+          espaisMap[espai.id] = espai;
+        });
+        // Tenim un mapa de tots els espais
+        setEspais(espaisMap);
 
       } catch (error) {
-        console.error('Error al obtenir les valoracions:', error);
+        console.error('Error al obtener las valoraciones:', error);
       }
       setLoading(false);
     };
-    fetchValoracions(); 
-  }, [userId, token]); 
+
+    fetchValoracions();
+
+  }, [props.userId, token]);
 
   return (
     <div>
@@ -63,7 +62,7 @@ export default function ValoracionsUsuari({ userId }) {
         <tbody>
           {valoracions.map((valoracio) => (
             <tr key={valoracio.id}>
-              <td>{espais[valoracio.espai_id]}</td>
+              <td>{espais[valoracio.espai_id]?.nom}</td>
               <td>{valoracio.puntuacio}</td>
             </tr>
           ))}

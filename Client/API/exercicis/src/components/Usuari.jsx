@@ -28,10 +28,10 @@ export default function Usuari(props) {
       <hr />
       <div>
         <h3>Comentaris publicats</h3>
-        <ComentarisUsuari userId={usuari_id} />
+        <ComentarisUsuari userId={usuari_id} api_token={token}/>
         <hr />
         <h3>Valoracions publicades</h3>
-        <ValoracionsUsuari userId={usuari_id}/>
+        <ValoracionsUsuari userId={usuari_id} api_token={token}/>
       </div>
     </div>
   );
