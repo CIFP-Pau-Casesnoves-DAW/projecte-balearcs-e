@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ComentarisUsuari from './ComentarisUsuari';
+import ValoracionsUsuari from './ValoracionsUsuari';
 import UsuariDades from './UsuariDades';
 
 export default function Usuari(props) {
@@ -28,6 +29,9 @@ export default function Usuari(props) {
       <div>
         <h3>Comentaris publicats</h3>
         <ComentarisUsuari userId={usuari_id} />
+        <hr />
+        <h3>Valoracions publicades</h3>
+        <ValoracionsUsuari userId={usuari_id}/>
       </div>
     </div>
   );

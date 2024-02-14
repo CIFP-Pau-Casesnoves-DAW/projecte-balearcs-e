@@ -43,29 +43,8 @@ export default function ArquitectesCRUD(props) {
         if (edita) {
             modificaArquitecte();
         } else {
-            creaArquitecte();
+            setError('Error en la edició');
         }
-    }
-
-    const creaArquitecte = () => {
-        fetch('http://balearc.aurorakachau.com/public/api/arquitectes', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({
-                nom: nomArquitecte
-            })
-        }).then(response => response.json())
-            .then((data) => {
-                if (data.error) {
-                    setError("Error al crear l'arquitecte.");
-                } else {
-                    setError('');
-                    navigate('/arquitectes');
-                }
-            })
     }
 
     const modificaArquitecte = () => {

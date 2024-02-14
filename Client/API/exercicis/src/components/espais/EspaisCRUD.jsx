@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { Form, Button, Spinner } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { Alert } from 'react-bootstrap';
+import ModalitatsSelect from "./ModalitatsSelect";
 
 export default function EspaisCRUD(props){
     const [nom, setNom] = useState('');
@@ -76,7 +77,7 @@ export default function EspaisCRUD(props){
         if (edita) {
             modificaEspai();
         } else {
-            setError("No es pot editar l'espai.");
+            setError("Error amb la edició.");
         }
     }
 
@@ -421,7 +422,11 @@ export default function EspaisCRUD(props){
                         onChange={(e) => setDestacat(e.target.checked)}
                     />
                 </Form.Group>
-                {error && <Alert variant="danger">{error}</Alert>}
+
+                <Form.Group className="mb-3">
+                    <Form.Label>Modalitat:</Form.Label>
+                    <ModalitatsSelect api_token = {token}></ModalitatsSelect>
+                </Form.Group>
             <Button variant="primary" type="button" onClick={guardaEspai}>
                 Guarda
             </Button>

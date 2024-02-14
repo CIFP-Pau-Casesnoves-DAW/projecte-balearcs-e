@@ -43,29 +43,8 @@ export default function ServeisCRUD(props) {
         if (edita) {
             modificaServei();
         } else {
-            creaServei();
+            setError('Error en la edició');
         }
-    }
-
-    const creaServei = () => {
-        fetch('http://balearc.aurorakachau.com/public/api/serveis', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({
-                nom_serveis: nomServei
-            })
-        }).then(response => response.json())
-            .then((data) => {
-                if (data.error) {
-                setError("Error al crear el servei.");
-                } else {
-                    setError('');
-                    navigate('/serveis');
-                }
-            })
     }
 
     const modificaServei = () => {

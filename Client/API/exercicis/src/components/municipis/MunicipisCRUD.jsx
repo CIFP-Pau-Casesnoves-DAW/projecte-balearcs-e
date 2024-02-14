@@ -59,31 +59,8 @@ export default function MunicipisCRUD(props) {
         if (edita) {
             modificaMunicipi();
         } else {
-            creaMunicipi();
+            setError('Error en la edició');
         }
-    }
-
-
-    const creaMunicipi=()=>{
-        fetch('http://balearc.aurorakachau.com/public/api/municipis',{
-            method:'POST',
-            headers:{
-                'Content-Type':'application/json',
-                'Authorization':`Bearer ${token}`
-            },
-            body:JSON.stringify({
-                nom:nom,
-                illa_id:illa_id
-            })
-        }).then(resposta=>resposta.json())
-        .then((respostajson)=>{
-            if (respostajson.error) {
-                setError("Error: "+getMsgError(respostajson.error));
-            } else {
-                setError('');
-                navigate('/municipis');
-            }
-        })
     }
 
     const modificaMunicipi=()=>{

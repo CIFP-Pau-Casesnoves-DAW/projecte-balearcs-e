@@ -31,6 +31,9 @@ import ArquitectesAfegeix from "./components/arquitectes/ArquitectesAfegeix.jsx"
 import Espais from "./components/espais/Espais.jsx";
 import EspaisAfegir from "./components/espais/EspaisAfegir.jsx";
 import EspaisCRUD from "./components/espais/EspaisCRUD.jsx";
+import Puntsinteres from "./components/puntsinteres/Puntsinteres.jsx";
+import PuntsinteresAfegeix from "./components/puntsinteres/PuntsinteresAfegeix.jsx";
+import PuntsinteresCRUD from "./components/puntsinteres/PuntsinteresCRUD.jsx";
 /**
  * Component principal de l'aplicació.
  * Aquest component és responsable de renderitzar les rutes de l'aplicació utilitzant React Router.
@@ -124,6 +127,10 @@ function App() {
             <Route path="/espais" element={<Espais api_token={api_token}/>} />
             <Route path="/espais/afegir" element={<EspaisAfegir api_token={api_token}/>} />
             <Route path="/espais/:id" element={<EspaisCRUD api_token={api_token}/>} />
+            {/* PUNTS D'INTERÈS */}
+            <Route path="/puntsinteres" element={<Puntsinteres api_token={api_token}/>} />
+            <Route path="/puntsinteres/afegir" element={<PuntsinteresAfegeix api_token={api_token}/>} />
+            <Route path="/puntsinteres/:id" element={<PuntsinteresCRUD api_token={api_token}/>} />
         </>} 
         {/* Routes sols per a usuaris logats*/}
         {api_token && <>

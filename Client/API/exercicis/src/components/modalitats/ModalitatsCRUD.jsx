@@ -43,29 +43,8 @@ export default function ModalitatsCRUD(props) {
         if (edita) {
             modificaModalitat();
         } else {
-            creaModalitat();
+            setError('Error en la edició');
         }
-    }
-
-    const creaModalitat = () => {
-        fetch('http://balearc.aurorakachau.com/public/api/modalitats', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({
-                nom_modalitat: modalitat
-            })
-        }).then(response => response.json())
-            .then((data) => {
-                if (data.error) {
-                    setError("Error al crear la modalitat.");
-                } else {
-                    setError('');
-                    navigate('/modalitats');
-                }
-            })
     }
 
     const modificaModalitat = () => {

@@ -84,6 +84,8 @@ export default function Login(props) {
             <p>juanperez@gmail.com</p>
             <p>JuanPerez123</p>
             <h4>Usuari gestor</h4>
+            <p>gregoriomartorell@gmail.com</p>
+            <p>GregorioMartorell123</p>
             
         </>
     );

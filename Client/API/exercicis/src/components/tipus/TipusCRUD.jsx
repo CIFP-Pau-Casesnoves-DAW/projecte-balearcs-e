@@ -44,29 +44,8 @@ export default function TipusCRUD(props) {
         if (edita) {
             modificaTipus();
         } else {
-            creaTipus();
+            setError('Error en la edició');
         }
-    }
-
-    const creaTipus = () => {
-        fetch('http://balearc.aurorakachau.com/public/api/tipus', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({
-                nom_tipus: nomTipus
-            })
-        }).then(response => response.json())
-            .then((data) => {
-                if (data.error) {
-                    setError("Error al crear el tipus.");
-                } else {
-                    setError('');
-                    navigate('/tipus');
-                }
-            })
     }
 
     const modificaTipus = () => {

@@ -43,29 +43,8 @@ export default function IdiomesCRUD(props) {
         if (edita) {
             modificaIdioma();
         } else {
-            creaIdioma();
+            setError('Error en la edició');
         }
-    }
-
-    const creaIdioma = () => {
-        fetch('http://balearc.aurorakachau.com/public/api/idiomes', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({
-                idioma: idioma
-            })
-        }).then(response => response.json())
-            .then((data) => {
-                if (data.error) {
-                    setError("Error al crear l'idioma.");
-                } else {
-                    setError('');
-                    navigate('/idiomes');
-                }
-            })
     }
 
     const modificaIdioma = () => {
