@@ -1,23 +1,61 @@
-import React from 'react'; // Add the missing import statement for React
+import React, { useState } from 'react';
 import { storage } from '../../utils/storage';
-import {Button, Container, Form} from 'react-bootstrap';
+import { Button, Container, Form } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 
-export default function Logout(){
-    const tancar=()=>{
+export default function Logout() {
+    const id = storage.get('usuari_id');
+    const [error, setError] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
+
+    const ferLogout = (event) => {
+        event.preventDefault(); // Evita el envío del formulario por defecto
+        setLoading(true);
+        fetch(`http://balearc.aurorakachau.com/public/api/logout/${id}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error en el logout');
+                }
+                return response.json();
+            })
+            .then(respostajson => {
+                if (respostajson.status === "success") {
+                    setError(false);
+                    tancar(); // Cierra la sesión antes de redirigir
+                    window.location.href = "/inici"; // Redirige a la página de login
+                } else {
+                    setError(true);
+                }
+                setLoading(false);
+            })
+            .catch(function (error) {
+                console.log(error);
+                setError(true);
+                setLoading(false);
+            });
+    };
+
+    const tancar = () => {
         storage.remove('api_token');
         storage.remove('usuari_id');
         storage.remove('usuari_rol');
         storage.remove('usuari_nom');
     }
 
-        return  (
-            <Container>
+    return (
+        <Container>
             <h2>Sortir de la sessió?</h2>
-            <Form onSubmit={tancar} action="/inici">
-            <Button variant="primary" type="submit">
-                Sortir
-            </Button>
+            <Form onSubmit={ferLogout} >
+                <Button variant="primary" type="submit">
+                    Sortir
+                </Button>
             </Form>
-            </Container>
-        );
+        </Container>
+    );
 }
