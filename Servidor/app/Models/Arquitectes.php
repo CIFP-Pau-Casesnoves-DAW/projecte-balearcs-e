@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Espais;
 
 class Arquitectes extends Model
 {
@@ -23,8 +24,10 @@ class Arquitectes extends Model
         'data_baixa'
     ];
 
+    protected $with = ['espais'];
+
     public function espais()
     {
-        return $this->hasMany(Espais::class);
+        return $this->hasMany(Espais::class, 'arquitecte_id', 'id');
     }
 }

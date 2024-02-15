@@ -4,6 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Usuaris;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
 
 class Comentaris extends Model
 {
@@ -23,7 +26,7 @@ class Comentaris extends Model
      */
     public function espai()
     {
-        return $this->belongsTo(Espais::class, 'espai_id');
+        return $this->belongsTo(Espais::class, 'espai_id', 'id');
     }
 
     /**
@@ -31,6 +34,6 @@ class Comentaris extends Model
      */
     public function usuari()
     {
-        return $this->belongsTo(Usuaris::class, 'usuari_id');
+        return $this->belongsTo(Usuaris::class, 'usuari_id', 'id');
     }
 }

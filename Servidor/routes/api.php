@@ -132,9 +132,8 @@ $router->group(['prefix' => 'fotos'], function () use ($router) {
     $router->get('', [FotosController::class, 'index']);
     $router->get('{id}', [FotosController::class, 'show']);
     $router->post('', [FotosController::class, 'store'])->middleware(ControlaAdministrador::class);
-    $router->put('{id}', [FotosController::class, 'update'])->middleware(ControlaDadesFotos::class);
+    // $router->put('{id}', [FotosController::class, 'update'])->middleware(ControlaDadesFotos::class);
     $router->delete('{id}', [FotosController::class, 'destroy'])->middleware(ControlaAdministrador::class);
-    $router->put('delete/{id}', [FotosController::class, 'delete'])->middleware(ControlaAdministrador::class);
 });
 
 // Rutes per a llistar, crear, emmagatzemar, mostrar, editar, actualitzar i eliminar idiomes
@@ -227,6 +226,8 @@ $router->group(['prefix' => 'usuaris', 'middleware' => ControlaAdministrador::cl
     $router->put('{id}', [UsuarisController::class, 'update'])->withoutMiddleware([ControlaAdministrador::class])->middleware(ControlaDadesUsuari::class);
     $router->put('delete/{id}', [UsuarisController::class, 'delete'])->withoutMiddleware([ControlaAdministrador::class])->middleware(ControlaDadesUsuari::class);
     $router->delete('{id}', [UsuarisController::class, 'destroy']);
+    $router->post('/registre/{id}', [UsuarisController::class, 'registre'])->withoutMiddleware([ControlaAdministrador::class]);
+    $router->get('/confirma/{id}', [UsuarisController::class, 'confirma'])->withoutMiddleware([ControlaAdministrador::class]);
 });
 
 // Rutas para listar, crear, almacenar, mostrar, editar, actualizar y eliminar valoracions

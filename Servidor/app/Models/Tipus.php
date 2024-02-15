@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Espais;
 
 class Tipus extends Model
 {
@@ -16,4 +17,11 @@ class Tipus extends Model
         'nom_tipus',
         'data_baixa',
     ];
+
+    protected $with = ['espais'];
+
+    public function espais()
+    {
+        return $this->hasMany(Espais::class, 'tipus_id', 'id');
+    }
 }

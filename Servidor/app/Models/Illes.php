@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Municipis;
 
 class Illes extends Model
 {
@@ -20,4 +21,11 @@ class Illes extends Model
         'zona',
         'data_baixa',
     ];
+
+    protected $with = ['municipis'];
+
+    public function municipis()
+    {
+        return $this->hasMany(Municipis::class, 'illa_id', 'id');
+    }
 }

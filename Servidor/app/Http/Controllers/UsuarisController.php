@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\URL;
 
 /**
  * @OA\Tag(
@@ -280,9 +282,10 @@ class UsuarisController extends Controller
                 'nom' => 'filled|string|max:255',
                 'llinatges' => 'filled|string|max:255',
                 'dni' => 'filled|string|max:20',
-                'mail' => 'filled|email|unique:usuaris,mail|max:255',
+                'mail' => 'filled|email|unique:usuaris,mail,' . $id . '|max:255',
                 'contrasenya' => 'filled|string|min:6',
                 'rol' => 'filled|in:usuari,administrador,gestor',
+                'actiu' => 'filled|boolean'
             ];
 
             $missatges = [
@@ -308,9 +311,13 @@ class UsuarisController extends Controller
             }
 
             if ($request->filled('rol') && $mdRol == 'administrador') {
-                $usuari = Usuaris::find($id);
-                $usuari->rol = $request->input('rol');
-                $usuari->save();
+                $tupla->rol = $request->input('rol');
+                $tupla->save();
+            }
+
+            if ($request->filled('actiu') && $mdRol == 'administrador') {
+                $tupla->actiu = $request->input('actiu');
+                $tupla->save();
             }
             $tupla->update($request->all());
             return response()->json(['status' => 'success', 'data' => $tupla], 200);
@@ -424,6 +431,40 @@ class UsuarisController extends Controller
             $usuari->data_baixa = now();
             $usuari->save();
             return response()->json(['status' => 'success', 'data' => $usuari], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['status' => 'error', 'data' => $e], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
+        }
+    }
+
+    public function registre($id)
+    {
+        try {
+            $usuari = Usuaris::findOrFail($id);
+            $url = URL::to('/api/usuaris/confirma/' . $id); // genera la url
+            $data = array('nom' => $usuari->nom, 'link' => $url); // dades a enviar
+            Mail::send('mails.confirmacio', $data, function ($message) use ($usuari) {
+                $message->to($usuari->mail, $usuari->nom)->subject('Confirmació registre.')
+                    ->cc(['missatgeria@balearcgrupe.com']);
+            });
+            return response()->json(['status' => 'success', 'data' => $usuari], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['status' => 'error', 'data' => $e], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
+        }
+    }
+
+    public function confirma($id)
+    {
+        try {
+            $usuari = Usuaris::findOrFail($id);
+            $usuari->actiu = true;
+            $mail = $usuari->mail;
+            $nom = $usuari->nom;
+            $usuari->save();
+            return view('mails.usuari_confirmat', ['nom' => $nom, 'mail' => $mail]);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json(['status' => 'error', 'data' => $e], 400);
         } catch (\Exception $exception) {

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Espais;
 
 class Visites extends Model
 {
@@ -25,6 +26,6 @@ class Visites extends Model
 
     public function espai()
     {
-        return $this->belongsTo(Espais::class, 'espai_id');
+        return $this->belongsTo(Espais::class, 'espai_id', 'id');
     }
 }
