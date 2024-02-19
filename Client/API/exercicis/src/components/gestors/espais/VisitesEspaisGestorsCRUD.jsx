@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Form, Button, Alert, Spinner } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
-import SelectEspais from '../puntsinteres/SelectEspais'; 
 
-export default function VisitesCRUD(props) {
+export default function VisitesEspaisGestorsCRUD(props) {
     const [titol, setTitol] = useState("");
     const [descripcio, setDescripcio] = useState("");
     const [inscripcioPrevia, setInscripcioPrevia] = useState("");
@@ -11,20 +10,17 @@ export default function VisitesCRUD(props) {
     const [dataInici, setDataInici] = useState("");
     const [dataFi, setDataFi] = useState("");
     const [horari, setHorari] = useState("");
-    const [espaiId, setEspaiId] = useState("");
-    const [espai_actual, setEspai_actual] = useState("");
-    const [nomEspaiactual, setnomEspaiactual] = useState("");
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const [edita, setEdita] = useState(false);
     const navigate = useNavigate();
     const { id } = useParams();
+    const [espaiId, setEspaiId] = useState("");
     const token = props.api_token;
 
     useEffect(() => {
         if (id !== "-1") {
             descarregaVisita();
-            EspaiActual();
         } else {
             setEdita(false);
         }
@@ -33,26 +29,25 @@ export default function VisitesCRUD(props) {
     const descarregaVisita = async () => {
         setLoading(true);
         try {
-            const response = await fetch(`http://balearc.aurorakachau.com/public/api/visites/${id}`, {
+            const response = await fetch(`http://balearc.aurorakachau.com/public/api/visites/${id}`,{
                 method: 'GET',
                 headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application',
                     'Authorization': `Bearer ${token}`
                 }
             });
             const jsonData = await response.json();
             const visita = jsonData.data;
             setTitol(visita.titol);
-            setEspai_actual(visita.espai_id);
             setDescripcio(visita.descripcio);
             setInscripcioPrevia(visita.inscripcio_previa.toString());
             setNPlaces(visita.n_places.toString());
             setDataInici(visita.data_inici);
             setDataFi(visita.data_fi);
             setHorari(visita.horari);
-            setEspaiId(visita.espai_id.toString());
+            setEspaiId(visita.espai_id);
             setEdita(true);
+
         } catch (error) {
             console.error(error);
             setError("Error en la descàrrega de la visita.");
@@ -64,7 +59,7 @@ export default function VisitesCRUD(props) {
         if (edita) {
             modificaVisita();
         } else {
-            setEdita(false);
+            setError('No s\'ha pogut editar la visita');
         }
     }
 
@@ -76,14 +71,13 @@ export default function VisitesCRUD(props) {
                 'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify({
-                titol,
-                descripcio,
+                titol: titol,
+                descripcio: descripcio,
                 inscripcio_previa: parseInt(inscripcioPrevia),
                 n_places: parseInt(nPlaces),
                 data_inici: dataInici,
                 data_fi: dataFi,
-                horari: horari,
-                espai_id: parseInt(espaiId)
+                horari: horari
             })
         })
         .then(response => response.json())
@@ -91,49 +85,8 @@ export default function VisitesCRUD(props) {
             if (data.error) {
                 setError("Error al modificar la visita.");
             } else {
-                navigate('/visites');
+                navigate(`/espaisgestors/${espaiId}`);
             }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            setError("Error al modificar la visita.");
-        });
-    }
-
-    const esborraVisita = () => {
-        fetch(`http://balearc.aurorakachau.com/public/api/visites/${id}`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.error) {
-                setError("Error en esborrar la visita.");
-            } else {
-                navigate('/visites');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            setError("Error en esborrar la visita.");
-        });
-    }
-
-    const EspaiActual = () => {
-        fetch(`http://balearc.aurorakachau.com/public/api/espais/${id}`,{
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application',
-                'Authorization': `Bearer ${token}`
-            }
-        })
-        .then (response => response.json())
-        .then (data => {
-            setnomEspaiactual(data.data.nom);
         })
         .catch(error => {
             console.error('Error:', error);
@@ -213,22 +166,13 @@ export default function VisitesCRUD(props) {
                         onChange={(e) => setHorari(e.target.value)}
                     />
                 </Form.Group>
-                <Form.Group className="mb-3">
-                    <Form.Label>Espai actual: <strong>{nomEspaiactual}</strong> </Form.Label>
-                    <SelectEspais id={espaiId} onChange={(e) => { setEspaiId(e.target.value) }} />
-                </Form.Group>
                 <Button variant="primary" type="button" onClick={guardaVisita}>
                     {edita ? "Guarda" : "Crea"}
                 </Button>
                 &nbsp;&nbsp;
-                <Button variant="warning" type="button" onClick={() => navigate("/visites")}>
+                <Button variant="warning" type="button" onClick={() => navigate(`/espaisgestors/${espaiId}`)}>
                     Cancel·la
                 </Button>
-                {edita && (
-                    <Button variant="danger" type="button" onClick={esborraVisita}>
-                        Esborra
-                    </Button>
-                )}
             </Form>
             <br />
             {error !== '' && <Alert variant="danger">{error}</Alert>}

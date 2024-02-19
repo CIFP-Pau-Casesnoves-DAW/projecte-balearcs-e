@@ -6,6 +6,8 @@ function FormulariAfegirPuntInteres({ api_token, espai_id, onCancel }) {
     const [descripcio, setDescripcio] = useState('');
     const [error, setError] = useState('');
     const [confirmationMessage, setConfirmationMessage] = useState('');
+    const idespai = espai_id;
+    const token = api_token;
 
     const handleAfegir = async () => {
         try {
@@ -13,12 +15,12 @@ function FormulariAfegirPuntInteres({ api_token, espai_id, onCancel }) {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${api_token}`
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify({
                     titol: titol,
                     descripcio: descripcio,
-                    espai_id: espai_id
+                    espai_id: idespai
                 })
             });
             const data = await response.json();

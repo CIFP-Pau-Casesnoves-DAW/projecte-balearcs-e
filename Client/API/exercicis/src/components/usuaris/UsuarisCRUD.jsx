@@ -9,6 +9,7 @@ export default function UsuarisCRUD(props) {
     const [mailUsuari, setMailUsuari] = useState("");
     const [contrasenyaUsuari, setContrasenyaUsuari] = useState("");
     const [rolUsuari, setRolUsuari] = useState("usuari");
+    const [validat, setValidat] = useState('');
     const [error, setError] = useState('');
     const [edita, setEdita] = useState(false);
     const [descarregant, setDescarregant] = useState(false);
@@ -37,12 +38,13 @@ export default function UsuarisCRUD(props) {
                 }
             });
             const responseData = await response.json();
-            const { nom, llinatges, dni, mail, rol } = responseData.data;
+            const { nom, llinatges, dni, mail, rol, actiu } = responseData.data;
             setNomUsuari(nom);
             setLlinatgesUsuari(llinatges);
             setDniUsuari(dni);
             setMailUsuari(mail);
             setRolUsuari(rol);
+            setValidat(actiu);
         } catch (error) {
             console.log(error);
         }
@@ -70,7 +72,8 @@ export default function UsuarisCRUD(props) {
                 dni: dniUsuari,
                 mail: mailUsuari,
                 contrasenya: contrasenyaUsuari,
-                rol: rolUsuari
+                rol: rolUsuari,
+                actiu: validat
             })
         }).then(response => response.json())
             .then((data) => {
@@ -95,7 +98,8 @@ export default function UsuarisCRUD(props) {
                 llinatges: llinatgesUsuari,
                 dni: dniUsuari,
                 mail: mailUsuari,
-                rol: rolUsuari
+                rol: rolUsuari,
+                actiu: validat
             })
         }).then(response => response.json())
             .then((data) => {
@@ -190,6 +194,16 @@ export default function UsuarisCRUD(props) {
                         <option value="usuari">Usuari</option>
                         <option value="gestor">Gestor</option>
                         <option value="administrador">Administrador</option>
+                    </Form.Select>
+                </Form.Group>
+                <Form.Group className="mb-3">
+                    <Form.Label>Actiu</Form.Label>
+                    <Form.Select
+                        value={validat}
+                        onChange={(e) => setValidat(parseInt(e.target.value))}
+                    >
+                        <option value={1}>Sí</option>
+                        <option value={0}>No</option>
                     </Form.Select>
                 </Form.Group>
                 <Button variant="primary" type="button" onClick={guardaUsuari}>

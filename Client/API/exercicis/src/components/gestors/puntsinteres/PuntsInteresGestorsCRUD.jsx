@@ -25,13 +25,25 @@ export default function PuntsInteresGestorsCRUD(props) {
     const descarregaPuntInteres = async () => {
         setLoading(true);
         try {
-            const resposta = await fetch(`http://balearc.aurorakachau.com/public/api/punts_interes/${id}`);
+            const resposta = await fetch(`http://balearc.aurorakachau.com/public/api/punts_interes/${id}`,{
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
             const jsonresposta = await resposta.json();
             setPuntInteres(jsonresposta.data.titol);
             setDescripcio(jsonresposta.data.descripcio);
             setEspai_id(jsonresposta.data.espai_id);
 
-            const respostaEspais = await fetch(`http://balearc.aurorakachau.com/public/api/espais/${jsonresposta.data.espai_id}`);
+            const respostaEspais = await fetch(`http://balearc.aurorakachau.com/public/api/espais/${jsonresposta.data.espai_id}`,{
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
             const jsonrespostaEspais = await respostaEspais.json();
             setEspai_actual(jsonrespostaEspais.data.nom);
             setEdita(true);

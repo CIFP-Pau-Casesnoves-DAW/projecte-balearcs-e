@@ -50,6 +50,7 @@ import UsuarisAfegeix from "./components/usuaris/UsuarisAfegeix.jsx";
 import Visites from "./components/visites/Visites.jsx";
 import VisitesCRUD from "./components/visites/VisitesCRUD.jsx";
 import VisitesAfegeix from "./components/visites/VisitesAfegeix.jsx";
+import VisitesEspaisGestorsCRUD from "./components/gestors/espais/VisitesEspaisGestorsCRUD.jsx";
 /**
  * Component principal de l'aplicació.
  * Aquest component és responsable de renderitzar les rutes de l'aplicació utilitzant React Router.
@@ -172,6 +173,7 @@ function App() {
             {/* GESTIÓ DE PUNTS D'INTERÈS */}
             {/* Problema perque si poso un altre id no asignat al gestor el pot modificar */}
             <Route path="/espaisgestors/:id/puntsinteresgestors/:id" element={<PuntsInteresGestorsCRUD api_token = {api_token} />} />
+            <Route path="/espaisgestors/:id/visitesgestors/:id" element={<VisitesEspaisGestorsCRUD api_token = {api_token} />} />
         </>}
         {/* Routes sols per a usuaris logats*/}
         {api_token && <>

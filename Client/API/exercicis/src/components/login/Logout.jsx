@@ -12,13 +12,16 @@ export default function Logout() {
     };
 
     return (
-        <Container className="logout-container">
-            <h2 className="logout-title">Voleu sortir de la sessió?</h2>
-            <Form onSubmit={handleLogout} action="/inici">
-                <Button variant="primary" type="submit" className="logout-button">
-                    Sortir
-                </Button>
-            </Form>
-        </Container>
+        <div className='contingut'>
+            <Container className="logout-container">
+
+                    <h2 className="logout-title">Voleu sortir de la sessió?</h2>
+                    <Form onSubmit={handleLogout} action="/inici">
+                        <Button variant="primary" type="submit" className="logout-button">
+                            Sortir
+                        </Button>
+                    </Form>
+            </Container>
+        </div>
     );
 }
