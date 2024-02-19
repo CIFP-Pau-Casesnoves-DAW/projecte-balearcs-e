@@ -1,3 +1,4 @@
+            
 import Ajuda from "./components/Ajuda.jsx";
 import Menu from "./components/Menu.jsx";
 import MunicipisAfegeix from "./components/municipis/MunicipisAfegeix.jsx";
@@ -37,6 +38,18 @@ import PuntsinteresCRUD from "./components/puntsinteres/PuntsinteresCRUD.jsx";
 import Valoracions from "./components/valoracions/Valoracions.jsx";
 import ValoracionsAfegeix from "./components/valoracions/ValoracionsAfegeix.jsx";
 import ValoracionsCRUD from "./components/valoracions/ValoracionsCRUD.jsx";
+import Fotos from "./components/fotos/Fotos.jsx";
+import FotosAfegeix from "./components/fotos/FotosAfegeix.jsx";
+import FotosCRUD from "./components/fotos/FotosCRUD.jsx";
+import EspaisGestors from "./components/gestors/espais/EspaisGestors.jsx";
+import EspaisGestorsCRUD from "./components/gestors/espais/EspaisGestorsCRUD.jsx";
+import PuntsInteresGestorsCRUD from "./components/gestors/puntsinteres/PuntsInteresGestorsCRUD.jsx";
+import Usuaris from "./components/usuaris/Usuaris.jsx";
+import UsuarisCRUD from "./components/usuaris/UsuarisCRUD.jsx";
+import UsuarisAfegeix from "./components/usuaris/UsuarisAfegeix.jsx";
+import Visites from "./components/visites/Visites.jsx";
+import VisitesCRUD from "./components/visites/VisitesCRUD.jsx";
+import VisitesAfegeix from "./components/visites/VisitesAfegeix.jsx";
 /**
  * Component principal de l'aplicació.
  * Aquest component és responsable de renderitzar les rutes de l'aplicació utilitzant React Router.
@@ -138,7 +151,28 @@ function App() {
             <Route path="/valoracions" element={<Valoracions api_token={api_token}/>} />
             <Route path="/valoracions/afegir" element={<ValoracionsAfegeix api_token={api_token}/>} />
             <Route path="/valoracions/:id" element={<ValoracionsCRUD api_token={api_token}/>} />
+            {/* FOTOS */}
+            <Route path="/fotos" element={<Fotos api_token={api_token}/>} />
+            <Route path="/fotos/afegir" element={<FotosAfegeix api_token={api_token}/>} />
+            <Route path="/fotos/:id" element={<FotosCRUD api_token={api_token}/>} />
+            {/* USUARIS */}
+            <Route path="/usuaris" element={<Usuaris api_token = {api_token} usuari_nom={usuari_nom} usuari_id={usuari_id}/>} />
+            <Route path="/usuaris/:id" element={<UsuarisCRUD api_token={api_token}/>} />
+            <Route path="/usuaris/afegir" element={<UsuarisAfegeix api_token={api_token}/>} />
+            {/* VISITES */}
+            <Route path="/visites" element={<Visites api_token={api_token} usuari_nom={usuari_nom} usuari_id={usuari_id}/>} />
+            <Route path="/visites/:id" element={<VisitesCRUD api_token={api_token} />} />
+            <Route path="/visites/afegir" element={<VisitesAfegeix api_token={api_token} />} />
         </>} 
+        {/* Routes sols per a usuaris logats gestors*/}
+        {api_token && usuari_rol=="gestor" && <>
+            {/* GESTIÓ D'ESPAIS */}
+            <Route path="/espaisgestors" element={<EspaisGestors api_token = {api_token} usuari_id={usuari_id} />} />
+            <Route path="/espaisgestors/:id" element={<EspaisGestorsCRUD api_token = {api_token} />} />
+            {/* GESTIÓ DE PUNTS D'INTERÈS */}
+            {/* Problema perque si poso un altre id no asignat al gestor el pot modificar */}
+            <Route path="/espaisgestors/:id/puntsinteresgestors/:id" element={<PuntsInteresGestorsCRUD api_token = {api_token} />} />
+        </>}
         {/* Routes sols per a usuaris logats*/}
         {api_token && <>
             {/* INICI */}

@@ -404,11 +404,13 @@ export default function EspaisCRUD(props){
                         onChange={(e) => setGestorId(e.target.value)}
                     >
                         <option value="-1">Selecciona un gestor:</option>
-                        {gestors && gestors.map((gestor) => (
-                            <option key={gestor.id} value={gestor.id}>
-                                {gestor.nom}
-                            </option>
-                        ))}
+                        {gestors && gestors
+                            .filter(gestor => gestor.rol === 'gestor') // Només afegir els gestors amb el rol "gestor"
+                            .map((gestor) => (
+                                <option key={gestor.id} value={gestor.id}>
+                                    {gestor.nom}
+                                </option>
+                            ))}
                     </Form.Control>
                 </Form.Group>
 
@@ -425,7 +427,7 @@ export default function EspaisCRUD(props){
 
                 <Form.Group className="mb-3">
                     <Form.Label>Modalitat:</Form.Label>
-                    <ModalitatsSelect api_token = {token}></ModalitatsSelect>
+                    <ModalitatsSelect api_token = {token} codiespai={id}></ModalitatsSelect>
                 </Form.Group>
             <Button variant="primary" type="button" onClick={guardaEspai}>
                 Guarda

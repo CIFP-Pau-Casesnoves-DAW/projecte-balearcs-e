@@ -31,6 +31,14 @@ export default function Menu({ api_token, usuari_nom, usuari_rol }) {
                             <NavDropdown.Item href="/espais">Espais</NavDropdown.Item>
                             <NavDropdown.Item href="/puntsinteres">Punts d'interès</NavDropdown.Item>
                             <NavDropdown.Item href="/valoracions">Valoracions</NavDropdown.Item>
+                            <NavDropdown.Item href="/fotos">Fotos</NavDropdown.Item>
+                            <NavDropdown.Item href="/usuaris">Usuaris</NavDropdown.Item>
+                            <NavDropdown.Item href="/visites">Visites</NavDropdown.Item>
+                        </NavDropdown>
+                    </>}
+                    {api_token && usuari_rol=='gestor'&& <>
+                        <NavDropdown title="Gestió" id="basic-nav-dropdown">
+                            <NavDropdown.Item href="/espaisgestors">Gestió d'espais</NavDropdown.Item>
                         </NavDropdown>
                     </>}
                     {!api_token && <Link className="nav-link" to="/login">Login</Link>}

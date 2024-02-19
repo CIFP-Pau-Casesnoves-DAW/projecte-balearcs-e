@@ -1,23 +1,24 @@
-import React from 'react'; // Add the missing import statement for React
+import React from 'react';
 import { storage } from '../../utils/storage';
-import {Button, Container, Form} from 'react-bootstrap';
+import { Button, Container, Form } from 'react-bootstrap';
+import '../../style/Style.css'; // Importa l'arxiu CSS
 
-export default function Logout(){
-    const tancar=()=>{
+export default function Logout() {
+    const handleLogout = () => {
         storage.remove('api_token');
         storage.remove('usuari_id');
         storage.remove('usuari_rol');
         storage.remove('usuari_nom');
-    }
+    };
 
-        return  (
-            <Container>
-            <h2>Sortir de la sessió?</h2>
-            <Form onSubmit={tancar} action="/inici">
-            <Button variant="primary" type="submit">
-                Sortir
-            </Button>
+    return (
+        <Container className="logout-container">
+            <h2 className="logout-title">Voleu sortir de la sessió?</h2>
+            <Form onSubmit={handleLogout} action="/inici">
+                <Button variant="primary" type="submit" className="logout-button">
+                    Sortir
+                </Button>
             </Form>
-            </Container>
-        );
+        </Container>
+    );
 }
