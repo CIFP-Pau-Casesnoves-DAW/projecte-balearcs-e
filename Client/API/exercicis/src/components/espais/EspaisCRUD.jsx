@@ -4,6 +4,7 @@ import { Form, Button, Spinner } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { Alert } from 'react-bootstrap';
 import ModalitatsSelect from "./ModalitatsSelect";
+import FotosEspai from "./FotosEspai";
 
 export default function EspaisCRUD(props){
     const [nom, setNom] = useState('');
@@ -429,6 +430,13 @@ export default function EspaisCRUD(props){
                     <Form.Label>Modalitat:</Form.Label>
                     <ModalitatsSelect api_token = {token} codiespai={id}></ModalitatsSelect>
                 </Form.Group>
+
+                <br />
+                <Form.Group className="mb-3">
+                    <h3>Foto:</h3>
+                    <FotosEspai id={id}/>
+                </Form.Group>
+
             <Button variant="primary" type="button" onClick={guardaEspai}>
                 Guarda
             </Button>

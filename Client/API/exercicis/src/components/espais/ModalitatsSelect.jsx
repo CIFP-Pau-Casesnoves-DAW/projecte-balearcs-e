@@ -1,13 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { useParams } from 'react-router-dom';
 
 export default function ModalitatsSelect(props) {
     const [modalitats, setModalitats] = useState([]);
+    const [modalitatsEspai, setModalitatsEspai] = useState([]);
     const token = props.api_token;
-    const codiespai = props.codiespai;
+    const codi_espai = props.codiespai;
     const [selectedOption, setSelectedOption] = useState('');
+    const { id } = useParams();
+    const [error, setError] = useState('');
 
     useEffect(() => {
+        if(id !== "-1"){
+            getModalitats();
+            getModalitatsEspai();
+        }
+        else{
+            setError("No s'ha pogut carregar la llista de modalitats.");
+        }
+    }, [id]);
+
+    const getModalitats = () => {
         fetch('http://balearc.aurorakachau.com/public/api/modalitats', {
             method: 'GET',
             headers: {
@@ -19,13 +33,25 @@ export default function ModalitatsSelect(props) {
         .then(response => response.json())
         .then(data => {
             setModalitats(data.data);
-            // Establim la opció seleccionada basada en el codi d'espai
-            const modalitat = data.data.find(modalitat => modalitat.codiespai === codiespai);
-            if (modalitat) {
-                setSelectedOption(modalitat.nom_modalitat);
-            }
+            console.log(modalitats);
         });
-    }, []);
+    }
+
+    const getModalitatsEspai = () => {
+        fetch('http://balearc.aurorakachau.com/public/api/espais_modalitats', {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            setModalitatsEspai(data.data);
+            console.log(modalitatsEspai);
+        });
+    }
 
     return (
         <select className="form-control" value={selectedOption}>

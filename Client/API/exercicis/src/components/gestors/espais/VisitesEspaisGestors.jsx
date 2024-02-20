@@ -41,7 +41,7 @@ export default function VisitesEspaisGestors(props) {
     };
 
     useEffect(() => {
-        if (visites.length > 0) {
+        if (visites && visites.length > 0) {
             const filteredVisites = visites.filter(visita => visita.espai_id === parseInt(espaiId));
             setVisitesEspai(filteredVisites);
         }

@@ -42,7 +42,9 @@ export default function Menu({ api_token, usuari_nom, usuari_rol }) {
                             <NavDropdown.Item href="/espaisgestors">Gestió d'espais</NavDropdown.Item>
                         </NavDropdown>
                     </>}
-                    {!api_token && <Link className="nav-link" to="/login">Login</Link>}
+                    {!api_token && <>
+                        <Link className="nav-link" to="/login">Login</Link>
+                    </>}
                 </Nav>
                 <Navbar.Collapse className="justify-content-end">
                     <Navbar.Text>

@@ -58,6 +58,10 @@ export default function Login(props) {
         ferLogin();
     };
 
+    const goToRegister = () => {
+        navigate("/registre");
+    };
+
     return (
         <div className='contingut'>
             <Container className="login-container">
@@ -90,6 +94,7 @@ export default function Login(props) {
                     <p>gregoriomartorell@gmail.com</p>
                     <p>GregorioMartorell123</p>
                 </div>
+                <Button variant="link" onClick={goToRegister}>No estàs registrat? Registra't aquí</Button>
             </Container>
         </div>
     );

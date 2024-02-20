@@ -51,6 +51,7 @@ import Visites from "./components/visites/Visites.jsx";
 import VisitesCRUD from "./components/visites/VisitesCRUD.jsx";
 import VisitesAfegeix from "./components/visites/VisitesAfegeix.jsx";
 import VisitesEspaisGestorsCRUD from "./components/gestors/espais/VisitesEspaisGestorsCRUD.jsx";
+import Registre from "./components/registre/Registre.jsx";
 /**
  * Component principal de l'aplicació.
  * Aquest component és responsable de renderitzar les rutes de l'aplicació utilitzant React Router.
@@ -183,7 +184,10 @@ function App() {
             <Route path="/logout" element={<Logout/>}/>
         </>} 
         {/* Routes sols per a usuaris NO logats*/}
-        {!api_token && <Route path="/login" element={<Login guardausuari_id={ferGuardausuari_id} guardaapi_token={ferGuardaapi_token} guardausuari_rol={ferGuardausuari_rol} guardausuari_nom={ferGuardausuari_nom}/>} /> } 
+        {!api_token && <>
+          <Route path="/login" element={<Login guardausuari_id={ferGuardausuari_id} guardaapi_token={ferGuardaapi_token} guardausuari_rol={ferGuardausuari_rol} guardausuari_nom={ferGuardausuari_nom}/>} />
+          <Route path="/registre" element={<Registre guardausuari_id={ferGuardausuari_id} guardaapi_token={ferGuardaapi_token} guardausuari_rol={ferGuardausuari_rol} guardausuari_nom={ferGuardausuari_nom}/>} />
+        </> } 
         {/* Routes per a tots els usuaris*/}
           <Route path="/ajuda" element={<Ajuda />} />
           <Route path="/inici" element={<Inici />} />
