@@ -1,25 +1,21 @@
 import React, { useState } from "react";
 import { Form, Button, Alert } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
-import { SelectEspais } from "./SelectEspais";
-import { SelectPuntsInteres } from "./SelectPunts";
 import axios from 'axios';
 
-export default function FotosAfegeix(props) {
+export default function FormulariAfegirFotos(props) {
+    const { espai_id, punt_interes_id, api_token, onCancel } = props;
+
     const [foto, setFoto] = useState(null);
-    const [espai_id, setEspai_id] = useState("");
-    const [punt_interes_id, setPunt_interes_id] = useState("");
     const [comentari, setComentari] = useState("");
     const [error, setError] = useState('');
-    const navigate = useNavigate();
-    const token = props.api_token;
+    const [successMessage, setSuccessMessage] = useState('');
 
     const handleFileChange = (event) => {
         setFoto(event.target.files[0]);
     }
 
-    const guardaFoto = () => {
-        if (!foto || punt_interes_id.trim() === '' || espai_id.trim() === '' || punt_interes_id === "-1" || espai_id === "-1") {
+    const guardaFoto = async () => {
+        if (!foto || !punt_interes_id || !espai_id) {
             setError("Tots els camps són obligatoris.");
             return;
         }
@@ -30,21 +26,22 @@ export default function FotosAfegeix(props) {
         formData.append('punt_interes_id', punt_interes_id);
         formData.append('comentari', comentari);
 
-        axios.post('http://balearc.aurorakachau.com/public/api/fotos', formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-                'Authorization': `Bearer ${token}`
-            }
-        })
-            .then(response => {
-                console.log(response.data);
-                setError('');
-                navigate('/fotos');
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                setError("Error en guardar la foto.");
+        try {
+            const response = await axios.post('http://balearc.aurorakachau.com/public/api/fotos', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': `Bearer ${api_token}`
+                }
             });
+
+            console.log(response.data);
+            setSuccessMessage('Foto afegida correctament.');
+            setError('');
+            // Aquí pots gestionar la redirecció o altres accions després d'afegir la foto amb èxit
+        } catch (error) {
+            console.error('Error:', error);
+            setError("Error en guardar la foto.");
+        }
     }
 
     return (
@@ -63,16 +60,6 @@ export default function FotosAfegeix(props) {
                 </Form.Group>
 
                 <Form.Group className="mb-3">
-                    <Form.Label>Espai: <strong>{espai_id}</strong></Form.Label>
-                    <SelectEspais id={espai_id} api_token={token} onChange={(value) => { setEspai_id(value) }} />
-                </Form.Group>
-
-                <Form.Group className="mb-3">
-                    <Form.Label>Punt Interés: <strong>{punt_interes_id}</strong></Form.Label>
-                    <SelectPuntsInteres idEspai={espai_id} api_token={token} onChange={(value) => { setPunt_interes_id(value) }} />
-                </Form.Group>
-
-                <Form.Group className="mb-3">
                     <Form.Label>Comentari</Form.Label>
                     <Form.Control
                         type="text"
@@ -85,12 +72,13 @@ export default function FotosAfegeix(props) {
                     Guarda
                 </Button>
                 &nbsp;&nbsp;
-                <Button variant="warning" type="button" onClick={() => navigate("/fotos")}>
+                <Button variant="warning" type="button" onClick={onCancel}>
                     Cancel·la
                 </Button>
             </Form>
             <br />
             {error !== '' && <Alert variant="danger">{error}</Alert>}
+            {successMessage !== '' && <Alert variant="success">{successMessage}</Alert>}
         </div>
     );
 }

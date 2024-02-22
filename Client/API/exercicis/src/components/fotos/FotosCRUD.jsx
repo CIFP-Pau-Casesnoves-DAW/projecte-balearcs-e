@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Form, Button, Alert, Spinner } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
-import {SelectEspais, SelectPuntsInteres} from "./SelectEspaisPunts";
+import { SelectEspais } from "./SelectEspais";
+import { SelectPuntsInteres } from "./SelectPunts";
 
 export default function FotosCRUD(props) {
     const [foto, setFoto] = useState("");
@@ -49,7 +50,7 @@ export default function FotosCRUD(props) {
     }
 
     const guardaFoto = () => {
-        if(espaiId === "-1"){
+        if (espaiId === "-1") {
             setError("No has seleccionat un espai.");
             return;
         }
@@ -87,7 +88,7 @@ export default function FotosCRUD(props) {
                 setError("Error en modificar la foto.");
             });
     }
-    
+
 
     const esborraFoto = () => {
         fetch(`http://balearc.aurorakachau.com/public/api/fotos/${id}`, {
@@ -141,7 +142,12 @@ export default function FotosCRUD(props) {
 
                 <Form.Group className="mb-3">
                     <Form.Label>Espai actual: <strong>{espaiId}</strong></Form.Label>
-                    <SelectEspais id={espaiId} api_token={token} onChange={(e) => { setEspaiId(e.target.value) }} />
+                    <SelectEspais id={espaiId} api_token={token} onChange={(value) => { setEspaiId(value) }} />
+                </Form.Group>
+
+                <Form.Group className="mb-3">
+                    <Form.Label>Punt d'Interés actual: <strong>{puntInteresId}</strong></Form.Label>
+                    <SelectPuntsInteres idEspai={espaiId} api_token={token} onChange={(value) => { setPuntInteresId(value) }} />
                 </Form.Group>
 
                 <Form.Group className="mb-3">

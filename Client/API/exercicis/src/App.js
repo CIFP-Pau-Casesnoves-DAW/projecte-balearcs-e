@@ -52,6 +52,9 @@ import VisitesCRUD from "./components/visites/VisitesCRUD.jsx";
 import VisitesAfegeix from "./components/visites/VisitesAfegeix.jsx";
 import VisitesEspaisGestorsCRUD from "./components/gestors/espais/VisitesEspaisGestorsCRUD.jsx";
 import Registre from "./components/registre/Registre.jsx";
+import Audios from "./components/audios/Audios.jsx";
+import AudiosAfegeix from "./components/audios/AudiosAfegeix.jsx";
+import AudiosCRUD from "./components/audios/AudiosCRUD.jsx";
 /**
  * Component principal de l'aplicació.
  * Aquest component és responsable de renderitzar les rutes de l'aplicació utilitzant React Router.
@@ -157,6 +160,10 @@ function App() {
             <Route path="/fotos" element={<Fotos api_token={api_token}/>} />
             <Route path="/fotos/afegir" element={<FotosAfegeix api_token={api_token}/>} />
             <Route path="/fotos/:id" element={<FotosCRUD api_token={api_token}/>} />
+            {/* AUDIOS */}
+            <Route path="/audios" element={<Audios api_token={api_token}/>} />
+            <Route path="/audios/afegir" element={<AudiosAfegeix api_token={api_token}/>} />
+            <Route path="/audios/:id" element={<AudiosCRUD api_token={api_token}/>} />
             {/* USUARIS */}
             <Route path="/usuaris" element={<Usuaris api_token = {api_token} usuari_nom={usuari_nom} usuari_id={usuari_id}/>} />
             <Route path="/usuaris/:id" element={<UsuarisCRUD api_token={api_token}/>} />
