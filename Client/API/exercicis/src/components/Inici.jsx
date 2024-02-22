@@ -4,8 +4,8 @@ import Carousel from 'react-bootstrap/Carousel';
 const HomePage = () => {
     return (
         <div>
-            <h1 style={{ color: 'Darkgreen', textAlign: 'center', padding: '30px'}}>BaleArcs</h1>
-            <p style={{ fontStyle: 'italic', textAlign: 'center' , paddingBottom: '30px'}}>Benvingut a la pàgina web de BaleArcs</p>
+            <h1 style={{ color: 'Darkgreen', textAlign: 'center', padding: '30px'}}>BaleArts</h1>
+            <p style={{ fontStyle: 'italic', textAlign: 'center' , paddingBottom: '30px'}}>Benvingut a la pàgina web de BaleArts</p>
             <Carousel>
                 <Carousel.Item >
                     <img 

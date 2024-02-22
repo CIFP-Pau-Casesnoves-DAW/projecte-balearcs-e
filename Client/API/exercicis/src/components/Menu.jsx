@@ -2,6 +2,7 @@ import {Link, Outlet} from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Navbar, Nav, Container, NavDropdown } from 'react-bootstrap';
 import logo from '../images/logoBalearcs.jpeg'; // Import the image
+import '../style/Style.css'; // Importa l'arxiu CSS
 
 export default function Menu({ api_token, usuari_nom, usuari_rol }) {
     return (
@@ -31,9 +32,20 @@ export default function Menu({ api_token, usuari_nom, usuari_rol }) {
                             <NavDropdown.Item href="/espais">Espais</NavDropdown.Item>
                             <NavDropdown.Item href="/puntsinteres">Punts d'interès</NavDropdown.Item>
                             <NavDropdown.Item href="/valoracions">Valoracions</NavDropdown.Item>
+                            <NavDropdown.Item href="/fotos">Fotos</NavDropdown.Item>
+                            <NavDropdown.Item href="/audios">Audios</NavDropdown.Item>
+                            <NavDropdown.Item href="/usuaris">Usuaris</NavDropdown.Item>
+                            <NavDropdown.Item href="/visites">Visites</NavDropdown.Item>
                         </NavDropdown>
                     </>}
-                    {!api_token && <Link className="nav-link" to="/login">Login</Link>}
+                    {api_token && usuari_rol=='gestor'&& <>
+                        <NavDropdown title="Gestió" id="basic-nav-dropdown">
+                            <NavDropdown.Item href="/espaisgestors">Gestió d'espais</NavDropdown.Item>
+                        </NavDropdown>
+                    </>}
+                    {!api_token && <>
+                        <Link className="nav-link" to="/login">Login</Link>
+                    </>}
                 </Nav>
                 <Navbar.Collapse className="justify-content-end">
                     <Navbar.Text>
@@ -44,6 +56,24 @@ export default function Menu({ api_token, usuari_nom, usuari_rol }) {
             <Container>
                 <Outlet />
             </Container>
+            {/* Footer */}
+            <footer className="footer mt-5 py-3 bg-dark text-white">
+                <Container>
+                    <div className="row">
+                        <div className="col-md-6">
+                            <p className="mb-0">&copy; {new Date().getFullYear()} BaleArts. Tots els drets reservats.</p>
+                        </div>
+                        <div className="col-md-6 d-flex justify-content-end align-items-center">
+                            <ul className="list-inline mb-0">
+                                <li className="list-inline-item"><a href="#" className="text-white"><i className="fab fa-facebook-f"></i></a></li>
+                                <li className="list-inline-item"><a href="#" className="text-white"><i className="fab fa-twitter"></i></a></li>
+                                <li className="list-inline-item"><a href="#" className="text-white"><i className="fab fa-instagram"></i></a></li>
+                            </ul>
+                            <p className="mb-0 ml-3">Contacte: info@balearts.com</p>
+                        </div>
+                    </div>
+                </Container>
+            </footer>
         </>
     );
 }

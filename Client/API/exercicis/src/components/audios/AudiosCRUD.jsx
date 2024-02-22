@@ -4,12 +4,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import { SelectEspais } from "./SelectEspais";
 import { SelectPuntsInteres } from "./SelectPunts";
 
-export default function FotosCRUD(props) {
-    const [foto, setFoto] = useState("");
+export default function AudiosCRUD(props) {
+    const [audioFile, setAudioFile] = useState("");
     const [puntInteresId, setPuntInteresId] = useState("");
     const [espaiId, setEspaiId] = useState("");
-    const [comentari, setComentari] = useState("");
-    const [espai_actual, setEspai_actual] = useState("");
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const [edita, setEdita] = useState(false);
@@ -19,17 +17,17 @@ export default function FotosCRUD(props) {
 
     useEffect(() => {
         if (id !== "-1") {
-            descarregaFoto();
+            descarregaAudio();
         } else {
             setEdita(false);
         }
     }, [id]);
 
-    const descarregaFoto = async () => {
+    const descarregaAudio = async () => {
         setLoading(true);
         setEdita(true);
         try {
-            const response = await fetch(`http://balearc.aurorakachau.com/public/api/fotos/${id}`, {
+            const response = await fetch(`http://balearc.aurorakachau.com/public/api/audios/${id}`, {
                 method: 'GET',
                 headers: {
                     'Accept': 'application/json',
@@ -39,75 +37,98 @@ export default function FotosCRUD(props) {
             });
             const responseData = await response.json();
             const data = responseData.data;
-            setFoto(data.foto);
+            setAudioFile(data.audio);
             setPuntInteresId(data.punt_interes_id);
             setEspaiId(data.espai_id);
-            setComentari(data.comentari);
         } catch (error) {
             console.log(error);
         }
         setLoading(false);
     }
 
-    const guardaFoto = () => {
-        if (espaiId === "-1") {
-            setError("No has seleccionat un espai.");
+    const handleFileChange = (event) => {
+        setAudioFile(event.target.files[0]);
+    }
+
+    const guardaAudio = () => {
+        if (!audioFile || espaiId === "-1") {
+            setError("Tots els camps són obligatoris.");
             return;
         }
 
         if (edita) {
-            modificaFoto();
+            modificaAudio();
         } else {
-            setError('Error en l\'edició');
+            creaAudio();
         }
     }
 
-    const modificaFoto = () => {
-        fetch(`http://balearc.aurorakachau.com/public/api/fotos/${id}`, {
-            method: 'PUT',
+    const creaAudio = () => {
+        const formData = new FormData();
+        formData.append('audio', audioFile);
+        formData.append('punt_interes_id', puntInteresId);
+        formData.append('espai_id', espaiId);
+
+        fetch('http://balearc.aurorakachau.com/public/api/audios', {
+            method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify({
-                punt_interes_id: puntInteresId,
-                espai_id: espaiId,
-                comentari: comentari
-            })
-        }).then(response => response.json())
-            .then((data) => {
-                if (data.error) {
-                    setError("Error al modificar la foto.");
-                } else {
-                    setError('');
-                    navigate('/fotos'); // Redirecció després d'èxit
-                }
+            body: formData
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                setError('');
+                navigate('/audios');
             })
             .catch(error => {
                 console.error('Error:', error);
-                setError("Error en modificar la foto.");
+                setError("Error en crear el audio.");
             });
     }
 
+    const modificaAudio = () => {
+        const formData = new FormData();
+        formData.append('audio', audioFile);
+        formData.append('punt_interes_id', puntInteresId);
+        formData.append('espai_id', espaiId);
 
-    const esborraFoto = () => {
-        fetch(`http://balearc.aurorakachau.com/public/api/fotos/${id}`, {
-            method: 'DELETE',
+        fetch(`http://balearc.aurorakachau.com/public/api/audios/${id}`, {
+            method: 'PUT',
             headers: {
-                'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
-            }
-        }).then(response => response.json())
+            },
+            body: formData
+        })
+            .then(response => response.json())
             .then(data => {
-                if (data.error) {
-                    setError("Error en esborrar la foto.");
-                } else {
-                    navigate('/fotos');
-                }
+                console.log(data);
+                setError('');
+                navigate('/audios');
             })
             .catch(error => {
                 console.error('Error:', error);
-                setError("Error en esborrar la foto.");
+                setError("Error en modificar el audio.");
+            });
+    }
+
+    const esborraAudio = () => {
+        fetch(`http://balearc.aurorakachau.com/public/api/audios/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                setError('');
+                navigate('/audios');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                setError("Error en esborrar el audio.");
             });
     }
 
@@ -118,26 +139,20 @@ export default function FotosCRUD(props) {
     return (
         <div>
             <Form>
-                {edita &&
+                {edita && (
                     <Form.Group className="mb-3">
                         <Form.Label>Id: </Form.Label>
                         <Form.Control type="text" name="id" value={id} disabled />
                     </Form.Group>
-                }
+                )}
                 <Form.Group className="mb-3">
-                    <Form.Label>Foto:</Form.Label>
+                    <Form.Label>Audio:</Form.Label>
                     <hr />
-                    {foto && (
-                        <img src={`http://balearc.aurorakachau.com/public/storage/${foto}`} alt="Vista prèvia de la foto" style={{ maxWidth: '300px' }} />
-                    )}
+                    <audio controls>
+                        <source src={`http://balearc.aurorakachau.com/public/storage/${audioFile}`} type="audio/mpeg" />
+                        Your browser does not support the audio element.
+                    </audio>
                     <hr />
-                    <Form.Label>Url:</Form.Label>
-                    <Form.Control
-                        type="text"
-                        placeholder="URL de la foto"
-                        value={foto} disabled
-                        onChange={(e) => setFoto(e.target.value)}
-                    />
                 </Form.Group>
 
                 <Form.Group className="mb-3">
@@ -150,16 +165,7 @@ export default function FotosCRUD(props) {
                     <SelectPuntsInteres idEspai={espaiId} api_token={token} onChange={(value) => { setPuntInteresId(value) }} />
                 </Form.Group>
 
-                <Form.Group className="mb-3">
-                    <Form.Label>Comentari:</Form.Label>
-                    <Form.Control
-                        type="text"
-                        placeholder="Comentari"
-                        value={comentari}
-                        onChange={(e) => setComentari(e.target.value)}
-                    />
-                </Form.Group>
-                <Button variant="primary" type="button" onClick={guardaFoto}>
+                <Button variant="primary" type="button" onClick={guardaAudio}>
                     {edita ? "Guarda" : "Crea"}
                 </Button>
                 &nbsp;&nbsp;
@@ -167,11 +173,11 @@ export default function FotosCRUD(props) {
                     Cancel·la
                 </Button>
                 &nbsp;&nbsp;
-                {edita &&
-                    <Button variant="danger" type="button" onClick={esborraFoto}>
+                {edita && (
+                    <Button variant="danger" type="button" onClick={esborraAudio}>
                         Esborra
                     </Button>
-                }
+                )}
             </Form>
             <br />
             {error !== '' && <Alert variant="danger">{error}</Alert>}

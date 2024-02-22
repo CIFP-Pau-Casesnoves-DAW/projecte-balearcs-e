@@ -5,32 +5,30 @@ import { SelectEspais } from "./SelectEspais";
 import { SelectPuntsInteres } from "./SelectPunts";
 import axios from 'axios';
 
-export default function FotosAfegeix(props) {
-    const [foto, setFoto] = useState(null);
+export default function AudiosAfegeix(props) {
+    const [audio, setAudio] = useState(null);
     const [espai_id, setEspai_id] = useState("");
     const [punt_interes_id, setPunt_interes_id] = useState("");
-    const [comentari, setComentari] = useState("");
     const [error, setError] = useState('');
     const navigate = useNavigate();
     const token = props.api_token;
 
     const handleFileChange = (event) => {
-        setFoto(event.target.files[0]);
+        setAudio(event.target.files[0]);
     }
 
-    const guardaFoto = () => {
-        if (!foto || punt_interes_id.trim() === '' || espai_id.trim() === '' || punt_interes_id === "-1" || espai_id === "-1") {
+    const guardaAudio = () => {
+        if (!audio || punt_interes_id.trim() === '' || espai_id.trim() === '' || punt_interes_id === "-1" || espai_id === "-1") {
             setError("Tots els camps són obligatoris.");
             return;
         }
 
         const formData = new FormData();
-        formData.append('foto', foto);
+        formData.append('audio', audio);
         formData.append('espai_id', espai_id);
         formData.append('punt_interes_id', punt_interes_id);
-        formData.append('comentari', comentari);
 
-        axios.post('http://balearc.aurorakachau.com/public/api/fotos', formData, {
+        axios.post('http://balearc.aurorakachau.com/public/api/audios', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
                 'Authorization': `Bearer ${token}`
@@ -39,25 +37,26 @@ export default function FotosAfegeix(props) {
             .then(response => {
                 console.log(response.data);
                 setError('');
-                navigate('/fotos');
+                navigate('/audios');
             })
             .catch(error => {
                 console.error('Error:', error);
-                setError("Error en guardar la foto.");
+                setError("Error en guardar el audio.");
             });
     }
 
     return (
         <div>
             <hr />
-            <h1>Afegir Foto</h1>
+            <h1>Afegir Audio</h1>
             <hr />
             <Form>
                 <Form.Group className="mb-3">
-                    <Form.Label>Foto</Form.Label>
+                    <Form.Label>Audio</Form.Label>
                     <Form.Control
                         type="file"
-                        name="foto"
+                        accept="audio/*" // Acepta cualquier tipo de archivo de audio
+                        name="audio"
                         onChange={handleFileChange}
                     />
                 </Form.Group>
@@ -72,20 +71,11 @@ export default function FotosAfegeix(props) {
                     <SelectPuntsInteres idEspai={espai_id} api_token={token} onChange={(value) => { setPunt_interes_id(value) }} />
                 </Form.Group>
 
-                <Form.Group className="mb-3">
-                    <Form.Label>Comentari</Form.Label>
-                    <Form.Control
-                        type="text"
-                        name="comentari"
-                        onChange={(event) => setComentari(event.target.value)}
-                    />
-                </Form.Group>
-
-                <Button variant="primary" type="button" onClick={guardaFoto}>
+                <Button variant="primary" type="button" onClick={guardaAudio}>
                     Guarda
                 </Button>
                 &nbsp;&nbsp;
-                <Button variant="warning" type="button" onClick={() => navigate("/fotos")}>
+                <Button variant="warning" type="button" onClick={() => navigate("/audios")}>
                     Cancel·la
                 </Button>
             </Form>

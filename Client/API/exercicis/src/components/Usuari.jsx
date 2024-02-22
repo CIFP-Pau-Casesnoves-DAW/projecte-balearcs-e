@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import ComentarisUsuari from './ComentarisUsuari';
 import ValoracionsUsuari from './ValoracionsUsuari';
 import UsuariDades from './UsuariDades';
+import '../style/Style.css'; // Importa l'arxiu CSS
 
 export default function Usuari(props) {
   const usuari = props.usuari_nom;
@@ -10,8 +11,7 @@ export default function Usuari(props) {
   const [showForm, setShowForm] = useState(false);
 
   return (
-    <div>
-      <hr />
+    <div className="user-section">
       <h1>Benvingut, {usuari}</h1>
       <p>Aquí podreu:</p>
       <ul>

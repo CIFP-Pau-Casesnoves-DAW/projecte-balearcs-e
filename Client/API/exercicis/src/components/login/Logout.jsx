@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { storage } from '../../utils/storage';
-import { Button, Container, Form } from 'react-bootstrap';
+import { Button, Container, Form, Alert } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import '../../style/Style.css'; // Importa l'arxiu CSS
 
 export default function Logout() {
     const id = storage.get('usuari_id');
@@ -49,13 +51,17 @@ export default function Logout() {
     }
 
     return (
-        <Container>
-            <h2>Sortir de la sessió?</h2>
-            <Form onSubmit={ferLogout} >
-                <Button variant="primary" type="submit">
-                    Sortir
-                </Button>
-            </Form>
-        </Container>
+        <div className='contingut'>
+            <Container className="logout-container">
+
+                    <h2 className="logout-title">Voleu sortir de la sessió?</h2>
+                    <Form onSubmit={ferLogout} action="/inici">
+                        <Button variant="primary" type="submit" className="logout-button">
+                            Sortir
+                        </Button>
+                    </Form>
+                    {error && <Alert variant="danger">No se ha pogut fer logout.</Alert>}
+            </Container>
+        </div>
     );
 }
