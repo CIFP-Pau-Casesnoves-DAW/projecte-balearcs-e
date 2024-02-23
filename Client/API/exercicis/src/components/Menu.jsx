@@ -16,6 +16,8 @@ export default function Menu({ api_token, usuari_nom, usuari_rol }) {
                     </Link>
                     <Link className="nav-link" to="/inici">Inici</Link>
                     <Link className="nav-link" to="/ajuda">Ajuda</Link>
+                    <Link className="nav-link" to="/contacte">Contacte</Link>
+                    <Link className="nav-link" to="/mesespais">Més Espais</Link>
                     {api_token && <>
                         <Link className="nav-link" to="/usuari">Usuari</Link>
                         <Link className="nav-link" to="/logout">Logout</Link>

@@ -55,6 +55,8 @@ import Registre from "./components/registre/Registre.jsx";
 import Audios from "./components/audios/Audios.jsx";
 import AudiosAfegeix from "./components/audios/AudiosAfegeix.jsx";
 import AudiosCRUD from "./components/audios/AudiosCRUD.jsx";
+import ContactForm from "./components/ContactForm.jsx";
+import MesEspais from "./components/MesEspais.jsx";
 /**
  * Component principal de l'aplicació.
  * Aquest component és responsable de renderitzar les rutes de l'aplicació utilitzant React Router.
@@ -189,6 +191,8 @@ function App() {
             <Route path="/usuari" element={<Usuari api_token = {api_token} usuari_nom={usuari_nom} usuari_id={usuari_id}/>} />
             {/* LOGOUT */}
             <Route path="/logout" element={<Logout/>}/>
+            {/* MÉS ESPAIS */}
+            <Route path="/mesespais" element={<MesEspais api_token = {api_token}/>} />
         </>} 
         {/* Routes sols per a usuaris NO logats*/}
         {!api_token && <>
@@ -198,6 +202,8 @@ function App() {
         {/* Routes per a tots els usuaris*/}
           <Route path="/ajuda" element={<Ajuda />} />
           <Route path="/inici" element={<Inici />} />
+          <Route path="/mesespais" element={<MesEspais api_token = {api_token}/>} />
+          <Route path="/contacte" element={<ContactForm/>} />
           <Route path="*" element={<h1>Ups! Opció incorrecta</h1>} />
         </Route>
       </Routes>
