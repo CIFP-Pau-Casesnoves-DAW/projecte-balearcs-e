@@ -1,6 +1,3 @@
-# projecte-balearcs-e grup E
-projecte-balearcs-e created by GitHub Classroom
-
 # Projecte Balearcs - README
 
 ## Grup E
@@ -83,24 +80,24 @@ Executa les migracions per crear la base de dades:
 - Audios
 - Comentaris
 - Espais
-- Espaisidiomes
+- EspaisIdiomes
 - EspaisModalitats
 - EspaisServeis
 - Fotos
 - Idiomes
-- Illa
+- Illes
 - Login
 - Modalitats
-- Modalitatsidiomes
+- ModalitatsIdiomes
 - Municipis
-- Puntsinteres
+- PuntsInteres
 - Serveis
-- Serveisidiomes
+- ServeisIdiomes
 - Tipus
 - Usuaris
 - Valoracions
 - Visites
-- Visitesidiomes
+- VisitesIdiomes
 - VisitesPuntsInteres
 
 ## Controladors
@@ -109,19 +106,19 @@ Executa les migracions per crear la base de dades:
 - AudiosController
 - ComentarisController
 - EspaisController
-- EspaisidiomesController
+- EspaisIdiomesController
 - EspaisModalitatsController
 - EspaisServeisController
 - FotosController
 - IdiomesController
-- IllaController
+- IllesController
 - LoginController
 - ModalitatsController
-- ModalitatsidiomesController
+- ModalitatsIdiomesController
 - MunicipisController
-- PuntsinteresController
+- PuntsInteresController
 - ServeisController
-- ServeisidiomesController
+- ServeisIdiomesController
 - TipusController
 - UsuarisController
 - ValoracionsController
@@ -162,3 +159,17 @@ Si vols contribuir al projecte, segueix aquests passos:
 ## Llicència
 
 Aquest projecte està sota la [Llicència CIFP PAUCASESNOVES](LICENSE).
+
+## DonDominio
+
+Aquest projecte està pujat a http://balearc.aurorakachau.com/public/api/nom_taula
+
+## Usuari Tomeu
+
+mail: TomeuCampaner@gmail.com
+
+contrasenya: TomeuCampaner123
+
+rol: administrador
+
+No està loguejat, recoman primer fer Login per tenir el token

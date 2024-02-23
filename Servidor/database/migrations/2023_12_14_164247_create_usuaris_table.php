@@ -19,13 +19,12 @@ return new class extends Migration
             $table->string('mail');
             $table->string('contrasenya');
             $table->enum('rol', ['usuari', 'administrador', 'gestor'])->default('usuari');
+            $table->string('api_token')->nullable();
             $table->date('data_baixa')->nullable();
             $table->timestamps();
         });
     }
 
-    
-   
     /**
      * Reverse the migrations.
      */

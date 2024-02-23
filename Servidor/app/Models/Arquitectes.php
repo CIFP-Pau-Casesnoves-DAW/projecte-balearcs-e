@@ -28,5 +28,3 @@ class Arquitectes extends Model
         return $this->hasMany(Espais::class);
     }
 }
-
-
