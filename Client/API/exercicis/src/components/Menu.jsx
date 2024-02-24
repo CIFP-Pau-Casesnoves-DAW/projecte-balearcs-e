@@ -4,8 +4,21 @@ import { Navbar, Nav, Container, NavDropdown } from 'react-bootstrap';
 import logo from '../images/logoBalearcs.jpeg'; // Import the image
 import '../style/Style.css'; // Importa l'arxiu CSS
 import BarraCerca from './BarraCerca';
+import { toggleModal } from './ModalContacte';
+import ModalContacte from './ModalContacte';
+import { useState } from 'react';
+
+
+
 
 export default function Menu({ api_token, usuari_nom, usuari_rol }) {
+    const [modalOpen, setModalOpen] = useState(false); // estat del modal
+
+    
+    const toggleModal = () => {
+        setModalOpen(!modalOpen); // Això commuta l'estat del modal
+    };
+
     return (
         <>
             <Navbar bg="dark" className="color-nav" variant="dark" expand="sm" sticky="top">
@@ -50,10 +63,26 @@ export default function Menu({ api_token, usuari_nom, usuari_rol }) {
                     </>}
                 </Nav>
                 {/* BarraCerca */}
-                <Nav>
+                <Nav style={{ display: 'flex', alignItems: 'center' }}>
                     <BarraCerca />
-
+                </Nav> 
+                {/* ModalContacte */}   
+                <Nav>
+                    <button 
+                        onClick={toggleModal} 
+                        style={{
+                            backgroundColor: 'grey', color: '#ffffff', padding: '8px 15px', 
+                            fontSize: '1rem', border: 'none', borderRadius: '0.55rem', 
+                            cursor: 'pointer', // Canvia el cursor a pointer per a indicar clicabilitat
+                            boxShadow: '0px 2px 2px rgba(0, 0, 0, 0.2)', // Ombra lleugera per a profunditat
+                            transition: 'all 0.2s ease-in-out', // Suavitzat de transició per interaccions
+                            margin: '5px', 
+                        }}>
+                        Contacte
+                    </button>
                 </Nav>
+                {/* Assegura't que passes les props correctament al ModalContacte */}
+                <ModalContacte isOpen={modalOpen} onClose={toggleModal} />
                 <Navbar.Collapse className="justify-content-end">
                     <Navbar.Text>
                         {usuari_nom && <>Hola, {usuari_nom}&nbsp;&nbsp;</>}
