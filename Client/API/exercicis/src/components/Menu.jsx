@@ -81,9 +81,8 @@ export default function Menu({ api_token, usuari_nom, usuari_rol }) {
                         Contacte
                     </button>
                 </Nav>
-                {/* Assegura't que passes les props correctament al ModalContacte */}
                 <ModalContacte isOpen={modalOpen} onClose={toggleModal} />
-                <Navbar.Collapse className="justify-content-end">
+                <Navbar.Collapse className="justify-content-end" style={{marginRight: '15px'}}>
                     <Navbar.Text>
                         {usuari_nom && <>Hola, {usuari_nom}&nbsp;&nbsp;</>}
                     </Navbar.Text>
