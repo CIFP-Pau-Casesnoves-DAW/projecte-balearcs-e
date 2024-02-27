@@ -3,16 +3,17 @@ import { Spinner } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { storage } from "../utils/storage.js"; 
 
-export default function ComentarisUsuari({ userId }) {
+export default function ComentarisUsuari({ userId, api_token }) {
   const [comentaris, setComentaris] = useState([]);
   const [loading, setLoading] = useState(false);
-  const token = storage.get('api_token');
+  const token = api_token;
+  const usrid = userId;
 
   useEffect(() => {
     const fetchComentaris = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`http://balearc.aurorakachau.com/public/api/usuaris/${userId}`,{
+        const response = await fetch(`http://balearc.aurorakachau.com/public/api/usuaris/${usrid}`,{
           method: 'GET',
           headers: {
             'Accept': 'application/json',
@@ -28,7 +29,7 @@ export default function ComentarisUsuari({ userId }) {
       setLoading(false);
     };
     fetchComentaris(); 
-  }, [userId]); 
+  }, [usrid]); 
 
   return (
     <div>
@@ -40,7 +41,7 @@ export default function ComentarisUsuari({ userId }) {
           </tr>
         </thead>
         <tbody>
-          {comentaris.map((comentari) => (
+          {comentaris && comentaris.map((comentari) => (
             <tr key={comentari.id}>
               <td>{comentari.comentari}</td>
               <td>{comentari.validat ? <span style={{ color: 'green' }}>Confirmada</span> : <span style={{ color: 'red' }}>En espera</span>}</td>

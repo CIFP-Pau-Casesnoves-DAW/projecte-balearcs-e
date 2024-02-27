@@ -57,7 +57,7 @@ import AudiosAfegeix from "./components/audios/AudiosAfegeix.jsx";
 import AudiosCRUD from "./components/audios/AudiosCRUD.jsx";
 import ContactForm from "./components/ContactForm.jsx";
 import MesEspais from "./components/MesEspais.jsx";
-import axios from "axios"; // Importa axios para hacer la solicitud HTTP
+import ValoracionsUsuari from "./components/ValoracionsUsuari.jsx";
 /**
  * Component principal de l'aplicació.
  * Aquest component és responsable de renderitzar les rutes de l'aplicació utilitzant React Router.
@@ -78,7 +78,6 @@ function App() {
 
     if (tk) {
       setapi_token(tk);
-      console.log("token " + tk);
       descarregaUsuari(tk); // Llamar a la función dentro del useEffect
     }
   }, []);
@@ -94,13 +93,9 @@ function App() {
         }
       });
       const responseData = await response.json();
-      console.log(responseData);
       setusuari_id(responseData.data.id);
       setusuari_nom(responseData.data.nom);
       setusuari_rol(responseData.data.rol);
-
-      // Los console.log aquí se ejecutarán después de que los valores del estado hayan sido actualizados
-      console.log(responseData.data.id);
 
     } catch (error) {
       console.log(error);
@@ -197,8 +192,8 @@ function App() {
         </>}
         {/* Routes sols per a usuaris logats*/}
         {api_token && <>
-            {/* INICI */}
-            <Route path="/usuari" element={<Usuari api_token = {api_token} usuari_nom={usuari_nom} usuari_id={usuari_id}/>} />
+            {/* DADES USUARI */}
+            <Route path="/usuari" element={<Usuari api_token = {api_token} usuari_nom={usuari_nom} usuari_id={usuari_id}/>}/>
             {/* LOGOUT */}
             <Route path="/logout" element={<Logout usuari_id = {usuari_id}/>}/>
             {/* MÉS ESPAIS */}

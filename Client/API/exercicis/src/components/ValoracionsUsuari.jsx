@@ -7,12 +7,13 @@ export default function ValoracionsUsuari(props) {
   const [loading, setLoading] = useState(false);
   const [espais, setEspais] = useState({});
   const token = props.api_token;
+  const usrid = props.userId;
 
   useEffect(() => {
     const fetchValoracions = async () => {
       setLoading(true);
       try {
-        const responseValoracions = await fetch(`http://balearc.aurorakachau.com/public/api/usuaris/${props.userId}`, {
+        const responseValoracions = await fetch(`http://balearc.aurorakachau.com/public/api/usuaris/${usrid}`, {
           method: 'GET',
           headers: {
             'Accept': 'application/json',
@@ -41,7 +42,7 @@ export default function ValoracionsUsuari(props) {
         setEspais(espaisMap);
 
       } catch (error) {
-        console.error('Error al obtener las valoraciones:', error);
+        console.error('Error al obtenir les valoracions:', error);
       }
       setLoading(false);
     };
@@ -60,7 +61,7 @@ export default function ValoracionsUsuari(props) {
           </tr>
         </thead>
         <tbody>
-          {valoracions.map((valoracio) => (
+          {valoracions && valoracions.map((valoracio) => (
             <tr key={valoracio.id}>
               <td>{espais[valoracio.espai_id]?.nom}</td>
               <td>{valoracio.puntuacio}</td>
