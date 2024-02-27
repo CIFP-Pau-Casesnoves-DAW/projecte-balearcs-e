@@ -67,50 +67,59 @@ import axios from "axios"; // Importa axios para hacer la solicitud HTTP
  * @returns {JSX.Element} El component principal de l'aplicació.
  */
 function App() {
-  const  [api_token, setapi_token] = useState(null);
+  const [api_token, setapi_token] = useState(null);
   const [usuari_id, setusuari_id] = useState(null);
   const [usuari_rol, setusuari_rol] = useState(null);
   const [usuari_nom, setusuari_nom] = useState(null);
 
   // Validation
-
   useEffect(() => {
-    
-    const tk = storage.get("api_token");  // llegint el api_token del localStorage
-    const us = storage.get("usuari_id"); // llegint l'user_id del localStorage
-    const rol = storage.get("usuari_rol"); // llegint el rol del localStorage
-    const nom = storage.get("usuari_nom"); // llegint el nom del localStorage
+    const tk = storage.get("api_token");
 
-
-    if (nom) {
-      setusuari_nom(nom);
-    }
-    if (rol) {
-      setusuari_rol(rol);
-    }
-    if (us) {
-      setusuari_id(us);
-    }
     if (tk) {
       setapi_token(tk);
+      console.log("token " + tk);
+      descarregaUsuari(tk); // Llamar a la función dentro del useEffect
     }
   }, []);
 
+  const descarregaUsuari = async (tk) => {
+    try {
+      const token = tk;
+      const response = await fetch(`http://balearc.aurorakachau.com/public/api/usuaris/token/${token}`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      });
+      const responseData = await response.json();
+      console.log(responseData);
+      setusuari_id(responseData.data.id);
+      setusuari_nom(responseData.data.nom);
+      setusuari_rol(responseData.data.rol);
+
+      // Los console.log aquí se ejecutarán después de que los valores del estado hayan sido actualizados
+      console.log(responseData.data.id);
+
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   // Guardam el token i l'usuari al localStorage
   const ferGuardaapi_token = (api_token) => {
-    storage.set("api_token",api_token);  // guardant el api_token al localStorage
+    storage.set("api_token", api_token);  // guardant el api_token al localStorage
     setapi_token(api_token);
+    descarregaUsuari(api_token);
   }
   const ferGuardausuari_id = (usuari_id) => {
-    storage.set("usuari_id",usuari_id);  // guardant el user_id al localStorage
     setusuari_id(usuari_id);
   }
   const ferGuardausuari_rol = (usuari_rol) => {
-    storage.set("usuari_rol",usuari_rol);  // guardant el usuari_rol al localStorage
     setusuari_rol(usuari_rol);
   }
   const ferGuardausuari_nom = (usuari_nom) => {
-    storage.set("usuari_nom",usuari_nom);  // guardant el usuari_nom al localStorage
     setusuari_nom(usuari_nom);
   }
 
