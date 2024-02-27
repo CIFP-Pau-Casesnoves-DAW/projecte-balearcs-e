@@ -43,7 +43,7 @@ function FotosEspai({ id }) {
                             {fotosEspai.map((foto) => (
                                 <li key={foto.id}>
                                     <img
-                                        src={`http://balearc.aurorakachau.com/public/${foto.foto}`}
+                                        src={`http://balearc.aurorakachau.com/public/storage/${foto.foto}`}
                                         alt={`Foto ${foto.id}`}
                                         style={{ maxWidth: '300px' }} // Estil per limitar l'ample a 300px
                                     />                                </li>

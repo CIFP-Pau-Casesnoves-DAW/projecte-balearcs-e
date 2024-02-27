@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Form, Button, Alert } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { SelectEspais } from "./SelectEspais";
-import { SelectPuntsInteres } from "./SelectPunts";
+import {SelectEspais} from "../fotos/SelectEspais.jsx";
+import {SelectPuntsInteres} from "../fotos/SelectPunts.jsx";
 import axios from 'axios';
 
 export default function AudiosAfegeix(props) {
