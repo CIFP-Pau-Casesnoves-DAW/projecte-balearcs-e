@@ -57,6 +57,7 @@ import AudiosAfegeix from "./components/audios/AudiosAfegeix.jsx";
 import AudiosCRUD from "./components/audios/AudiosCRUD.jsx";
 import ContactForm from "./components/ContactForm.jsx";
 import MesEspais from "./components/MesEspais.jsx";
+import axios from "axios"; // Importa axios para hacer la solicitud HTTP
 /**
  * Component principal de l'aplicació.
  * Aquest component és responsable de renderitzar les rutes de l'aplicació utilitzant React Router.
@@ -72,12 +73,15 @@ function App() {
   const [usuari_nom, setusuari_nom] = useState(null);
 
   // Validation
+
   useEffect(() => {
+    
     const tk = storage.get("api_token");  // llegint el api_token del localStorage
     const us = storage.get("usuari_id"); // llegint l'user_id del localStorage
     const rol = storage.get("usuari_rol"); // llegint el rol del localStorage
     const nom = storage.get("usuari_nom"); // llegint el nom del localStorage
-    
+
+
     if (nom) {
       setusuari_nom(nom);
     }
@@ -110,14 +114,12 @@ function App() {
     setusuari_nom(usuari_nom);
   }
 
-
-
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Menu api_token={api_token} usuari_id={usuari_id} usuari_rol={usuari_rol} usuari_nom={usuari_nom}/>} >
         {/* Routes sols per a usuaris logats administradors*/}
-        {api_token && usuari_rol=="administrador" && <>
+        {api_token && usuari_rol==="administrador" && <>
             {/* MUNICIPIS */}
             <Route path="/municipis" element={<Municipis api_token = {api_token}/>} />
             <Route path="/municipis/afegir" element={<MunicipisAfegeix api_token = {api_token}/>} />
@@ -181,7 +183,6 @@ function App() {
             <Route path="/espaisgestors" element={<EspaisGestors api_token = {api_token} usuari_id={usuari_id} />} />
             <Route path="/espaisgestors/:id" element={<EspaisGestorsCRUD api_token = {api_token} />} />
             {/* GESTIÓ DE PUNTS D'INTERÈS */}
-            {/* Problema perque si poso un altre id no asignat al gestor el pot modificar */}
             <Route path="/espaisgestors/:id/puntsinteresgestors/:id" element={<PuntsInteresGestorsCRUD api_token = {api_token} />} />
             <Route path="/espaisgestors/:id/visitesgestors/:id" element={<VisitesEspaisGestorsCRUD api_token = {api_token} />} />
         </>}
@@ -190,7 +191,7 @@ function App() {
             {/* INICI */}
             <Route path="/usuari" element={<Usuari api_token = {api_token} usuari_nom={usuari_nom} usuari_id={usuari_id}/>} />
             {/* LOGOUT */}
-            <Route path="/logout" element={<Logout/>}/>
+            <Route path="/logout" element={<Logout usuari_id = {usuari_id}/>}/>
             {/* MÉS ESPAIS */}
             <Route path="/mesespais" element={<MesEspais api_token = {api_token}/>} />
         </>} 

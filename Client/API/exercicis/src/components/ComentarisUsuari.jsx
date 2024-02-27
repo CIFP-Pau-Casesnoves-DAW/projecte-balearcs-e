@@ -22,7 +22,6 @@ export default function ComentarisUsuari({ userId }) {
         });
         const data = await response.json();
         setComentaris(data.data.comentaris);
-        console.log(data);
       } catch (error) {
         console.error('Error al obtenir els comentaris:', error);
       }

@@ -3,6 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Navbar, Nav, Container, NavDropdown } from 'react-bootstrap';
 import logo from '../images/logoBalearcs.jpeg'; // Import the image
 import '../style/Style.css'; // Importa l'arxiu CSS
+import BarraCerca from './BarraCerca';
 
 export default function Menu({ api_token, usuari_nom, usuari_rol }) {
     return (
@@ -17,7 +18,7 @@ export default function Menu({ api_token, usuari_nom, usuari_rol }) {
                     <Link className="nav-link" to="/inici">Inici</Link>
                     <Link className="nav-link" to="/ajuda">Ajuda</Link>
                     <Link className="nav-link" to="/contacte">Contacte</Link>
-                    <Link className="nav-link" to="/mesespais">Més Espais</Link>
+                    <Link className="nav-link" to="/mesespais">Espais</Link>
                     {api_token && <>
                         <Link className="nav-link" to="/usuari">Usuari</Link>
                         <Link className="nav-link" to="/logout">Logout</Link>
@@ -48,6 +49,10 @@ export default function Menu({ api_token, usuari_nom, usuari_rol }) {
                     {!api_token && <>
                         <Link className="nav-link" to="/login">Login</Link>
                     </>}
+                </Nav>
+                {/* BarraCerca */}
+                <Nav>
+                    <BarraCerca />
                 </Nav>
                 <Navbar.Collapse className="justify-content-end">
                     <Navbar.Text>

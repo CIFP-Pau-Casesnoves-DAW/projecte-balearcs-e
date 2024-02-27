@@ -39,7 +39,6 @@ const BarraCerca = () => {
 
     return (
         <>
-            <h2 className="mb-3">Cerca d'Espais</h2>
             <div>
                 <input
                     type="text"
@@ -56,13 +55,12 @@ const BarraCerca = () => {
                     }}
                 />
             </div>
-            <div>
-                <h2>Resultats</h2>
+            <div id='resultatscerca'>
                 {resultats.length > 0 ? (
                     <table className="table">
                         <thead>
                             <tr>
-                                <th>RESULTAT</th>
+                                <th>RESULTATS</th>
                                 {/* Afegeix més capçaleres de columnes segons les dades que vols mostrar */}
                             </tr>
                         </thead>
@@ -76,7 +74,7 @@ const BarraCerca = () => {
                         </tbody>
                     </table>
                 ) : (
-                    <p>No s'han trobat resultats.</p>
+                    <p></p>
                 )}
             </div>
         </>

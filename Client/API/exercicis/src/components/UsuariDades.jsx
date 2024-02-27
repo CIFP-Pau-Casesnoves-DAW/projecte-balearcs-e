@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Button, Alert, Spinner } from 'react-bootstrap';
-import { storage } from '../utils/storage.js';
 
-export default function UsuariDades() {
+export default function UsuariDades(props) {
     const [llinatges, setLlinatges] = useState('');
     const [nom, setNom] = useState('');
     const [dni, setDni] = useState('');
@@ -12,8 +11,8 @@ export default function UsuariDades() {
     const [error, setError] = useState('');
     const [showForm, setShowForm] = useState(false);
     const [loading, setLoading] = useState(false);
-    const id = storage.get('usuari_id');
-    const token = storage.get('api_token');
+    const id = props.usuari_id
+    const token = props.api_token;
 
     useEffect(() => {
         fetchDadesUsuari();

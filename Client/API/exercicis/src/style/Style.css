@@ -162,3 +162,20 @@
     padding-top: 15px;
     padding-bottom: 10px;
 }
+
+/* Estils de la barra de cerca */
+.navbar-nav {
+    align-items: center;
+}
+
+/* Estil per barra navegacio */
+nav.color-nav.navbar.navbar-expand-sm.navbar-dark.bg-dark.sticky-top {
+    height: 100px;
+}
+
+/* Estils resultats cerca */
+div#resultatscerca {
+    position: relative;
+    width: 170px;
+    bottom: -241px;
+}

@@ -27,7 +27,7 @@ export default function Login(props) {
             return response.json();
         })
         .then(respostajson => {
-            console.log(respostajson.data);
+            // console.log(respostajson.data);
     
             if (respostajson.status === "success" && respostajson.data && respostajson.data.api_token) {
                 let api_token = respostajson.data.api_token;
