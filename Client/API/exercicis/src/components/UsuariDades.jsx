@@ -11,7 +11,7 @@ export default function UsuariDades(props) {
     const [error, setError] = useState('');
     const [showForm, setShowForm] = useState(false);
     const [loading, setLoading] = useState(false);
-    const id = props.usuari_id;
+    const id = props.usuari_id
     const token = props.api_token;
 
     useEffect(() => {

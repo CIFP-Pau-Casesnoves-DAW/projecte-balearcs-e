@@ -7,9 +7,10 @@ use App\Models\Espais;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 
+
 /**
  * @OA\Tag(
- *     name="Espai",
+ *     name="Espais",
  *     description="Operacions per a Espais"
  * )
  */
@@ -18,18 +19,57 @@ class EspaisController extends Controller
     /**
      * @OA\Get(
      *     path="/api/espais",
-     *     tags={"Espai"},
+     *     tags={"Espais"},
      *     summary="Llista tots els espais",
      *     @OA\Response(
      *         response=200,
-     *         description="Retorna un llistat de tots els espais",
+     *         description="Llista d'espais recuperada amb èxit",
      *         @OA\JsonContent(
-     *             type="array",
-     *             @OA\Items(ref="#/components/schemas/Espai")
+     *             type="object",
+     *             @OA\Property(property="status", type="string", example="correcto"),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="array",
+     *                 @OA\Items(ref="#/components/schemas/Espais")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Error en la sol·licitud",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="data", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Error intern del servidor",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string")
      *         )
      *     )
      * )
+     * @OA\Schema(
+     *     schema="Espais",
+     *     type="object",
+     *     @OA\Property(property="nom", type="string", description="Nom de l'espai"),
+     *     @OA\Property(property="descripcio", type="string", description="Descripció de l'espai"),
+     *     @OA\Property(property="adreca", type="string", description="Adreça de l'espai"),
+     *     @OA\Property(property="mail", type="string", description="Correu electrònic de l'espai"),
+     *     @OA\Property(property="grau_acc", type="string", description="Grau d'accessibilitat de l'espai"),
+     *     @OA\Property(property="data_baixa", type="string", format="date", description="Data de baixa de l'espai"),
+     *     @OA\Property(property="arquitecte_id", type="integer", description="ID de l'arquitecte de l'espai"),
+     *     @OA\Property(property="gestor_id", type="integer", description="ID del gestor de l'espai"),
+     *     @OA\Property(property="tipus_id", type="integer", description="ID del tipus d'espai"),
+     *     @OA\Property(property="municipi_id", type="integer", description="ID del municipi de l'espai")
+     *     
+     * )
      */
+
     public function index()
     {
         try {
@@ -45,38 +85,49 @@ class EspaisController extends Controller
     /**
      * @OA\Post(
      *     path="/api/espais",
-     *     tags={"Espai"},
+     *     tags={"Espais"},
      *     summary="Crea un nou espai",
      *     @OA\RequestBody(
      *         required=true,
      *         description="Dades necessàries per a crear un nou espai",
      *         @OA\JsonContent(
-     *             required={"nom", "descripcio", "carrer", "numero", "mail", "arquitecte_id", "gestor_id", "tipus_id", "municipi_id"},
-     *             @OA\Property(property="nom", type="string", example="Edifici Històric"),
-     *             @OA\Property(property="descripcio", type="string", example="Descripció detallada de l'edifici"),
-     *             @OA\Property(property="carrer", type="string", example="Carrer de l'Exemple"),
-     *             @OA\Property(property="numero", type="string", example="123"),
-     *             @OA\Property(property="pis_porta", type="string", example="1r 2a", nullable=true),
-     *             @OA\Property(property="web", type="string", format="url", example="https://exemple.com", nullable=true),
-     *             @OA\Property(property="mail", type="string", format="email", example="contacte@exemple.com"),
-     *             @OA\Property(property="grau_acc", type="string", enum={"baix", "mig", "alt"}, nullable=true),
-     *             @OA\Property(property="data_baixa", type="string", format="date", example="2023-01-01", nullable=true),
-     *             @OA\Property(property="arquitecte_id", type="integer", example=1),
-     *             @OA\Property(property="gestor_id", type="integer", example=2),
-     *             @OA\Property(property="tipus_id", type="integer", example=3),
-     *             @OA\Property(property="municipi_id", type="integer", example=4)
+     *             required={"nom", "descripcio", "carrer", "numero", "mail"},
+     *             @OA\Property(property="nom", type="string", description="Nom de l'espai", maxLength=255),
+     *             @OA\Property(property="descripcio", type="string", description="Descripció de l'espai"),
+     *             @OA\Property(property="carrer", type="string", description="Carrer de l'espai", maxLength=255),
+     *             @OA\Property(property="numero", type="string", description="Número de l'edifici", maxLength=10),
+     *             @OA\Property(property="pis_porta", type="string", description="Pis i porta", maxLength=50, nullable=true),
+     *             @OA\Property(property="web", type="string", description="Web de l'espai", maxLength=255, nullable=true),
+     *             @OA\Property(property="mail", type="string", format="email", description="Correu electrònic de contacte", maxLength=255),
+     *             @OA\Property(property="grau_acc", type="string", description="Grau d'accessibilitat", enum={"baix", "mig", "alt"}, nullable=true),
+     *             @OA\Property(property="any_cons", type="integer", description="Any de construcció", nullable=true)
      *         )
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Espai creat correctament",
-     *         @OA\JsonContent(ref="#/components/schemas/Espai")
+     *         description="Nou espai creat correctament",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="string", example="correcte"),
+     *             @OA\Property(property="data", type="object", ref="#/components/schemas/Espais")
+     *         )
      *     ),
      *     @OA\Response(
      *         response=400,
-     *         description="Error de validació",
+     *         description="Error en la validació de dades",
      *         @OA\JsonContent(
-     *             @OA\Property(property="errors", type="object")
+     *             type="object",
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="data", type="object", additionalProperties={"type":"string"})
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Error intern del servidor",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string")
      *         )
      *     )
      * )
@@ -136,21 +187,46 @@ class EspaisController extends Controller
     /**
      * @OA\Get(
      *     path="/api/espais/{id}",
-     *     tags={"Espai"},
-     *     summary="Mostra un espai específic",
+     *     tags={"Espais"},
+     *     summary="Obté les dades d'un espai específic",
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
-     *         @OA\Schema(type="integer")
+     *         description="Identificador únic de l'espai",
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Retorna l'espai especificat",
-     *         @OA\JsonContent(ref="#/components/schemas/Espai")
+     *         description="Dades de l'espai trobades",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="string", example="correcto"),
+     *             @OA\Property(property="data", type="object", ref="#/components/schemas/Espais")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Espai no trobat",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="string", example="Espai no trobat")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Error intern del servidor",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string")
+     *         )
      *     )
      * )
      */
+
     public function show($id)
     {
         try {
@@ -165,57 +241,47 @@ class EspaisController extends Controller
 
     /**
      * @OA\Put(
-     *     path="/api/espais/{id}",
-     *     tags={"Espai"},
-     *     summary="Actualitza un espai específic",
+     *     path="/espais/{id}",
+     *     tags={"Espais"},
+     *     summary="Actualitza un espai existent",
+     *     description="Actualitza les dades d'un espai basat en el seu ID",
+     *     operationId="updateEspai",
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
-     *         required=true,
      *         description="ID de l'espai a actualitzar",
-     *         @OA\Schema(type="integer")
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer",
+     *             format="int64"
+     *         )
      *     ),
      *     @OA\RequestBody(
+     *         description="Dades actualitzades de l'espai",
      *         required=true,
-     *         description="Dades per a actualitzar un espai",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="nom", type="string", example="Edifici Modernitzat"),
-     *             @OA\Property(property="descripcio", type="string", example="Nova descripció de l'edifici"),
-     *             @OA\Property(property="carrer", type="string", example="Carrer de la Innovació"),
-     *             @OA\Property(property="numero", type="string", example="456"),
-     *             @OA\Property(property="pis_porta", type="string", example="2n 3a", nullable=true),
-     *             @OA\Property(property="web", type="string", format="url", example="https://exemplemodernitzat.com", nullable=true),
-     *             @OA\Property(property="mail", type="string", format="email", example="modernitzat@exemple.com"),
-     *             @OA\Property(property="grau_acc", type="string", enum={"baix", "mig", "alt"}, nullable=true),
-     *             @OA\Property(property="data_baixa", type="string", format="date", example="2023-02-01", nullable=true),
-     *             @OA\Property(property="arquitecte_id", type="integer", example=2),
-     *             @OA\Property(property="gestor_id", type="integer", example=3),
-     *             @OA\Property(property="tipus_id", type="integer", example=4),
-     *             @OA\Property(property="municipi_id", type="integer", example=5)
-     *         )
+     *         @OA\JsonContent(ref="#/components/schemas/Espais")
      *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Espai actualitzat correctament",
-     *         @OA\JsonContent(ref="#/components/schemas/Espai")
+     *         @OA\JsonContent(ref="#/components/schemas/Espais")
      *     ),
      *     @OA\Response(
      *         response=400,
-     *         description="Error de validació",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="errors", type="object")
-     *         )
+     *         description="Dades no vàlides"
      *     ),
      *     @OA\Response(
      *         response=404,
-     *         description="Espai no trobat",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Espai no trobat")
-     *         )
+     *         description="Espai no trobat"
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Error del servidor"
      *     )
      * )
+     * 
      */
+
     public function update(Request $request, $id)
     {
         try {
@@ -306,19 +372,41 @@ class EspaisController extends Controller
     /**
      * @OA\Delete(
      *     path="/api/espais/{id}",
-     *     tags={"Espai"},
-     *     summary="Elimina un espai específic",
+     *     tags={"Espais"},
+     *     summary="Elimina un espai existent",
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
-     *         @OA\Schema(type="integer")
+     *         description="Identificador únic de l'espai a eliminar",
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
      *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Espai eliminat correctament",
      *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Espai eliminat correctament")
+     *             type="object",
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="data", type="object", ref="#/components/schemas/Espais")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Espai no trobat o error en l'eliminació",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="string", example="Error")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Error intern del servidor",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string")
      *         )
      *     )
      * )
@@ -335,6 +423,49 @@ class EspaisController extends Controller
             return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
         }
     }
+
+    /**
+     * @OA\Delete(
+     *     path="/api/espais/delete/{id}",
+     *     tags={"Espais"},
+     *     summary="Marca un espai com a donat de baixa",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Identificador únic de l'espai a marcar com a baixa",
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Espai marcat com a baixa correctament",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="data", type="object", ref="#/components/schemas/Espais")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Espai no trobat o error en el procés de baixa",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="string", example="Error")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Error intern del servidor",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string")
+     *         )
+     *     )
+     * )
+     */
 
     // No eliminamos un espacio, solo ponemos fecha de baja
     public function delete($id)

@@ -23,17 +23,37 @@ class ValoracionsController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/valoracions",
+     *     path="/valoracions",
+     *     summary="Obtenir totes les valoracions",
      *     tags={"Valoracions"},
-     *     summary="Llista totes les valoracions",
      *     @OA\Response(
      *         response=200,
-     *         description="Retorna un llistat de valoracions",
+     *         description="Llista de valoracions",
      *         @OA\JsonContent(
      *             type="array",
-     *             @OA\Items(ref="#/components/schemas/Valoracions")
+     *             @OA\Items(ref="#/components/schemas/Valoracio")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Comentari no trobat",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="data", type="string", example="Comentari no trobat")
      *         )
      *     )
+     * )
+     * @OA\Schema(
+     *     schema="Valoracio",
+     *     type="object",
+     *     @OA\Property(property="id", type="integer"),
+     *     @OA\Property(property="comentari", type="string"),
+     *     @OA\Property(property="puntuacio", type="integer"),
+     *     @OA\Property(property="usuari_id", type="integer"),
+     *     @OA\Property(property="espai_id", type="integer"),
+     *     @OA\Property(property="created_at", type="string", format="date-time"),
+     *     @OA\Property(property="updated_at", type="string", format="date-time"),
      * )
      */
     public function index()
@@ -55,16 +75,47 @@ class ValoracionsController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/valoracions",
+     *     path="/valoracions",
+     *     summary="Crear una nova valoració",
      *     tags={"Valoracions"},
-     *     summary="Crea una nova valoració",
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/Valoracions")
+     *         description="Dades necessàries per a crear una nova valoració",
+     *         @OA\JsonContent(
+     *             required={"puntuacio", "espai_id", "md_id"},
+     *             @OA\Property(property="puntuacio", type="integer", example=5),
+     *             @OA\Property(property="data", type="string", format="date-time", example="2024-01-30T12:00:00Z"),
+     *             @OA\Property(property="usuari_id", type="integer", example=1),
+     *             @OA\Property(property="espai_id", type="integer", example=1),
+     *             @OA\Property(property="data_baixa", type="string", format="date", nullable=true),
+     *         )
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Valoració creada correctament"
+     *         description="Valoració creada correctament",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="data", type="object", ref="#/components/schemas/Valoracio")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Error en la validació de dades",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="data", type="object", additionalProperties={"type":"string"})
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Error intern del servidor",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string")
+     *         )
      *     )
      * )
      */
@@ -111,21 +162,51 @@ class ValoracionsController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/valoracions/{id}",
+     *     path="/valoracions/{id}",
+     *     summary="Obtenir una valoració per ID",
      *     tags={"Valoracions"},
-     *     summary="Mostra una valoració específica",
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
-     *         @OA\Schema(
-     *             type="integer"
-     *         )
+     *         description="ID de la valoració a obtenir",
+     *         @OA\Schema(type="integer")
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Retorna la valoració especificada",
-     *         @OA\JsonContent(ref="#/components/schemas/Valoracions")
+     *         description="Valoració trobada correctament",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="string", example="correcto"),
+     *             @OA\Property(property="data", type="object", ref="#/components/schemas/Valoracio")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Error en la validació de dades",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="data", type="object", additionalProperties={"type":"string"})
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Valoració no trobada",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="Valoració no trobada")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Error intern del servidor",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string")
+     *         )
      *     )
      * )
      */
@@ -149,24 +230,63 @@ class ValoracionsController extends Controller
 
     /**
      * @OA\Put(
-     *     path="/api/valoracions/{id}",
+     *     path="/valoracions/{id}",
+     *     summary="Actualitza una valoració existent",
      *     tags={"Valoracions"},
-     *     summary="Actualitza una valoració específica",
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
-     *         @OA\Schema(
-     *             type="integer"
-     *         )
+     *         description="ID de la valoració a actualitzar",
+     *         @OA\Schema(type="integer")
      *     ),
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/Valoracions")
+     *         description="Dades necessàries per actualitzar la valoració",
+     *         @OA\JsonContent(
+     *             required={"puntuacio", "espai_id"},
+     *             @OA\Property(property="puntuacio", type="integer", example=4),
+     *             @OA\Property(property="espai_id", type="integer", example=1),
+     *             @OA\Property(property="usuari_id", type="integer", example=2, nullable=true),
+     *             @OA\Property(property="data_baixa", type="string", format="date", example="2024-01-28", nullable=true),
+     *             @OA\Property(property="validat", type="boolean", example=true, nullable=true)
+     *         )
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Valoració actualitzada correctament"
+     *         description="Valoració actualitzada amb èxit",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="data", type="object", ref="#/components/schemas/Valoracio")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Validació de dades fallida",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="data", type="object", additionalProperties={"type":"string"})
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Valoració no trobada",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="Valoració no trobada")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Error intern del servidor",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string")
+     *         )
      *     )
      * )
      */
@@ -233,20 +353,51 @@ class ValoracionsController extends Controller
 
     /**
      * @OA\Delete(
-     *     path="/api/valoracions/{id}",
+     *     path="/valoracions/{id}",
+     *     summary="Esborra una valoració per ID",
      *     tags={"Valoracions"},
-     *     summary="Elimina una valoració específica",
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
-     *         @OA\Schema(
-     *             type="integer"
-     *         )
+     *         description="ID de la valoració a esborrar",
+     *         @OA\Schema(type="integer")
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Valoració eliminada correctament"
+     *         description="Valoració esborrada correctament",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="data", type="object", ref="#/components/schemas/Valoracio")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Error en la validació de dades",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="data", type="object", additionalProperties={"type":"string"})
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Valoració no trobada",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="Valoració no trobada")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Error intern del servidor",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string")
+     *         )
      *     )
      * )
      */

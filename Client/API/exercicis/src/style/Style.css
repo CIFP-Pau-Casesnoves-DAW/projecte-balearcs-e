@@ -143,3 +143,39 @@
     color: white; /* Color del text */
     padding: 20px; /* Espaiat intern */
 }
+
+/* Estils pel formulari de contacte */
+
+.custom-form {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1); /* Afegeix una ombra suau */
+}
+
+.custom-form .form-group {
+    margin-bottom: 20px; /* Espai entre els elements del formulari */
+}
+
+.custom-form label {
+    font-weight: bold;
+    padding-top: 15px;
+    padding-bottom: 10px;
+}
+
+/* Estils de la barra de cerca */
+.navbar-nav {
+    align-items: center;
+}
+
+/* Estil per barra navegacio */
+nav.color-nav.navbar.navbar-expand-sm.navbar-dark.bg-dark.sticky-top {
+    height: 100px;
+}
+
+/* Estils resultats cerca */
+div#resultatscerca {
+    position: relative;
+    width: 170px;
+    bottom: -241px;
+}
