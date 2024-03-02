@@ -56,6 +56,12 @@ import Audios from "./components/audios/Audios.jsx";
 import AudiosAfegeix from "./components/audios/AudiosAfegeix.jsx";
 import AudiosCRUD from "./components/audios/AudiosCRUD.jsx";
 import MesEspais from "./components/MesEspais.jsx";
+import BarraCerca from "./components/BarraCerca.jsx";
+import LlistaEspais from "./components/LlistaEspais.jsx";
+import LlistaMunicipis from "./components/LlistaMunicipis.jsx";
+import PuntsInteresEspai from "./components/PuntsInteresEspai.jsx";
+import VisitesEspais from "./components/VisitesEspais.jsx";
+import UltimsComentaris from "./components/UltimsComentaris.jsx";
 /**
  * Component principal de l'aplicació.
  * Aquest component és responsable de renderitzar les rutes de l'aplicació utilitzant React Router.
@@ -91,7 +97,8 @@ function App() {
     }
   }, []);
 
-  // Guardam el token i l'usuari al localStorage
+
+   {/*Guardam el token i l'usuari al localStorage*/}
   const ferGuardaapi_token = (api_token) => {
     storage.set("api_token",api_token);  // guardant el api_token al localStorage
     setapi_token(api_token);
@@ -202,6 +209,12 @@ function App() {
           <Route path="/ajuda" element={<Ajuda />} />
           <Route path="/inici" element={<Inici />} />
           <Route path="/mesespais" element={<MesEspais api_token = {api_token}/>} />
+          <Route path="/puntsinteresespai" element={<PuntsInteresEspai api_token = {api_token}/>} />
+          <Route path="/visitesespais" element={<VisitesEspais api_token = {api_token}/>}  />
+          <Route path="/ultimscomentaris" element={<UltimsComentaris api_token = {api_token}/>} />
+          <Route path="/cerca" element={<BarraCerca api_token = {api_token}/>} />
+          <Route path="/municipis" element={<LlistaMunicipis api_token = {api_token}/>} />
+          <Route path="/espais" element={<LlistaEspais api_token = {api_token}/>} />
           <Route path="*" element={<h1>Ups! Opció incorrecta</h1>} />
         </Route>
       </Routes>

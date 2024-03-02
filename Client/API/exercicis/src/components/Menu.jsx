@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Navbar, Nav, Container, NavDropdown } from 'react-bootstrap';
 import logo from '../images/logoBalearcs.jpeg'; // Import the image
 import '../style/Style.css'; // Importa l'arxiu CSS
-import BarraCerca from './BarraCerca';
+
 import { toggleModal } from './ModalContacte';
 import ModalContacte from './ModalContacte';
 import { useState } from 'react';
@@ -31,6 +31,9 @@ export default function Menu({ api_token, usuari_nom, usuari_rol }) {
                     <Link className="nav-link" to="/inici">Inici</Link>
                     <Link className="nav-link" to="/ajuda">Ajuda</Link>
                     <Link className="nav-link" to="/mesespais">Més Espais</Link>
+                    <Link className='nav-link' to="/puntsinteresespai">Punts Interès Espai</Link>
+                    <Link className='nav-link' to="/ultimscomentaris">Últims Comentaris</Link>
+                    <Link className='nav-link' to="/visitesespais">Visites Espais</Link>
                     {api_token && <>
                         <Link className="nav-link" to="/usuari">Usuari</Link>
                         <Link className="nav-link" to="/logout">Logout</Link>
@@ -62,21 +65,18 @@ export default function Menu({ api_token, usuari_nom, usuari_rol }) {
                         <Link className="nav-link" to="/login">Login</Link>
                     </>}
                 </Nav>
-                {/* BarraCerca */}
-                <Nav style={{ display: 'flex', alignItems: 'center' }}>
-                    <BarraCerca />
-                </Nav> 
+              
                 {/* ModalContacte */}   
                 <Nav>
                     <button 
                         onClick={toggleModal} 
                         style={{
                             backgroundColor: 'grey', color: '#ffffff', padding: '8px 15px', 
-                            fontSize: '1rem', border: 'none', borderRadius: '0.55rem', 
+                            fontSize: '1rem', border: 'none', borderRadius: '0.65rem', 
                             cursor: 'pointer', // Canvia el cursor a pointer per a indicar clicabilitat
                             boxShadow: '0px 2px 2px rgba(0, 0, 0, 0.2)', // Ombra lleugera per a profunditat
                             transition: 'all 0.2s ease-in-out', // Suavitzat de transició per interaccions
-                            margin: '5px', 
+                            margin: '30px', 
                         }}>
                         Contacte
                     </button>

@@ -1,84 +1,67 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { useState } from 'react';
+import { Modal, Button } from 'react-bootstrap';
+import LlistaMunicipis from './LlistaMunicipis'; // Asumim que el component està en aquesta ruta
+import LlistaEspais from './LlistaEspais'; // Asumim que el component està en aquesta ruta
+import LlistaServeis from './LlistaServeis';
 
-const BarraCerca = () => {
-    const [resultats, setResultats] = useState([]);
-    const [searchText, setSearchText] = useState('');
 
-    // Endpoint per cercar espais (ajustat per incloure cerca)
-    const endpointEspais = `http://balearc.aurorakachau.com/public/api/espais?cerca=${searchText}`;
+const BarraCerca = ({ api_token }) => {
+    const [cercaTipus, setCercaTipus] = useState('nom');
+    const [showModal, setShowModal] = useState(false);
+    
 
-    useEffect(() => {
-        // Funció per a cercar espais basat en el text de cerca
-        const fetchData = async () => {
-            if (!searchText.trim()) {
-                setResultats([]);
-                return; // Evita la cerca si el text està buit
-            }
+    // Funció per determinar quin component mostrar dins del modal
+    const renderComponentDinsModal = () => {
+        switch(cercaTipus) {
+            case 'municipi':
+                return <LlistaMunicipis  api_token={api_token} />;
+            // Altres casos per a 'nom', 'grau_acc', i 'serveis'...
+            case 'nom':
+                return <LlistaEspais />;
+            //case 'grau_acc':
+              //  return <LlistaGrausAcc api_token={api_token} />;
+            case 'serveis':
+                return <LlistaServeis api_token={api_token} />;
 
-            try {
-                const response = await axios.get(endpointEspais);
-                setResultats(response.data.data); 
-            } catch (error) {
-                console.error('Error al obtenir els espais', error);
-            }
-        };
+            default:
+                return <p>No s'ha seleccionat cap tipus de cerca.</p>;
+        }
+    };
 
-        // Retard de 500ms per a millorar l'experiència d'usuari i reduir peticions innecessàries
-        const timeoutId = setTimeout(() => {
-            fetchData();
-        }, 500);
-
-        return () => clearTimeout(timeoutId); // Neteja el timeout quan el component es desmonti o actualitzi
-
-    }, [searchText]); // Dependència de l'`useEffect`: searchText
-
-    const handleSearchInputChange = (e) => {
-        setSearchText(e.target.value);
+    const handleSelectChange = (e) => {
+        setCercaTipus(e.target.value);
+        // Depenent del tipus de cerca, podríem voler carregar la informació aquí
+        // o simplement mostrar el modal que ja contindrà la informació necessària.
+        setShowModal(true);
     };
 
     return (
         <>
-            <h2 className="mb-3">Cerca d'Espais</h2>
+            <h2 className="mb-3">Cerca d'Espais i Serveis</h2>
             <div>
-                <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Cerca espais per nom, municipi, serveis..."
-                    value={searchText}
-                    onChange={handleSearchInputChange}
-                    style={{
-                        height: '38px',
-                        fontSize: '16px',
-                        minWidth: '400px',
-                        margin: '0 auto 10px auto', // Centra l'input horitzontalment i afegeix un marge inferior
-                        display: 'block', // Asegura que l'input es mostri en la seva pròpia línia
-                    }}
-                />
+                <select
+                    value={cercaTipus}
+                    onChange={handleSelectChange}
+                    className="form-control mb-3"
+                    style={{ width: '200px', margin: '0 auto' }}
+                >
+                    <option value="nom">Espais</option>
+                    <option value="municipi">Municipis</option>
+                    <option value="grau_acc">Grau d'Accessibilitat</option>
+                    <option value="serveis">Serveis</option>
+                </select>
             </div>
-            <div>
-                <h2>Resultats</h2>
-                {resultats.length > 0 ? (
-                    <table className="table">
-                        <thead>
-                            <tr>
-                                <th>RESULTAT</th>
-                                {/* Afegeix més capçaleres de columnes segons les dades que vols mostrar */}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {resultats.map((resultat) => (
-                                <tr key={resultat.id}>
-                                    <td>{resultat.nom}</td>
-                                   
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                ) : (
-                    <p>No s'han trobat resultats.</p>
-                )}
-            </div>
+            <Modal show={showModal} onHide={() => setShowModal(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Resultats de la Cerca</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {renderComponentDinsModal()}
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShowModal(false)}>Tanca</Button>
+                </Modal.Footer>
+            </Modal>
         </>
     );
 };
