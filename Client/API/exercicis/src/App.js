@@ -62,6 +62,8 @@ import LlistaMunicipis from "./components/LlistaMunicipis.jsx";
 import PuntsInteresEspai from "./components/PuntsInteresEspai.jsx";
 import VisitesEspais from "./components/VisitesEspais.jsx";
 import UltimsComentaris from "./components/UltimsComentaris.jsx";
+import ValoracionsComentaris from "./components/ValoracionsComentaris.jsx";
+
 /**
  * Component principal de l'aplicació.
  * Aquest component és responsable de renderitzar les rutes de l'aplicació utilitzant React Router.
@@ -199,6 +201,9 @@ function App() {
             <Route path="/logout" element={<Logout/>}/>
              {/* MÉS ESPAIS */}
              <Route path="/mesespais" element={<MesEspais api_token = {api_token}/>} />
+             {/* VALORACIONS I COMENTARIS */}
+              <Route path="/valoracionscomentaris" element={<ValoracionsComentaris api_token = {api_token}/>} />
+             
         </>} 
         {/* Routes sols per a usuaris NO logats*/}
         {!api_token && <>
@@ -212,6 +217,7 @@ function App() {
           <Route path="/puntsinteresespai" element={<PuntsInteresEspai api_token = {api_token}/>} />
           <Route path="/visitesespais" element={<VisitesEspais api_token = {api_token}/>}  />
           <Route path="/ultimscomentaris" element={<UltimsComentaris api_token = {api_token}/>} />
+          <Route path="/valoracionscomentaris" element={<ValoracionsComentaris api_token = {api_token}/>} />
           <Route path="/cerca" element={<BarraCerca api_token = {api_token}/>} />
           <Route path="/municipis" element={<LlistaMunicipis api_token = {api_token}/>} />
           <Route path="/espais" element={<LlistaEspais api_token = {api_token}/>} />

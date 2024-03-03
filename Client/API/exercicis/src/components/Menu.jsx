@@ -33,6 +33,7 @@ export default function Menu({ api_token, usuari_nom, usuari_rol }) {
                     <Link className="nav-link" to="/mesespais">Més Espais</Link>
                     <Link className='nav-link' to="/puntsinteresespai">Punts Interès Espai</Link>
                     <Link className='nav-link' to="/ultimscomentaris">Últims Comentaris</Link>
+                    <Link className='nav-link' to="/valoracionscomentaris">Valoracions & Comentaris</Link>
                     <Link className='nav-link' to="/visitesespais">Visites Espais</Link>
                     {api_token && <>
                         <Link className="nav-link" to="/usuari">Usuari</Link>
