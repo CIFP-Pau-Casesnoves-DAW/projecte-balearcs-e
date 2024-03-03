@@ -57,7 +57,6 @@ import AudiosAfegeix from "./components/audios/AudiosAfegeix.jsx";
 import AudiosCRUD from "./components/audios/AudiosCRUD.jsx";
 import MesEspais from "./components/MesEspais.jsx";
 import BarraCerca from "./components/BarraCerca.jsx";
-import LlistaEspais from "./components/LlistaEspais.jsx";
 import LlistaMunicipis from "./components/LlistaMunicipis.jsx";
 import PuntsInteresEspai from "./components/PuntsInteresEspai.jsx";
 import VisitesEspais from "./components/VisitesEspais.jsx";
@@ -220,7 +219,7 @@ function App() {
           <Route path="/valoracionscomentaris" element={<ValoracionsComentaris api_token = {api_token}/>} />
           <Route path="/cerca" element={<BarraCerca api_token = {api_token}/>} />
           <Route path="/municipis" element={<LlistaMunicipis api_token = {api_token}/>} />
-          <Route path="/espais" element={<LlistaEspais api_token = {api_token}/>} />
+          
           <Route path="*" element={<h1>Ups! Opció incorrecta</h1>} />
         </Route>
       </Routes>
