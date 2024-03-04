@@ -65,4 +65,3 @@ const PuntsInteresEspai = ({ api_token }) => {
 };
 
 export default PuntsInteresEspai;
-

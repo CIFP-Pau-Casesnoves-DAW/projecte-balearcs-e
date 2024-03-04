@@ -8,10 +8,8 @@ import { toggleModal } from './ModalContacte';
 import ModalContacte from './ModalContacte';
 import { useState } from 'react';
 
-
-
-
 export default function Menu({ api_token, usuari_nom, usuari_rol }) {
+
     const [modalOpen, setModalOpen] = useState(false); // estat del modal
 
     
@@ -30,14 +28,16 @@ export default function Menu({ api_token, usuari_nom, usuari_rol }) {
                     </Link>
                     <Link className="nav-link" to="/inici">Inici</Link>
                     <Link className="nav-link" to="/ajuda">Ajuda</Link>
-                    <Link className="nav-link" to="/mesespais">Més Espais</Link>
-                    <Link className='nav-link' to="/puntsinteresespai">Punts Interès Espai</Link>
-                    <Link className='nav-link' to="/ultimscomentaris">Últims Comentaris</Link>
-                    <Link className='nav-link' to="/valoracionscomentaris">Valoracions & Comentaris</Link>
-                    <Link className='nav-link' to="/visitesespais">Visites Espais</Link>
+                    <NavDropdown title="Espais" id="basic-nav-dropdown">
+                        <NavDropdown.Item href="/mesespais">Tots els Espais</NavDropdown.Item>
+                        <NavDropdown.Item href="/puntsinteresespai">Punts d'Interés</NavDropdown.Item>
+                        <NavDropdown.Item href="/ultimscomentaris">Últims Comentaris</NavDropdown.Item>
+                        <NavDropdown.Item href="/visitesespais">Visites dels espais</NavDropdown.Item>
+                    </NavDropdown>
                     {api_token && <>
                         <Link className="nav-link" to="/usuari">Usuari</Link>
                         <Link className="nav-link" to="/logout">Logout</Link>
+                        <Link className="nav-link" to="/valoracionscomentaris">Comentar i valorar un espai</Link>
                     </>}
                     {api_token && usuari_rol=='administrador'&& <>
                         <NavDropdown title="Modificar Taules" id="basic-nav-dropdown">
@@ -66,7 +66,7 @@ export default function Menu({ api_token, usuari_nom, usuari_rol }) {
                         <Link className="nav-link" to="/login">Login</Link>
                     </>}
                 </Nav>
-              
+
                 {/* ModalContacte */}   
                 <Nav>
                     <button 
@@ -79,11 +79,12 @@ export default function Menu({ api_token, usuari_nom, usuari_rol }) {
                             transition: 'all 0.2s ease-in-out', // Suavitzat de transició per interaccions
                             margin: '30px', 
                         }}>
-                        Contacte
+                        Contacta amb nosaltres
                     </button>
                 </Nav>
                 <ModalContacte isOpen={modalOpen} onClose={toggleModal} />
-                <Navbar.Collapse className="justify-content-end" style={{marginRight: '15px'}}>
+
+                <Navbar.Collapse className="justify-content-end">
                     <Navbar.Text>
                         {usuari_nom && <>Hola, {usuari_nom}&nbsp;&nbsp;</>}
                     </Navbar.Text>

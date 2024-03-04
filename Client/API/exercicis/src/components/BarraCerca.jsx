@@ -3,18 +3,22 @@ import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import { storage } from '../utils/storage'; 
 import LlistaMunicipis from './LlistaMunicipis';
+import LlistaServeis from './LlistaServeis';
+import EspaisOrdenats from './EspaisOrdenats';
 
 const BarraCerca = ({ api_token }) => {
     const [cercaTipus, setCercaTipus] = useState('');
     const [dades, setDades] = useState([]);
+    const [dadesgrauacc, setdadesgrauacc] = useState([]);
     const [mostraModal, setMostraModal] = useState(false);
+    const token = storage.get('api_token');
 
 
     const headersConfig = {
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${api_token}`
+            'Authorization': `Bearer ${token}`
         }
     };
 
@@ -51,11 +55,7 @@ const BarraCerca = ({ api_token }) => {
         try {
             const resposta = await fetch(url, {
                 method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${api_token}` // Assegura't que api_token està disponible
-                }
+                headersConfig
             });
             if (!resposta.ok) {
                 throw new Error(`Error de la resposta de l'API: ${resposta.status}`);
@@ -68,22 +68,23 @@ const BarraCerca = ({ api_token }) => {
         }
     };
 
-
-    
-
-
     const renderitzarContingutModal = () => {
         if (!Array.isArray(dades)) {
             return <p>Les dades no estan disponibles</p>;
         }
         switch (cercaTipus) {
             case 'espais':
+                return dades.map((item, index) => 
+                    <p key={index}>
+                        {item.nom}
+                    </p>);
             case 'grau_acc':
+                //Ordenar dades per grau_acc, pot ser alt, mig o baix
+                return <EspaisOrdenats espais = {dades} />;
             case 'serveis':
-                return dades.map((item, index) => <p key={index}>{item.nom}</p>);
+                return <LlistaServeis api_token={token} />;
             case 'municipis':
-                // S'ha corregit aquesta línia, ara retorna el component correctament.
-                return <LlistaMunicipis api_token={api_token} />;
+                return <LlistaMunicipis api_token={token} />;
             default:
                 return <p>Selecciona un tipus de cerca</p>;
         }
@@ -101,10 +102,10 @@ const BarraCerca = ({ api_token }) => {
                     style={{ width: '200px', margin: '0 auto' }}
                 >
                     <option value="">Selecciona el tipus de cerca</option>
-                    <option value="espais">Espais</option>
-                    <option value="municipis">Municipis</option>
-                    <option value="grau_acc">Grau d'Accessibilitat</option>
-                    <option value="serveis">Serveis</option>
+                    <option value="espais">Per Espais</option>
+                    <option value="municipis">Per Municipis</option>
+                    <option value="grau_acc">Per Grau d'Accessibilitat</option>
+                    <option value="serveis">Per Serveis</option>
                 </select>
             </div>
             <Modal show={mostraModal} onHide={() => setMostraModal(false)}>

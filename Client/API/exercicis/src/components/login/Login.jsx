@@ -20,37 +20,37 @@ export default function Login(props) {
                 'Content-Type': 'application/json'
             }
         })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Error en la petició');
-            }
-            return response.json();
-        })
-        .then(respostajson => {
-            console.log(respostajson.data);
-    
-            if (respostajson.status === "success" && respostajson.data && respostajson.data.api_token) {
-                let api_token = respostajson.data.api_token;
-                let usuari_id = respostajson.data.id;
-                let usuari_rol = respostajson.data.rol;
-                let usuari_nom = respostajson.data.nom;
-                
-                props.guardaapi_token(api_token);
-                props.guardausuari_id(usuari_id);
-                props.guardausuari_rol(usuari_rol);
-                props.guardausuari_nom(usuari_nom);
-                setError(false);
-                navigate("/inici");
-            } else {
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error en la petició');
+                }
+                return response.json();
+            })
+            .then(respostajson => {
+                // console.log(respostajson.data);
+
+                if (respostajson.status === "success" && respostajson.data && respostajson.data.api_token) {
+                    let api_token = respostajson.data.api_token;
+                    // let usuari_id = respostajson.data.id;
+                    // let usuari_rol = respostajson.data.rol;
+                    // let usuari_nom = respostajson.data.nom;
+
+                    props.guardaapi_token(api_token);
+                    // props.guardausuari_id(usuari_id);
+                    // props.guardausuari_rol(usuari_rol);
+                    // props.guardausuari_nom(usuari_nom);
+                    setError(false);
+                    navigate("/inici");
+                } else {
+                    setError(true);
+                }
+                setLoading(false);
+            })
+            .catch(function (error) {
+                console.log(error);
                 setError(true);
-            }
-            setLoading(false);
-        })
-        .catch(function (error) {
-            console.log(error);
-            setError(true);
-            setLoading(false);
-        });
+                setLoading(false);
+            });
     };
 
     const onSubmit = (e) => {

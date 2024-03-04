@@ -22,9 +22,9 @@ const UltimsComentaris = ({ api_token }) => {
 
                 for (let comentari of dadesComentaris) {
                     const responseEspai = await axios.get(`${API_URL}/espais/${comentari.espai_id}`, headersConfig);
-                    const responseUsuari = await axios.get(`${API_URL}/usuaris/${comentari.usuari_id}`, headersConfig);
+                   // const responseUsuari = await axios.get(`${API_URL}/usuaris/${comentari.usuari_id}`, headersConfig);
                     comentari.nomEspai = responseEspai.data.data.nom;
-                    comentari.nomUsuari = responseUsuari.data.data.nom;
+                    //comentari.nomUsuari = responseUsuari.data.data.nom;
                 }
 
                 setComentaris(dadesComentaris);
@@ -45,7 +45,7 @@ const UltimsComentaris = ({ api_token }) => {
                     <Card className="mb-3">
                         <Card.Body style={{ textAlign: 'center' }}>
                             <Card.Title>Nom de l'Espai: {comentari.nomEspai}</Card.Title>
-                            <Card.Subtitle className="mb-2">Usuari: {comentari.nomUsuari}</Card.Subtitle>
+                        {/*   <Card.Subtitle className="mb-2">Usuari: {comentari.nomUsuari}</Card.Subtitle>  */}
                             <Card.Text>Comentari: {comentari.comentari}</Card.Text>
                             <Card.Text>Data: {comentari.data}</Card.Text>
                         </Card.Body>

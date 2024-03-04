@@ -5,8 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import '../../style/Style.css'; // Importa l'arxiu CSS
 
-export default function Logout() {
-    const id = storage.get('usuari_id');
+export default function Logout(props) {
+    const id = props.usuari_id;
     const [error, setError] = useState(false);
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();

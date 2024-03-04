@@ -68,7 +68,7 @@ const LlistaMunicipis = ({ api_token }) => {
     <div>
       {municipis.map(municipi => (
         <div key={municipi.id}>
-          <h3>{municipi.nom}</h3>
+          <p>{municipi.nom}</p>
         </div>
       ))}
     </div>

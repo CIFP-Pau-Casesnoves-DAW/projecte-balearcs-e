@@ -127,4 +127,3 @@ const ValoracionsComentaris = () => {
 };
 
 export default ValoracionsComentaris;
-

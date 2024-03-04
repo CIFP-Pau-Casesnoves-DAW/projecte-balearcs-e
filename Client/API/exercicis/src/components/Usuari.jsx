@@ -21,7 +21,7 @@ export default function Usuari(props) {
       <hr />
       <h3>Dades personals</h3>
       <br />
-      {showForm ? (<UsuariDades />
+      {showForm ? (<UsuariDades usuari_id = {usuari_id} api_token={token}/>
       ) : (
         <button onClick={() => setShowForm(true)} className="btn btn-primary">Modificar dades personals</button>
       )}

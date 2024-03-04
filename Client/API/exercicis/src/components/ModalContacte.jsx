@@ -44,7 +44,7 @@ export default function ModalContacte({ isOpen, onClose }) {
         <Modal show={showModal} onHide={handleClose} centered>
             <Card style={modalStyle}>
                 <Card.Header style={{ textAlign: 'center', color: 'darkslategray' }}>
-                    <Card.Title>Contacte</Card.Title>
+                    <Card.Title>Formulari de contacte</Card.Title>
                 </Card.Header>
                 <Card.Body>
                     <form onSubmit={handleSubmit} style={formStyle}>
