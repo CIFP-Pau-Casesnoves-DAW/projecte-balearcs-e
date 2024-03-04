@@ -32,7 +32,6 @@ export default function Menu({ api_token, usuari_nom, usuari_rol }) {
                         <NavDropdown.Item href="/mesespais">Tots els Espais</NavDropdown.Item>
                         <NavDropdown.Item href="/puntsinteresespai">Punts d'Interés</NavDropdown.Item>
                         <NavDropdown.Item href="/ultimscomentaris">Últims Comentaris</NavDropdown.Item>
-                        {/* <NavDropdown.Item href="/valoracionscomentaris">Comentar i valorar</NavDropdown.Item> */}
                         <NavDropdown.Item href="/visitesespais">Visites dels espais</NavDropdown.Item>
                     </NavDropdown>
                     {api_token && <>

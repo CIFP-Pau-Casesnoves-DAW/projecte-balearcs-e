@@ -26,12 +26,9 @@ const LlistaServeis = ({ api_token }) => {
 
     return (
         <div>
-            <h2>Llista de Serveis</h2>
-            <ul>
-                {serveis.map((servei) => (
-                    <li key={servei.id}>{servei.nom}</li>
-                ))}
-            </ul>
+            {serveis.map((servei) => (
+                <p key={servei.id}>{servei.nom_serveis}</p>
+            ))}
         </div>
     );
 };
