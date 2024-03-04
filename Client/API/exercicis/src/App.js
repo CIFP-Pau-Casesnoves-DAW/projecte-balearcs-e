@@ -55,9 +55,14 @@ import Registre from "./components/registre/Registre.jsx";
 import Audios from "./components/audios/Audios.jsx";
 import AudiosAfegeix from "./components/audios/AudiosAfegeix.jsx";
 import AudiosCRUD from "./components/audios/AudiosCRUD.jsx";
-import ContactForm from "./components/ContactForm.jsx";
 import MesEspais from "./components/MesEspais.jsx";
+import BarraCerca from "./components/BarraCerca.jsx";
+import LlistaMunicipis from "./components/LlistaMunicipis.jsx";
+import PuntsInteresEspai from "./components/PuntsInteresEspai.jsx";
+import VisitesEspais from "./components/VisitesEspais.jsx";
+import UltimsComentaris from "./components/UltimsComentaris.jsx";
 import ValoracionsUsuari from "./components/ValoracionsUsuari.jsx";
+import ValoracionsComentaris from "./components/ValoracionsComentaris.jsx";
 /**
  * Component principal de l'aplicació.
  * Aquest component és responsable de renderitzar les rutes de l'aplicació utilitzant React Router.
@@ -198,6 +203,8 @@ function App() {
             <Route path="/logout" element={<Logout usuari_id = {usuari_id}/>}/>
             {/* MÉS ESPAIS */}
             <Route path="/mesespais" element={<MesEspais api_token = {api_token}/>} />
+            {/* VALORACIONS I COMENTARIS */}
+            <Route path="/valoracionscomentaris" element={<ValoracionsComentaris api_token = {api_token}/>} />
         </>} 
         {/* Routes sols per a usuaris NO logats*/}
         {!api_token && <>
@@ -208,7 +215,12 @@ function App() {
           <Route path="/ajuda" element={<Ajuda />} />
           <Route path="/inici" element={<Inici />} />
           <Route path="/mesespais" element={<MesEspais api_token = {api_token}/>} />
-          <Route path="/contacte" element={<ContactForm/>} />
+          <Route path="/puntsinteresespai" element={<PuntsInteresEspai api_token = {api_token}/>} />
+          <Route path="/visitesespais" element={<VisitesEspais api_token = {api_token}/>}  />
+          <Route path="/ultimscomentaris" element={<UltimsComentaris api_token = {api_token}/>} />
+          <Route path="/valoracionscomentaris" element={<ValoracionsComentaris api_token = {api_token}/>} />
+          <Route path="/cerca" element={<BarraCerca api_token = {api_token}/>} />
+          <Route path="/municipis" element={<LlistaMunicipis api_token = {api_token}/>} />
           <Route path="*" element={<h1>Ups! Opció incorrecta</h1>} />
         </Route>
       </Routes>

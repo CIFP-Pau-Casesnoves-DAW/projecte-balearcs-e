@@ -1,82 +1,123 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { useState } from 'react';
+import Modal from 'react-bootstrap/Modal';
+import Button from 'react-bootstrap/Button';
+import { storage } from '../utils/storage'; 
+import LlistaMunicipis from './LlistaMunicipis';
 
-const BarraCerca = () => {
-    const [resultats, setResultats] = useState([]);
-    const [searchText, setSearchText] = useState('');
+const BarraCerca = ({ api_token }) => {
+    const [cercaTipus, setCercaTipus] = useState('');
+    const [dades, setDades] = useState([]);
+    const [mostraModal, setMostraModal] = useState(false);
 
-    // Endpoint per cercar espais (ajustat per incloure cerca)
-    const endpointEspais = `http://balearc.aurorakachau.com/public/api/espais?cerca=${searchText}`;
 
-    useEffect(() => {
-        // Funció per a cercar espais basat en el text de cerca
-        const fetchData = async () => {
-            if (!searchText.trim()) {
-                setResultats([]);
-                return; // Evita la cerca si el text està buit
-            }
-
-            try {
-                const response = await axios.get(endpointEspais);
-                setResultats(response.data.data); 
-            } catch (error) {
-                console.error('Error al obtenir els espais', error);
-            }
-        };
-
-        // Retard de 500ms per a millorar l'experiència d'usuari i reduir peticions innecessàries
-        const timeoutId = setTimeout(() => {
-            fetchData();
-        }, 500);
-
-        return () => clearTimeout(timeoutId); // Neteja el timeout quan el component es desmonti o actualitzi
-
-    }, [searchText]); // Dependència de l'`useEffect`: searchText
-
-    const handleSearchInputChange = (e) => {
-        setSearchText(e.target.value);
+    const headersConfig = {
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${api_token}`
+        }
     };
+
+    const handleSelectChange = (event) => {
+        const tipus = event.target.value;
+        setCercaTipus(tipus);
+        // Per a 'municipis', simplement canviem l'estat per mostrar el modal sense cridar a carregaDades
+        setMostraModal(true);
+        if (tipus !== 'municipis') {
+            carregaDades(tipus);
+        }
+    };
+    
+        
+
+    const carregaDades = async (tipus) => {
+        let url = '';
+        switch (tipus) {
+            case 'espais':
+                url = 'http://balearc.aurorakachau.com/public/api/espais';
+                break;
+                
+            case 'grau_acc':
+                url = 'http://balearc.aurorakachau.com/public/api/espais?orderBy=grau_acc';
+                break;
+            case 'serveis':
+                url = 'http://balearc.aurorakachau.com/public/api/serveis';
+                break;
+            default:
+                setDades([]);
+                return;
+        }
+
+        try {
+            const resposta = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${api_token}` // Assegura't que api_token està disponible
+                }
+            });
+            if (!resposta.ok) {
+                throw new Error(`Error de la resposta de l'API: ${resposta.status}`);
+            }
+            const result = await resposta.json();
+            setDades(result.data);
+            setMostraModal(true);
+        } catch (error) {
+            console.error("Hi ha hagut un error en la crida a l'API o processant la resposta:", error);
+        }
+    };
+
+
+    
+
+
+    const renderitzarContingutModal = () => {
+        if (!Array.isArray(dades)) {
+            return <p>Les dades no estan disponibles</p>;
+        }
+        switch (cercaTipus) {
+            case 'espais':
+            case 'grau_acc':
+            case 'serveis':
+                return dades.map((item, index) => <p key={index}>{item.nom}</p>);
+            case 'municipis':
+                // S'ha corregit aquesta línia, ara retorna el component correctament.
+                return <LlistaMunicipis api_token={api_token} />;
+            default:
+                return <p>Selecciona un tipus de cerca</p>;
+        }
+    };
+    
 
     return (
         <>
+            <h2 className="mb-3">Cerca d'Espais i Serveis</h2>
             <div>
-                <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Cerca espais per nom, municipi, serveis..."
-                    value={searchText}
-                    onChange={handleSearchInputChange}
-                    style={{
-                        height: '38px',
-                        fontSize: '16px',
-                        minWidth: '400px',
-                        margin: '0 auto 10px auto', // Centra l'input horitzontalment i afegeix un marge inferior
-                        display: 'block', // Asegura que l'input es mostri en la seva pròpia línia
-                    }}
-                />
+                <select
+                    value={cercaTipus}
+                    onChange={handleSelectChange}
+                    className="form-control mb-3"
+                    style={{ width: '200px', margin: '0 auto' }}
+                >
+                    <option value="">Selecciona el tipus de cerca</option>
+                    <option value="espais">Espais</option>
+                    <option value="municipis">Municipis</option>
+                    <option value="grau_acc">Grau d'Accessibilitat</option>
+                    <option value="serveis">Serveis</option>
+                </select>
             </div>
-            <div id='resultatscerca'>
-                {resultats.length > 0 ? (
-                    <table className="table">
-                        <thead>
-                            <tr>
-                                <th>RESULTATS</th>
-                                {/* Afegeix més capçaleres de columnes segons les dades que vols mostrar */}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {resultats.map((resultat) => (
-                                <tr key={resultat.id}>
-                                    <td>{resultat.nom}</td>
-                                   
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                ) : (
-                    <p></p>
-                )}
-            </div>
+            <Modal show={mostraModal} onHide={() => setMostraModal(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Resultats de la cerca</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>{renderitzarContingutModal()}</Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setMostraModal(false)}>
+                        Tancar
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </>
     );
 };

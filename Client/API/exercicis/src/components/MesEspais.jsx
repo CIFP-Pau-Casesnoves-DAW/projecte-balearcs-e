@@ -3,6 +3,7 @@ import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import axios from 'axios';
 import { Pagination, Modal } from 'react-bootstrap';
+import BarraCerca from './BarraCerca';
 
 const MesEspais = (props) => {
     const [espais, setEspais] = useState([]);
@@ -143,6 +144,10 @@ const MesEspais = (props) => {
     return (
         <>
             <h2 className="mb-3">Més Espais</h2>
+              {/* BarraCerca */}
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <BarraCerca />
+            </div> 
             <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', margin: '-0.5rem', marginTop: '0.5rem' }}>
                 {elementsActuals.map((espai) => (
                     <Card key={espai.id} style={{ width: 'calc(25% - 1rem)', margin: '0.5rem' }}>
