@@ -150,8 +150,8 @@ const MesEspais = (props) => {
             </div> 
             <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', margin: '-0.5rem', marginTop: '0.5rem' }}>
                 {elementsActuals.map((espai) => (
-                    <Card key={espai.id} style={{ width: 'calc(25% - 1rem)', margin: '0.5rem' }}>
-                        <Card.Img variant="top" src={getFotoEspai(espai.id)} />
+                    <Card key={espai.id} style={{ width: 'calc(25% - 1rem)', margin: '0.5rem'}}>
+                        <Card.Img variant="top" src={getFotoEspai(espai.id)} style={{ width: '100%', height: '200px', objectFit: 'cover' }} />
                         <Card.Body>
                             <Card.Title>{espai.nom}</Card.Title>
                             <Card.Text>{espai.descripcio}</Card.Text>

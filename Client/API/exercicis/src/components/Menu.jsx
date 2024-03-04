@@ -41,19 +41,19 @@ export default function Menu({ api_token, usuari_nom, usuari_rol }) {
                     </>}
                     {api_token && usuari_rol=='administrador'&& <>
                         <NavDropdown title="Modificar Taules" id="basic-nav-dropdown">
-                            <NavDropdown.Item href="/municipis">Municipis</NavDropdown.Item>
+                            <NavDropdown.Item href="/arquitectes">Arquitectes</NavDropdown.Item>
+                            <NavDropdown.Item href="/audios">Audios</NavDropdown.Item>
                             <NavDropdown.Item href="/comentaris">Comentaris</NavDropdown.Item>
-                            <NavDropdown.Item href="/serveis">Serveis</NavDropdown.Item>
-                            <NavDropdown.Item href="/tipus">Tipus</NavDropdown.Item>
+                            <NavDropdown.Item href="/espais">Espais</NavDropdown.Item>
+                            <NavDropdown.Item href="/fotos">Fotos</NavDropdown.Item>
                             <NavDropdown.Item href="/idiomes">Idiomes</NavDropdown.Item>
                             <NavDropdown.Item href="/modalitats">Modalitats</NavDropdown.Item>
-                            <NavDropdown.Item href="/arquitectes">Arquitectes</NavDropdown.Item>
-                            <NavDropdown.Item href="/espais">Espais</NavDropdown.Item>
+                            <NavDropdown.Item href="/municipis">Municipis</NavDropdown.Item>
                             <NavDropdown.Item href="/puntsinteres">Punts d'interès</NavDropdown.Item>
-                            <NavDropdown.Item href="/valoracions">Valoracions</NavDropdown.Item>
-                            <NavDropdown.Item href="/fotos">Fotos</NavDropdown.Item>
-                            <NavDropdown.Item href="/audios">Audios</NavDropdown.Item>
+                            <NavDropdown.Item href="/serveis">Serveis</NavDropdown.Item>
+                            <NavDropdown.Item href="/tipus">Tipus</NavDropdown.Item>
                             <NavDropdown.Item href="/usuaris">Usuaris</NavDropdown.Item>
+                            <NavDropdown.Item href="/valoracions">Valoracions</NavDropdown.Item>
                             <NavDropdown.Item href="/visites">Visites</NavDropdown.Item>
                         </NavDropdown>
                     </>}
