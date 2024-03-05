@@ -37,7 +37,6 @@ export default function FotosAfegeix(props) {
             }
         })
             .then(response => {
-                console.log(response.data);
                 setError('');
                 navigate('/fotos');
             })

@@ -179,3 +179,10 @@ div#resultatscerca {
     width: 170px;
     bottom: -241px;
 }
+
+/* Estils cartes */
+.card {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Estils per el menu adaptable */
