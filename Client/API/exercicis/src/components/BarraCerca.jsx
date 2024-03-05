@@ -93,7 +93,7 @@ const BarraCerca = ({ api_token }) => {
 
     return (
         <>
-            <h2 className="mb-3">Cerca d'Espais i Serveis</h2>
+            <h4 className="mb-3"></h4>
             <div>
                 <select
                     value={cercaTipus}
@@ -101,7 +101,7 @@ const BarraCerca = ({ api_token }) => {
                     className="form-control mb-3"
                     style={{ width: '200px', margin: '0 auto' }}
                 >
-                    <option value="">Selecciona el tipus de cerca</option>
+                    <option value="">Trieu el tipus de cerca</option>
                     <option value="espais">Per Espais</option>
                     <option value="municipis">Per Municipis</option>
                     <option value="grau_acc">Per Grau d'Accessibilitat</option>

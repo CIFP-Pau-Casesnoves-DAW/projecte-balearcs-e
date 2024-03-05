@@ -22,9 +22,9 @@ const UltimsComentaris = ({ api_token }) => {
 
                 for (let comentari of dadesComentaris) {
                     const responseEspai = await axios.get(`${API_URL}/espais/${comentari.espai_id}`, headersConfig);
-                    const responseUsuari = await axios.get(`${API_URL}/usuaris/${comentari.usuari_id}`, headersConfig);
+                   // const responseUsuari = await axios.get(`${API_URL}/usuaris/${comentari.usuari_id}`, headersConfig);
                     comentari.nomEspai = responseEspai.data.data.nom;
-                    comentari.nomUsuari = responseUsuari.data.data.nom;
+                    //comentari.nomUsuari = responseUsuari.data.data.nom;
                 }
 
                 setComentaris(dadesComentaris);
@@ -38,14 +38,17 @@ const UltimsComentaris = ({ api_token }) => {
 
     return (
         <>
-            <h2 style={{ textAlign: 'center', padding: '20px' }}>Últims Comentaris</h2>
-            <Carousel>
-            {comentaris.map((comentari) => (
-                <Carousel.Item key={comentari.id} interval={3000}> {/* Ajusta a 3 segons */}
-                    <Card className="mb-3">
-                        <Card.Body style={{ textAlign: 'center' }}>
-                            <Card.Title>Nom de l'Espai: {comentari.nomEspai}</Card.Title>
-                            <Card.Subtitle className="mb-2">Usuari: {comentari.nomUsuari}</Card.Subtitle>
+            <hr />
+            <h1 style={{ textAlign: 'center', padding: '20px' }}>Últims Comentaris</h1>
+            <hr />
+        <Carousel prevIcon={<span aria-hidden="true" className="carousel-control-prev-icon" />}
+                    nextIcon={<span aria-hidden="true" className="carousel-control-next-icon" />}>            
+                {comentaris.map((comentari) => (
+                <Carousel.Item key={comentari.id} interval={4000}> {/* Ajusta a 3 segons */}
+                            <Card className="mb-3" style={{borderRadius: '15px'}}>
+                            <Card.Body style={{ textAlign: 'center', backgroundColor: '#F3F9E3', border: '1px solid black', color: 'black', borderRadius: '15px' }}>
+                            <Card.Title>Espai: {comentari.nomEspai}</Card.Title>
+                        {/*   <Card.Subtitle className="mb-2">Usuari: {comentari.nomUsuari}</Card.Subtitle>  */}
                             <Card.Text>Comentari: {comentari.comentari}</Card.Text>
                             <Card.Text>Data: {comentari.data}</Card.Text>
                         </Card.Body>

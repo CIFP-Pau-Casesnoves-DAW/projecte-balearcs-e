@@ -32,7 +32,9 @@ const VisitesEspais = ({ api_token }) => {
 
     return (
         <div className="container mt-4">
+            <hr />
             <h1 className="mb-4 text-center">Visites dels Espais</h1>
+            <hr />
             <div className="d-flex flex-wrap justify-content-around">
                 {espais.map((espai) => {
                     const visitesEspai = visites.filter((visita) => visita.espai_id === espai.id);
