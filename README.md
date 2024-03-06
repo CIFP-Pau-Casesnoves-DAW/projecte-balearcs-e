@@ -162,7 +162,8 @@ Aquest projecte està sota la [Llicència CIFP PAUCASESNOVES](LICENSE).
 
 ## DonDominio
 
-Aquest projecte està pujat a http://balearc.aurorakachau.com/public/api/nom_taula
+La part de servidor d'aquest projecte està pujat a http://balearc.aurorakachau.com/public/api/nom_taula
+La part de front d'aquest projecte està pujat a http://balearcs.aurorakachau.com
 
 ## Usuari Tomeu
 
@@ -172,4 +173,4 @@ contrasenya: TomeuCampaner123
 
 rol: administrador
 
-No està loguejat, recoman primer fer Login per tenir el token
+

@@ -38,12 +38,15 @@ const VisitesEspais = ({ api_token }) => {
             <div className="d-flex flex-wrap justify-content-around">
                 {espais.map((espai) => {
                     const visitesEspai = visites.filter((visita) => visita.espai_id === espai.id);
+
+                    if (espai.data_baixa === null) {
                     return (
-                        <Card key={espai.id} style={{ width: 'calc(25% - 1rem)', minHeight: '300px', margin: '0.5rem' }}>
-                            <Card.Body>
-                                <Card.Title><strong>Espai:</strong> {espai.nom}</Card.Title>
-                                {visitesEspai.length > 0 ? visitesEspai.map((visita, index) => (
-                                    <div key={index}>
+                    <Card key={espai.id} style={{ width: 'calc(25% - 1rem)', minHeight: '300px', margin: '0.5rem' }}>
+                        <Card.Body>
+                            <Card.Title><strong>Espai:</strong> {espai.nom}</Card.Title>
+                            {visitesEspai.length > 0 ? visitesEspai.map((visita, index) => (
+                                visita.data_baixa === null ? ( // Afegim una condició per a filtrar visites amb data de finalització null
+                                    <div key={index} id='visites'>
                                         <hr />
                                         <Card.Subtitle className="mb-2 text-muted"><strong>Títol:</strong> {visita.titol}</Card.Subtitle>
                                         <Card.Text>
@@ -58,13 +61,17 @@ const VisitesEspais = ({ api_token }) => {
                                             <strong>Horari:</strong> {visita.horari}
                                         </Card.Text>
                                     </div>
-                                )) : (
-                                    <Card.Text>Aquest espai no té visites programades.</Card.Text>
-                                )}
-                            </Card.Body>
-                        </Card>
+                                ) : null
+                            )) : (
+                                <Card.Text>Aquest espai no té visites programades.</Card.Text>
+                            )}
+                        </Card.Body>
+                    </Card>
+
                     );
-                })}
+            } else{
+                return null;
+            }})}
             </div>
         </div>
     );

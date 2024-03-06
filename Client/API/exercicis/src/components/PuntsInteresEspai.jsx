@@ -42,25 +42,28 @@ const PuntsInteresEspai = ({ api_token }) => {
             <div className="d-flex flex-wrap justify-content-around">
                 {espais.map((espai) => {
                     const punts = puntsInteres.filter((punt) => punt.espai_id === espai.id);
+                    if (espai.data_baixa === null) {
                     return (
                         <Card key={espai.id} style={{ width: 'calc(25% - 1rem)', minHeight: '300px', margin: '0.5rem' }}>  
-                            <Card.Body>
-                                <Card.Title><strong>Espai:</strong> {espai.nom}</Card.Title>
-                                <hr />
-                                {punts.length > 0 ? (
-                                    punts.map((punt) => (
-                                        <div key={punt.id}>
-                                            <Card.Subtitle className="mb-2 text-muted"><strong>Títol:</strong> {punt.titol}</Card.Subtitle>
-                                            <Card.Text><strong>Descripció:</strong> {punt.descripcio}</Card.Text>
-                                        </div>
-                                    ))
-                                ) : (
-                                    <Card.Text>Aquest espai no té punts d'interès disponibles.</Card.Text>
-                                )}
-                            </Card.Body>
-                        </Card>
+                        <Card.Body>
+                            <Card.Title><strong>Espai:</strong> {espai.nom}</Card.Title>
+                            <hr />
+                            {punts.length > 0 ? (
+                                punts.filter((punt) => punt.data_baixa === null).map((punt) => (
+                                    <div key={punt.id} id='puntsinteres'>
+                                        <Card.Subtitle className="mb-2 text-muted"><strong>Títol:</strong> {punt.titol}</Card.Subtitle>
+                                        <Card.Text><strong>Descripció:</strong> {punt.descripcio}</Card.Text>
+                                    </div>
+                                ))
+                            ) : (
+                                <Card.Text>Aquest espai no té punts d'interès disponibles.</Card.Text>
+                            )}
+                        </Card.Body>
+                    </Card>
                     );
-                })}
+                } else{
+                    return null;
+                }})}
             </div>
         </div>
     );

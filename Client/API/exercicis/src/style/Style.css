@@ -14,14 +14,13 @@
     filter: blur(5px); /* Ajusta el valor de blur según lo desees */
 }
 
-.login-container {
+.login-container.container {
     max-width: 400px;
     margin: 0 auto;
     padding: 20px;
     background-color: #f8f9fa;
     border-radius: 10px;
     box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
-    /* top: 50px; */
     position: relative;
 }
 
@@ -70,7 +69,7 @@
     align-items: center;
 }
 
-.logout-container {
+.logout-container.container {
     max-width: 400px;
     margin: 0 auto;
     padding: 20px;
@@ -185,4 +184,46 @@ div#resultatscerca {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Estils per el menu adaptable */
+div.card{
+    background-color: rgb(246, 246, 246);
+}
+
+/* Estils per text salutació usuari */
+span.navbar-text {
+    padding-right: 30px;
+}
+
+/* Estils menú bocadillo */
+.mr-auto.align-items-center.navbar-nav {
+    background-color: #212529;
+}
+.navbar-nav {
+    background-color: #212529;
+}
+.justify-content-end.navbar-collapse.collapse.show {
+    background-color: #212529;
+    text-align: center;
+    padding-bottom: 20px;
+}
+/* Estils per visites */
+#visites{
+    background-color: rgb(255, 255, 232);
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1); /* Afegeix una ombra suau */
+}
+
+div#visites {
+    margin: 20px;
+}
+/* Estils pels punts d'interes */
+#puntsinteres{
+    background-color: rgb(255, 255, 232);
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1); /* Afegeix una ombra suau */
+}
+
+div#puntsinteres {
+    margin: 20px;
+}
