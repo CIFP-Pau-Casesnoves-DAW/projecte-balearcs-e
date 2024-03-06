@@ -31,17 +31,19 @@ const VisitesEspais = ({ api_token }) => {
     }, [api_token]);
 
     return (
-        <div className="container mt-4">
+    <div className="container mt-4" id='visitestotal'>
             <hr />
             <h1 className="mb-4 text-center">Visites dels Espais</h1>
             <hr />
-            <div className="d-flex flex-wrap justify-content-around">
+            {/* <div className="d-flex flex-wrap justify-content-around"> */}
+            <div className="cartes">
+
                 {espais.map((espai) => {
                     const visitesEspai = visites.filter((visita) => visita.espai_id === espai.id);
 
                     if (espai.data_baixa === null) {
                     return (
-                    <Card key={espai.id} style={{ width: 'calc(25% - 1rem)', minHeight: '300px', margin: '0.5rem' }}>
+                    <Card key={espai.id} style={{ minHeight: '300px', margin: '0.5rem' }}>
                         <Card.Body>
                             <Card.Title><strong>Espai:</strong> {espai.nom}</Card.Title>
                             {visitesEspai.length > 0 ? visitesEspai.map((visita, index) => (

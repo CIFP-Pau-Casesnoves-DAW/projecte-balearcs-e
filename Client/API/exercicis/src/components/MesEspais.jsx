@@ -144,27 +144,27 @@ const MesEspais = (props) => {
     return (
         <>
             <hr />
-            <h1 className="mb-3" style={{ textAlign: 'center', padding: '20px' }}>Espais</h1>
+            <h1 className="mb-3 espais-title">Espais</h1>
             <hr />
-              {/* BarraCerca */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <BarraCerca />
+            {/* BarraCerca */}
+            <div className="barra-cerca-container">
+                <BarraCerca />
             </div> 
             <hr />
-            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', margin: '-0.5rem', marginTop: '0.5rem' }}>
+            <div className="espais-container">
                 {elementsActuals.map((espai) => (
                     espai.data_baixa == null ? (
-                        <Card key={espai.id} style={{ width: 'calc(25% - 1rem)', margin: '0.5rem' }}>
-                            <Card.Img variant="top" src={getFotoEspai(espai.id)} style={{ width: '100%', height: '200px', objectFit: 'cover' }} />
-                            <Card.Body>
-                                <Card.Title>{espai.nom}</Card.Title>
-                                <Card.Text>{espai.descripcio}</Card.Text>
+                        <div key={espai.id} className="espai-card">
+                            <img src={getFotoEspai(espai.id)} alt={espai.nom} className="espai-image" />
+                            <div className="espai-card-body">
+                                <h5 className="espai-title">{espai.nom}</h5>
+                                <p className="espai-description">{espai.descripcio}</p>
                                 <Button variant="primary" onClick={() => mostraInformacioEspai(espai)}>Més informació</Button>
-                            </Card.Body>
-                        </Card>
+                            </div>
+                        </div>
                     ) : null
                 ))}
-                <Modal show={modalObert} onHide={tancaModal}>
+                <Modal show={modalObert} onHide={tancaModal} className="espai-modal">
                     {espaiSeleccionat ? (
                         <>
                             <Modal.Header closeButton>
@@ -201,11 +201,12 @@ const MesEspais = (props) => {
                     </Modal.Footer>
                 </Modal>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1rem' }}>
+            <div className="paginacio-container">
                 {renderitzaPaginacio()}
             </div>
         </>
     );
+    
 
 }
 

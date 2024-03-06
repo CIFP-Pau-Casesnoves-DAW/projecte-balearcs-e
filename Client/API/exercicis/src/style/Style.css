@@ -227,3 +227,118 @@ div#visites {
 div#puntsinteres {
     margin: 20px;
 }
+
+/* Estils per a dispositius mòbils */
+@media (max-width: 600px) {
+    #punts {
+        width: 100%; /* Ajusta el màxim ample del contenidor */
+        display: flex;
+        flex-direction: column;
+    }
+
+    #visitestotal {
+        width: 100%; /* Ajusta el màxim ample del contenidor */
+        display: flex;
+        flex-direction: column;
+    }
+
+    .espais-container {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .espai-card {
+        width: 100%;
+        margin-top: 20px;
+    }
+
+    .cartes{
+        width: 100%;
+    }
+    .card{
+        width: 100%;
+    }
+
+    .espais-container {
+        margin: auto;
+    }
+}
+
+@media (min-width: 601px) {
+    .cartes{
+        display: flex;
+        flex-wrap: wrap;
+        justify-content:center;
+    }
+
+    .card{
+        width: calc(25% - 1rem);
+    } 
+
+    .espai-card{
+        width: calc(25% - 1rem);
+        margin: 0.5rem;
+    }
+
+    .espais-container {
+        margin: -0.5rem;
+        margin-top: 0.5rem;
+    }
+}
+
+
+/* Espais */
+.espais-title {
+    text-align: center;
+    padding: 20px;
+}
+
+.barra-cerca-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.espais-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    /* margin: -0.5rem;
+    margin-top: 0.5rem; */
+}
+
+.espai-card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.espai-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.espai-card-body {
+    padding: 1rem;
+}
+
+.espai-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.espai-description {
+    font-size: 1rem;
+    color: #333;
+}
+
+.paginacio-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+
