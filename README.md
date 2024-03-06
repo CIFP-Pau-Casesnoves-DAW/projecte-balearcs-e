@@ -87,6 +87,8 @@ Executa les migracions per crear la base de dades:
 - Idiomes
 - Illes
 - Login
+- Logout
+- Missatges
 - Modalitats
 - ModalitatsIdiomes
 - Municipis
@@ -113,6 +115,8 @@ Executa les migracions per crear la base de dades:
 - IdiomesController
 - IllesController
 - LoginController
+- LogoutController
+- MissatgesController
 - ModalitatsController
 - ModalitatsIdiomesController
 - MunicipisController
@@ -133,12 +137,13 @@ S'han creat els Middlewares següents:
 -  ControlaAdministrador
 -  ControlaDadesAudios
 -  ControlaDadesComentaris
+-  ControlaDadesEspais
 -  ControlaDadesFotos
 -  ControlaDadesPuntsInteres
+-  ControlaDadesUsuari
 -  ControlaDadesValoracions
 -  ControlaDadesVisites
--  ControlaDadesEspais
--  ControlaDadesUsuaris
+-  ControlaGestor
 -  ControlaRegistreUsuaris
 -  ControlaToken
 
@@ -163,7 +168,7 @@ Aquest projecte està sota la [Llicència CIFP PAUCASESNOVES](LICENSE).
 ## DonDominio
 
 La part de servidor d'aquest projecte està pujat a http://balearc.aurorakachau.com/public/api/nom_taula
-La part de front d'aquest projecte està pujat a http://balearcs.aurorakachau.com
+La part de front d'aquest projecte està pujat a http://balearcs.aurorakachau.com/inici
 
 ## Usuari Tomeu
 
