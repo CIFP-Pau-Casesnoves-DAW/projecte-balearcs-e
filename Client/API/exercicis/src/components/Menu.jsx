@@ -68,24 +68,24 @@ export default function Menu({ api_token, usuari_nom, usuari_rol }) {
                         </>}
                     </Nav>
                     <Nav>
-                        <button
+                    <button id='contacta'
                             onClick={toggleModal}
                             style={{
-                                backgroundColor: 'grey', color: '#ffffff', padding: '8px 15px',
+                                backgroundColor: '#99C2A2', color: '#ffffff', padding: '8px 15px',
                                 fontSize: '1rem', border: 'none', borderRadius: '0.65rem',
                                 cursor: 'pointer', // Canvia el cursor a pointer per a indicar clicabilitat
                                 boxShadow: '0px 2px 2px rgba(0, 0, 0, 0.2)', // Ombra lleugera per a profunditat
                                 transition: 'all 0.2s ease-in-out', // Suavitzat de transició per interaccions
                                 margin: '30px',
                             }}>
-                            Contacta amb nosaltres
+                            Contacte
                         </button>
                     </Nav>
                 </Navbar.Collapse>
                 <ModalContacte isOpen={modalOpen} onClose={toggleModal} />
                 <Navbar.Collapse className="justify-content-end">
                     <Navbar.Text>
-                        {usuari_nom && <>Hola, {usuari_nom}&nbsp;&nbsp;</>}
+                        {usuari_nom && <>Hola, {usuari_nom}</>}
                     </Navbar.Text>
                 </Navbar.Collapse>
             </Navbar>

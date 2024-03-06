@@ -73,7 +73,7 @@ const HomePage = () => {
                             className="d-block w-100"
                             src={getFotoEspai(espai.id)}
                             alt={`Imatge de l'espai ${espai.nom}`}
-                            style={{ width: '100%', maxHeight: '700px', objectFit: 'cover', borderRadius:'15px' }}                        
+                            style={{ width: '100%', height: '700px', objectFit: 'cover', borderRadius:'15px' }}                        
                         />
                         <Carousel.Caption style={modalStyle}>
                             <h3>{espai.nom}</h3>
