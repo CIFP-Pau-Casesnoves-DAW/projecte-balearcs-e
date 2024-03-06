@@ -262,6 +262,11 @@ div#puntsinteres {
     .espais-container {
         margin: auto;
     }
+    
+    #comentaris{
+        margin: auto;
+        width: 100%;
+    }
 }
 
 @media (min-width: 601px) {
@@ -283,6 +288,11 @@ div#puntsinteres {
     .espais-container {
         margin: -0.5rem;
         margin-top: 0.5rem;
+    }
+
+    #comentaris{
+        margin: auto;
+        width: 100%;
     }
 }
 

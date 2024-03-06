@@ -45,7 +45,7 @@ const UltimsComentaris = ({ api_token }) => {
                     nextIcon={<span aria-hidden="true" className="carousel-control-next-icon" />}>            
                 {comentaris.map((comentari) => (
                 <Carousel.Item key={comentari.id} interval={4000}> {/* Ajusta a 3 segons */}
-                            <Card className="mb-3" style={{borderRadius: '15px'}}>
+                        <Card className="mb-3" style={{borderRadius: '15px'}} id='comentaris'>
                             <Card.Body style={{ textAlign: 'center', backgroundColor: '#F3F9E3', border: '1px solid black', color: 'black', borderRadius: '15px' }}>
                             <Card.Title>Espai: {comentari.nomEspai}</Card.Title>
                         {/*   <Card.Subtitle className="mb-2">Usuari: {comentari.nomUsuari}</Card.Subtitle>  */}
