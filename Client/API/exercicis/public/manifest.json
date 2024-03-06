@@ -1,25 +1,26 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "homepage": "http://balearcs.aurorakachau.com",
+  "short_name": "BaleArcs",
+  "name": "Grup E BaleArcs",
   "icons": [
     {
-      "src": "favicon.ico",
+      "src": "logoBalearcs.568b21f84a82ded5b133.jpeg",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/x-icon"
     },
     {
-      "src": "logo192.png",
+      "src": "logoBalearcs.568b21f84a82ded5b133.jpeg",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "logo512.png",
+      "src": "logoBalearcs.568b21f84a82ded5b133.jpeg",
       "type": "image/png",
       "sizes": "512x512"
     }
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#000000",
+  "theme_color": "#FFBB9C",
   "background_color": "#ffffff"
 }

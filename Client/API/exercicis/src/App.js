@@ -1,3 +1,4 @@
+            
 import Ajuda from "./components/Ajuda.jsx";
 import Menu from "./components/Menu.jsx";
 import MunicipisAfegeix from "./components/municipis/MunicipisAfegeix.jsx";
@@ -12,7 +13,7 @@ import Login from "./components/login/Login.jsx";
 import Logout from "./components/login/Logout.jsx";
 import Usuari from "./components/Usuari.jsx";
 import Inici from "./components/Inici.jsx";
-import { storage } from "./utils/storage.js";
+import { storage } from "./utils/storage.js"; 
 import Serveis from "./components/serveis/Serveis.jsx";
 import ServeisAfegeix from "./components/serveis/ServeisAfegeix.jsx";
 import ServeisCRUD from "./components/serveis/ServeisCRUD.jsx";
@@ -54,6 +55,14 @@ import Registre from "./components/registre/Registre.jsx";
 import Audios from "./components/audios/Audios.jsx";
 import AudiosAfegeix from "./components/audios/AudiosAfegeix.jsx";
 import AudiosCRUD from "./components/audios/AudiosCRUD.jsx";
+import MesEspais from "./components/MesEspais.jsx";
+import BarraCerca from "./components/BarraCerca.jsx";
+import LlistaMunicipis from "./components/LlistaMunicipis.jsx";
+import PuntsInteresEspai from "./components/PuntsInteresEspai.jsx";
+import VisitesEspais from "./components/VisitesEspais.jsx";
+import UltimsComentaris from "./components/UltimsComentaris.jsx";
+import ValoracionsUsuari from "./components/ValoracionsUsuari.jsx";
+import ValoracionsComentaris from "./components/ValoracionsComentaris.jsx";
 /**
  * Component principal de l'aplicació.
  * Aquest component és responsable de renderitzar les rutes de l'aplicació utilitzant React Router.
@@ -74,7 +83,6 @@ function App() {
 
     if (tk) {
       setapi_token(tk);
-      console.log("token " + tk);
       descarregaUsuari(tk); // Llamar a la función dentro del useEffect
     }
   }, []);
@@ -90,13 +98,9 @@ function App() {
         }
       });
       const responseData = await response.json();
-      console.log(responseData);
       setusuari_id(responseData.data.id);
       setusuari_nom(responseData.data.nom);
       setusuari_rol(responseData.data.rol);
-
-      // Los console.log aquí se ejecutarán después de que los valores del estado hayan sido actualizados
-      console.log(responseData.data.id);
 
     } catch (error) {
       console.log(error);
@@ -122,91 +126,101 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Menu api_token={api_token} usuari_rol={usuari_rol} usuari_nom={usuari_nom} />} >
-          {/* Routes sols per a usuaris logats administradors*/}
-          {api_token && usuari_rol == "administrador" && <>
+        <Route path="/" element={<Menu api_token={api_token} usuari_id={usuari_id} usuari_rol={usuari_rol} usuari_nom={usuari_nom}/>} >
+        {/* Routes sols per a usuaris logats administradors*/}
+        {api_token && usuari_rol==="administrador" && <>
             {/* MUNICIPIS */}
-            <Route path="/municipis" element={<Municipis api_token={api_token} />} />
-            <Route path="/municipis/afegir" element={<MunicipisAfegeix api_token={api_token} />} />
-            <Route path="/municipis/:id" element={<MunicipisCRUD api_token={api_token} />} />
+            <Route path="/municipis" element={<Municipis api_token = {api_token}/>} />
+            <Route path="/municipis/afegir" element={<MunicipisAfegeix api_token = {api_token}/>} />
+            <Route path="/municipis/:id" element={<MunicipisCRUD api_token = {api_token}/>}/>
             {/* COMENTARIS API */}
-            <Route path="/comentaris/afegir" element={<ComentarisAfegeix api_token={api_token} />} />
-            <Route path="/comentaris/:id" element={<ComentarisCRUD api_token={api_token} />} />
-            <Route path="/comentaris" element={<Comentaris api_token={api_token} />} />
+            <Route path="/comentaris/afegir" element={<ComentarisAfegeix api_token = {api_token}/>} />
+            <Route path="/comentaris/:id" element={<ComentarisCRUD api_token = {api_token}/>}/>
+            <Route path="/comentaris" element={<Comentaris api_token = {api_token}/>} />
             {/* SERVEIS */}
-            <Route path="/serveis" element={<Serveis api_token={api_token} />} />
-            <Route path="/serveis/afegir" element={<ServeisAfegeix api_token={api_token} />} />
-            <Route path="/serveis/:id" element={<ServeisCRUD api_token={api_token} />} />
+            <Route path="/serveis" element={<Serveis api_token = {api_token}/>} />
+            <Route path="/serveis/afegir" element={<ServeisAfegeix api_token = {api_token}/>} />
+            <Route path="/serveis/:id" element={<ServeisCRUD api_token = {api_token}/>}/>
             {/* TIPUS */}
-            <Route path="/tipus" element={<Tipus api_token={api_token} />} />
-            <Route path="/tipus/afegir" element={<TipusAfegeix api_token={api_token} />} />
-            <Route path="/tipus/:id" element={<TipusCRUD api_token={api_token} />} />
+            <Route path="/tipus" element={<Tipus api_token = {api_token}/>} />
+            <Route path="/tipus/afegir" element={<TipusAfegeix api_token = {api_token}/>} />
+            <Route path="/tipus/:id" element={<TipusCRUD api_token = {api_token}/>}/>
             {/* IDIOMES */}
-            <Route path="/idiomes" element={<Idiomes api_token={api_token} />} />
-            <Route path="/idiomes/afegir" element={<IdiomesAfegeix api_token={api_token} />} />
-            <Route path="/idiomes/:id" element={<IdiomesCRUD api_token={api_token} />} />
+            <Route path="/idiomes" element={<Idiomes api_token = {api_token}/>} />
+            <Route path="/idiomes/afegir" element={<IdiomesAfegeix api_token = {api_token}/>} />
+            <Route path="/idiomes/:id" element={<IdiomesCRUD api_token = {api_token}/>}/>
             {/* MODALITATS */}
-            <Route path="/modalitats" element={<Modalitats api_token={api_token} />} />
-            <Route path="/modalitats/afegir" element={<ModalitatsAfegeix api_token={api_token} />} />
-            <Route path="/modalitats/:id" element={<ModalitatsCRUD api_token={api_token} />} />
+            <Route path="/modalitats" element={<Modalitats api_token = {api_token}/>} />
+            <Route path="/modalitats/afegir" element={<ModalitatsAfegeix api_token = {api_token}/>} />
+            <Route path="/modalitats/:id" element={<ModalitatsCRUD api_token = {api_token}/>}/>
             {/* ARQUITECTES */}
-            <Route path="/arquitectes" element={<Arquitectes api_token={api_token} />} />
-            <Route path="/arquitectes/afegir" element={<ArquitectesAfegeix api_token={api_token} />} />
-            <Route path="/arquitectes/:id" element={<ArquitectesCRUD api_token={api_token} />} />
+            <Route path="/arquitectes" element={<Arquitectes api_token = {api_token}/>} />
+            <Route path="/arquitectes/afegir" element={<ArquitectesAfegeix api_token = {api_token}/>} />
+            <Route path="/arquitectes/:id" element={<ArquitectesCRUD api_token = {api_token}/>} />
             {/* ESPAIS */}
-            <Route path="/espais" element={<Espais api_token={api_token} />} />
-            <Route path="/espais/afegir" element={<EspaisAfegir api_token={api_token} />} />
-            <Route path="/espais/:id" element={<EspaisCRUD api_token={api_token} />} />
+            <Route path="/espais" element={<Espais api_token={api_token}/>} />
+            <Route path="/espais/afegir" element={<EspaisAfegir api_token={api_token}/>} />
+            <Route path="/espais/:id" element={<EspaisCRUD api_token={api_token}/>} />
             {/* PUNTS D'INTERÈS */}
-            <Route path="/puntsinteres" element={<Puntsinteres api_token={api_token} />} />
-            <Route path="/puntsinteres/afegir" element={<PuntsinteresAfegeix api_token={api_token} />} />
-            <Route path="/puntsinteres/:id" element={<PuntsinteresCRUD api_token={api_token} />} />
+            <Route path="/puntsinteres" element={<Puntsinteres api_token={api_token}/>} />
+            <Route path="/puntsinteres/afegir" element={<PuntsinteresAfegeix api_token={api_token}/>} />
+            <Route path="/puntsinteres/:id" element={<PuntsinteresCRUD api_token={api_token}/>} />
             {/* VALORACIONS */}
-            <Route path="/valoracions" element={<Valoracions api_token={api_token} />} />
-            <Route path="/valoracions/afegir" element={<ValoracionsAfegeix api_token={api_token} />} />
-            <Route path="/valoracions/:id" element={<ValoracionsCRUD api_token={api_token} />} />
+            <Route path="/valoracions" element={<Valoracions api_token={api_token}/>} />
+            <Route path="/valoracions/afegir" element={<ValoracionsAfegeix api_token={api_token}/>} />
+            <Route path="/valoracions/:id" element={<ValoracionsCRUD api_token={api_token}/>} />
             {/* FOTOS */}
-            <Route path="/fotos" element={<Fotos api_token={api_token} />} />
-            <Route path="/fotos/afegir" element={<FotosAfegeix api_token={api_token} />} />
-            <Route path="/fotos/:id" element={<FotosCRUD api_token={api_token} />} />
+            <Route path="/fotos" element={<Fotos api_token={api_token}/>} />
+            <Route path="/fotos/afegir" element={<FotosAfegeix api_token={api_token}/>} />
+            <Route path="/fotos/:id" element={<FotosCRUD api_token={api_token}/>} />
             {/* AUDIOS */}
-            <Route path="/audios" element={<Audios api_token={api_token} />} />
-            <Route path="/audios/afegir" element={<AudiosAfegeix api_token={api_token} />} />
-            <Route path="/audios/:id" element={<AudiosCRUD api_token={api_token} />} />
+            <Route path="/audios" element={<Audios api_token={api_token}/>} />
+            <Route path="/audios/afegir" element={<AudiosAfegeix api_token={api_token}/>} />
+            <Route path="/audios/:id" element={<AudiosCRUD api_token={api_token}/>} />
             {/* USUARIS */}
-            <Route path="/usuaris" element={<Usuaris api_token={api_token} usuari_nom={usuari_nom} usuari_id={usuari_id} />} />
-            <Route path="/usuaris/:id" element={<UsuarisCRUD api_token={api_token} />} />
-            <Route path="/usuaris/afegir" element={<UsuarisAfegeix api_token={api_token} />} />
+            <Route path="/usuaris" element={<Usuaris api_token = {api_token} usuari_nom={usuari_nom} usuari_id={usuari_id}/>} />
+            <Route path="/usuaris/:id" element={<UsuarisCRUD api_token={api_token}/>} />
+            <Route path="/usuaris/afegir" element={<UsuarisAfegeix api_token={api_token}/>} />
             {/* VISITES */}
-            <Route path="/visites" element={<Visites api_token={api_token} usuari_nom={usuari_nom} usuari_id={usuari_id} />} />
+            <Route path="/visites" element={<Visites api_token={api_token} usuari_nom={usuari_nom} usuari_id={usuari_id}/>} />
             <Route path="/visites/:id" element={<VisitesCRUD api_token={api_token} />} />
             <Route path="/visites/afegir" element={<VisitesAfegeix api_token={api_token} />} />
-          </>}
-          {/* Routes sols per a usuaris logats gestors*/}
-          {api_token && usuari_rol == "gestor" && <>
+        </>} 
+        {/* Routes sols per a usuaris logats gestors*/}
+        {api_token && usuari_rol=="gestor" && <>
             {/* GESTIÓ D'ESPAIS */}
-            <Route path="/espaisgestors" element={<EspaisGestors api_token={api_token} usuari_id={usuari_id} />} />
-            <Route path="/espaisgestors/:id" element={<EspaisGestorsCRUD api_token={api_token} />} />
+            <Route path="/espaisgestors" element={<EspaisGestors api_token = {api_token} usuari_id={usuari_id} />} />
+            <Route path="/espaisgestors/:id" element={<EspaisGestorsCRUD api_token = {api_token} />} />
             {/* GESTIÓ DE PUNTS D'INTERÈS */}
-            {/* Problema perque si poso un altre id no asignat al gestor el pot modificar */}
-            <Route path="/espaisgestors/:id/puntsinteresgestors/:id" element={<PuntsInteresGestorsCRUD api_token={api_token} />} />
-            <Route path="/espaisgestors/:id/visitesgestors/:id" element={<VisitesEspaisGestorsCRUD api_token={api_token} />} />
-          </>}
-          {/* Routes sols per a usuaris logats*/}
-          {api_token && <>
-            {/* INICI */}
-            <Route path="/usuari" element={<Usuari api_token={api_token} usuari_nom={usuari_nom} usuari_id={usuari_id} />} />
+            <Route path="/espaisgestors/:id/puntsinteresgestors/:id" element={<PuntsInteresGestorsCRUD api_token = {api_token} />} />
+            <Route path="/espaisgestors/:id/visitesgestors/:id" element={<VisitesEspaisGestorsCRUD api_token = {api_token} />} />
+        </>}
+        {/* Routes sols per a usuaris logats*/}
+        {api_token && <>
+            {/* DADES USUARI */}
+            <Route path="/usuari" element={<Usuari api_token = {api_token} usuari_nom={usuari_nom} usuari_id={usuari_id}/>}/>
             {/* LOGOUT */}
-            <Route path="/logout" element={<Logout />} />
-          </>}
-          {/* Routes sols per a usuaris NO logats*/}
-          {!api_token && <>
-            <Route path="/login" element={<Login guardaapi_token={ferGuardaapi_token} />} />
-            <Route path="/registre" element={<Registre guardaapi_token={ferGuardaapi_token} />} />
-          </>}
-          {/* Routes per a tots els usuaris*/}
+            <Route path="/logout" element={<Logout usuari_id = {usuari_id}/>}/>
+            {/* MÉS ESPAIS */}
+            <Route path="/mesespais" element={<MesEspais api_token = {api_token}/>} />
+            {/* VALORACIONS I COMENTARIS */}
+            <Route path="/valoracionscomentaris" element={<ValoracionsComentaris api_token = {api_token}/>} />
+        </>} 
+        {/* Routes sols per a usuaris NO logats*/}
+        {!api_token && <>
+          <Route path="/login" element={<Login guardausuari_id={ferGuardausuari_id} guardaapi_token={ferGuardaapi_token} guardausuari_rol={ferGuardausuari_rol} guardausuari_nom={ferGuardausuari_nom}/>} />
+          <Route path="/registre" element={<Registre guardausuari_id={ferGuardausuari_id} guardaapi_token={ferGuardaapi_token} guardausuari_rol={ferGuardausuari_rol} guardausuari_nom={ferGuardausuari_nom}/>} />
+        </> } 
+        {/* Routes per a tots els usuaris*/}
           <Route path="/ajuda" element={<Ajuda />} />
           <Route path="/inici" element={<Inici />} />
+          <Route path="/mesespais" element={<MesEspais api_token = {api_token}/>} />
+          <Route path="/puntsinteresespai" element={<PuntsInteresEspai api_token = {api_token}/>} />
+          <Route path="/visitesespais" element={<VisitesEspais api_token = {api_token}/>}  />
+          <Route path="/ultimscomentaris" element={<UltimsComentaris api_token = {api_token}/>} />
+          <Route path="/valoracionscomentaris" element={<ValoracionsComentaris api_token = {api_token}/>} />
+          <Route path="/cerca" element={<BarraCerca api_token = {api_token}/>} />
+          <Route path="/municipis" element={<LlistaMunicipis api_token = {api_token}/>} />
           <Route path="*" element={<h1>Ups! Opció incorrecta</h1>} />
         </Route>
       </Routes>

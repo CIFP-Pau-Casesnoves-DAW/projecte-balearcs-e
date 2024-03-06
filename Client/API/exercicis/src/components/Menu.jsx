@@ -1,52 +1,88 @@
-import {Link, Outlet} from 'react-router-dom';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import { Navbar, Nav, Container, NavDropdown } from 'react-bootstrap';
+import React, { useState } from 'react';
+import { Link, Outlet } from 'react-router-dom';
+import { Navbar, Nav, NavDropdown, Container, } from 'react-bootstrap';
 import logo from '../images/logoBalearcs.jpeg'; // Import the image
 import '../style/Style.css'; // Importa l'arxiu CSS
+import ModalContacte from './ModalContacte';
 
 export default function Menu({ api_token, usuari_nom, usuari_rol }) {
+    const [showMenu, setShowMenu] = useState(false);
+    const [modalOpen, setModalOpen] = useState(false); // estat del modal
+
+    const toggleMenu = () => {
+        setShowMenu(!showMenu);
+    };
+
+    const toggleModal = () => {
+        setModalOpen(!modalOpen); // Això commuta l'estat del modal
+    };
+
     return (
         <>
             <Navbar bg="dark" className="color-nav" variant="dark" expand="sm" sticky="top">
-                <Nav className="mr-auto align-items-center">
-                    <Link className='nav-link' to="/inici">
-                        <img style={{ width: '80px', height: '80px', borderRadius: '30px', border: '2px solid black' }}
-                            src={logo} alt="Foto del header"
-                        />
-                    </Link>
-                    <Link className="nav-link" to="/inici">Inici</Link>
-                    <Link className="nav-link" to="/ajuda">Ajuda</Link>
-                    {api_token && <>
-                        <Link className="nav-link" to="/usuari">Usuari</Link>
-                        <Link className="nav-link" to="/logout">Logout</Link>
-                    </>}
-                    {api_token && usuari_rol=='administrador'&& <>
-                        <NavDropdown title="Modificar Taules" id="basic-nav-dropdown">
-                            <NavDropdown.Item href="/municipis">Municipis</NavDropdown.Item>
-                            <NavDropdown.Item href="/comentaris">Comentaris</NavDropdown.Item>
-                            <NavDropdown.Item href="/serveis">Serveis</NavDropdown.Item>
-                            <NavDropdown.Item href="/tipus">Tipus</NavDropdown.Item>
-                            <NavDropdown.Item href="/idiomes">Idiomes</NavDropdown.Item>
-                            <NavDropdown.Item href="/modalitats">Modalitats</NavDropdown.Item>
-                            <NavDropdown.Item href="/arquitectes">Arquitectes</NavDropdown.Item>
-                            <NavDropdown.Item href="/espais">Espais</NavDropdown.Item>
-                            <NavDropdown.Item href="/puntsinteres">Punts d'interès</NavDropdown.Item>
-                            <NavDropdown.Item href="/valoracions">Valoracions</NavDropdown.Item>
-                            <NavDropdown.Item href="/fotos">Fotos</NavDropdown.Item>
-                            <NavDropdown.Item href="/audios">Audios</NavDropdown.Item>
-                            <NavDropdown.Item href="/usuaris">Usuaris</NavDropdown.Item>
-                            <NavDropdown.Item href="/visites">Visites</NavDropdown.Item>
+                <Navbar.Brand onClick={toggleMenu}></Navbar.Brand>
+                <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                <Navbar.Collapse id="basic-navbar-nav" className={showMenu ? "show" : ""}>
+                    <Nav className="mr-auto align-items-center">
+                        <Link className='nav-link' to="/inici">
+                            <img style={{ width: '80px', height: '80px', borderRadius: '30px', border: '2px solid black' }}
+                                src={logo} alt="Foto del header"
+                            />
+                        </Link>
+                        <Link className="nav-link" to="/inici">Inici</Link>
+                        <Link className="nav-link" to="/ajuda">Ajuda</Link>
+                        <NavDropdown title="Espais" id="basic-nav-dropdown">
+                            <NavDropdown.Item href="/mesespais">Tots els Espais</NavDropdown.Item>
+                            <NavDropdown.Item href="/puntsinteresespai">Punts d'Interés</NavDropdown.Item>
+                            <NavDropdown.Item href="/ultimscomentaris">Últims Comentaris</NavDropdown.Item>
+                            <NavDropdown.Item href="/visitesespais">Visites dels espais</NavDropdown.Item>
                         </NavDropdown>
-                    </>}
-                    {api_token && usuari_rol=='gestor'&& <>
-                        <NavDropdown title="Gestió" id="basic-nav-dropdown">
-                            <NavDropdown.Item href="/espaisgestors">Gestió d'espais</NavDropdown.Item>
-                        </NavDropdown>
-                    </>}
-                    {!api_token && <>
-                        <Link className="nav-link" to="/login">Login</Link>
-                    </>}
-                </Nav>
+                        {api_token && <>
+                            <Link className="nav-link" to="/usuari">Usuari</Link>
+                            <Link className="nav-link" to="/logout">Logout</Link>
+                            <Link className="nav-link" to="/valoracionscomentaris">Comentar i valorar un espai</Link>
+                        </>}
+                        {api_token && usuari_rol === 'administrador' && <>
+                            <NavDropdown title="Modificar Taules" id="basic-nav-dropdown">
+                                <NavDropdown.Item href="/municipis">Municipis</NavDropdown.Item>
+                                <NavDropdown.Item href="/comentaris">Comentaris</NavDropdown.Item>
+                                <NavDropdown.Item href="/serveis">Serveis</NavDropdown.Item>
+                                <NavDropdown.Item href="/tipus">Tipus</NavDropdown.Item>
+                                <NavDropdown.Item href="/idiomes">Idiomes</NavDropdown.Item>
+                                <NavDropdown.Item href="/modalitats">Modalitats</NavDropdown.Item>
+                                <NavDropdown.Item href="/arquitectes">Arquitectes</NavDropdown.Item>
+                                <NavDropdown.Item href="/espais">Espais</NavDropdown.Item>
+                                <NavDropdown.Item href="/puntsinteres">Punts d'interès</NavDropdown.Item>
+                                <NavDropdown.Item href="/valoracions">Valoracions</NavDropdown.Item>
+                                <NavDropdown.Item href="/fotos">Fotos</NavDropdown.Item>
+                                <NavDropdown.Item href="/audios">Audios</NavDropdown.Item>
+                                <NavDropdown.Item href="/usuaris">Usuaris</NavDropdown.Item>
+                                <NavDropdown.Item href="/visites">Visites</NavDropdown.Item>
+                            </NavDropdown>
+                        </>}
+                        {api_token && usuari_rol === 'gestor' && <>
+                            <Link className="nav-link" to="/espaisgestors">Gestió d'espais</Link>
+                        </>}
+                        {!api_token && <>
+                            <Link className="nav-link" to="/login">Login</Link>
+                        </>}
+                    </Nav>
+                    <Nav>
+                        <button
+                            onClick={toggleModal}
+                            style={{
+                                backgroundColor: 'grey', color: '#ffffff', padding: '8px 15px',
+                                fontSize: '1rem', border: 'none', borderRadius: '0.65rem',
+                                cursor: 'pointer', // Canvia el cursor a pointer per a indicar clicabilitat
+                                boxShadow: '0px 2px 2px rgba(0, 0, 0, 0.2)', // Ombra lleugera per a profunditat
+                                transition: 'all 0.2s ease-in-out', // Suavitzat de transició per interaccions
+                                margin: '30px',
+                            }}>
+                            Contacta amb nosaltres
+                        </button>
+                    </Nav>
+                </Navbar.Collapse>
+                <ModalContacte isOpen={modalOpen} onClose={toggleModal} />
                 <Navbar.Collapse className="justify-content-end">
                     <Navbar.Text>
                         {usuari_nom && <>Hola, {usuari_nom}&nbsp;&nbsp;</>}
@@ -77,4 +113,3 @@ export default function Menu({ api_token, usuari_nom, usuari_rol }) {
         </>
     );
 }
-

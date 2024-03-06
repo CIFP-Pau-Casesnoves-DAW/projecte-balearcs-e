@@ -35,11 +35,14 @@ use App\Http\Controllers\IdiomesController;
 use App\Http\Controllers\ModalitatsController;
 use App\Http\Controllers\ComentarisController;
 use App\Http\Controllers\LogoutController;
+use App\Http\Controllers\MissatgesController;
 use App\Http\Middleware\ControlaDadesAudios;
 use App\Http\Middleware\ControlaDadesFotos;
 use App\Http\Middleware\ControlaDadesPuntsInteres;
 use App\Http\Middleware\ControlaDadesValoracions;
 use App\Http\Middleware\ControlaDadesVisites;
+use App\Http\Middleware\ControlaGestor;
+use Illuminate\Support\Facades\Artisan;
 
 /*
 |--------------------------------------------------------------------------
@@ -56,6 +59,29 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::get('/activateLink', function () {
+    Artisan::call('storage:link');
+
+    $storagePath = public_path('storage');
+
+    if (file_exists($storagePath)) {
+        chmod($storagePath, 0777); // Dar permisos 777 al enlace simbólico
+        return 'Enlace simbólico activado y permisos establecidos a 777.';
+    } else {
+        return 'El enlace simbólico no se creó correctamente.';
+    }
+})->middleware([ControlaAdministrador::class]);
+
+
+Route::get('/desactivateLink', function () {
+    if (file_exists(public_path('storage'))) {
+        unlink(public_path('storage')); // Elimina el enlace simbólico
+        return 'Enlace simbólico desactivado.';
+    } else {
+        return 'El enlace simbólico no existe.';
+    }
+})->middleware([ControlaAdministrador::class]);
+
 //login
 $router->post('login', [LoginController::class, 'login']);
 
@@ -64,8 +90,8 @@ $router->post('logout/{id}', [LogoutController::class, 'logout']);
 
 // Rutes per a llistar, crear, emmagatzemar, mostrar, editar, actualitzar i eliminar arquitectes
 $router->group(['prefix' => 'arquitectes', 'middleware' => ControlaAdministrador::class], function () use ($router) {
-    $router->get('', [ArquitectesController::class, 'index']);
-    $router->get('{id}', [ArquitectesController::class, 'show']);
+    $router->get('', [ArquitectesController::class, 'index'])->withoutMiddleware([ControlaAdministrador::class]);
+    $router->get('{id}', [ArquitectesController::class, 'show'])->withoutMiddleware([ControlaAdministrador::class]);
     $router->post('', [ArquitectesController::class, 'store']);
     $router->put('{id}', [ArquitectesController::class, 'update']);
     $router->delete('{id}', [ArquitectesController::class, 'destroy']);
@@ -75,10 +101,9 @@ $router->group(['prefix' => 'arquitectes', 'middleware' => ControlaAdministrador
 $router->group(['prefix' => 'audios'], function () use ($router) {
     $router->get('', [AudiosController::class, 'index']);
     $router->get('{id}', [AudiosController::class, 'show']);
-    $router->post('', [AudiosController::class, 'store'])->middleware(ControlaAdministrador::class);
-    $router->put('{id}', [AudiosController::class, 'update'])->middleware(ControlaDadesAudios::class);
-    $router->delete('{id}', [AudiosController::class, 'destroy'])->middleware(ControlaAdministrador::class);
-    $router->put('delete/{id}', [AudiosController::class, 'delete'])->middleware(ControlaAdministrador::class);
+    $router->post('', [AudiosController::class, 'store'])->middleware(ControlaGestor::class);
+    $router->put('{id}', [AudiosController::class, 'update'])->middleware(ControlaGestor::class);
+    $router->delete('{id}', [AudiosController::class, 'destroy'])->middleware(ControlaGestor::class);
 });
 
 //comentaris
@@ -131,9 +156,9 @@ $router->group(['prefix' => 'espais_serveis', 'middleware' => ControlaAdministra
 $router->group(['prefix' => 'fotos'], function () use ($router) {
     $router->get('', [FotosController::class, 'index']);
     $router->get('{id}', [FotosController::class, 'show']);
-    $router->post('', [FotosController::class, 'store'])->middleware(ControlaAdministrador::class);
-    // $router->put('{id}', [FotosController::class, 'update'])->middleware(ControlaDadesFotos::class);
-    $router->delete('{id}', [FotosController::class, 'destroy'])->middleware(ControlaAdministrador::class);
+    $router->post('', [FotosController::class, 'store'])->middleware(ControlaGestor::class);
+    $router->put('{id}', [FotosController::class, 'update'])->middleware(ControlaGestor::class);
+    $router->delete('{id}', [FotosController::class, 'destroy'])->middleware(ControlaGestor::class);
 });
 
 // Rutes per a llistar, crear, emmagatzemar, mostrar, editar, actualitzar i eliminar idiomes
@@ -152,6 +177,10 @@ $router->group(['prefix' => 'illes', 'middleware' => ControlaAdministrador::clas
     $router->post('', [IllesController::class, 'store']);
     $router->put('{id}', [IllesController::class, 'update']);
     $router->delete('{id}', [IllesController::class, 'destroy']);
+});
+
+$router->group(['prefix' => 'missatges'], function () use ($router) {
+    $router->post('', [MissatgesController::class, 'envia']);
 });
 
 // Rutes per a llistar, crear, emmagatzemar, mostrar, editar, actualitzar i eliminar modalitats
@@ -174,8 +203,8 @@ $router->group(['prefix' => 'modalitats_idiomes', 'middleware' => ControlaAdmini
 
 // Rutas para listar, crear, almacenar, mostrar, editar, actualizar y eliminar municipis
 $router->group(['prefix' => 'municipis', 'middleware' => ControlaAdministrador::class], function () use ($router) {
-    $router->get('', [MunicipisController::class, 'index']);
-    $router->get('{id}', [MunicipisController::class, 'show']);
+    $router->get('', [MunicipisController::class, 'index'])->withoutMiddleware([ControlaAdministrador::class]);
+    $router->get('{id}', [MunicipisController::class, 'show'])->withoutMiddleware([ControlaAdministrador::class]);
     $router->post('', [MunicipisController::class, 'store']);
     $router->put('{id}', [MunicipisController::class, 'update']);
     $router->delete('{id}', [MunicipisController::class, 'destroy']);
@@ -184,17 +213,17 @@ $router->group(['prefix' => 'municipis', 'middleware' => ControlaAdministrador::
 // Rutas para listar, crear, almacenar, mostrar, editar, actualizar y eliminar punts_interes
 $router->group(['prefix' => 'punts_interes'], function () use ($router) {
     $router->get('', [PuntsInteresController::class, 'index']);
-    $router->get('{id}', [PuntsInteresController::class, 'show']);
-    $router->post('', [PuntsInteresController::class, 'store'])->middleware(ControlaAdministrador::class);
+    $router->get('{id}', [PuntsInteresController::class, 'show'])->middleware(ControlaDadesPuntsInteres::class);
+    $router->post('', [PuntsInteresController::class, 'store'])->middleware(ControlaGestor::class);
     $router->put('{id}', [PuntsInteresController::class, 'update'])->middleware(ControlaDadesPuntsInteres::class);
-    $router->put('delete/{id}', [EspaisController::class, 'delete'])->middleware(ControlaAdministrador::class);
+    $router->put('delete/{id}', [PuntsInteresController::class, 'delete'])->middleware(ControlaAdministrador::class);
     $router->delete('{id}', [PuntsInteresController::class, 'destroy'])->middleware(ControlaAdministrador::class);
 });
 
 // Rutas para listar, crear, almacenar, mostrar, editar, actualizar y eliminar serveis
 $router->group(['prefix' => 'serveis', 'middleware' => ControlaAdministrador::class], function () use ($router) {
-    $router->get('', [ServeisController::class, 'index']);
-    $router->get('{id}', [ServeisController::class, 'show']);
+    $router->get('', [ServeisController::class, 'index'])->withoutMiddleware([ControlaAdministrador::class]);
+    $router->get('{id}', [ServeisController::class, 'show'])->withoutMiddleware([ControlaAdministrador::class]);
     $router->post('', [ServeisController::class, 'store']);
     $router->put('{id}', [ServeisController::class, 'update']);
     $router->delete('{id}', [ServeisController::class, 'destroy']);
@@ -211,8 +240,8 @@ $router->group(['prefix' => 'serveis_idiomes', 'middleware' => ControlaAdministr
 
 // Rutas para listar, crear, almacenar, mostrar, editar, actualizar y eliminar tipus
 $router->group(['prefix' => 'tipus', 'middleware' => ControlaAdministrador::class], function () use ($router) {
-    $router->get('', [TipusController::class, 'index']);
-    $router->get('{id}', [TipusController::class, 'show']);
+    $router->get('', [TipusController::class, 'index'])->withoutMiddleware([ControlaAdministrador::class]);
+    $router->get('{id}', [TipusController::class, 'show'])->withoutMiddleware([ControlaAdministrador::class]);
     $router->post('', [TipusController::class, 'store']);
     $router->put('{id}', [TipusController::class, 'update']);
     $router->delete('{id}', [TipusController::class, 'destroy']);
@@ -228,22 +257,23 @@ $router->group(['prefix' => 'usuaris', 'middleware' => ControlaAdministrador::cl
     $router->delete('{id}', [UsuarisController::class, 'destroy']);
     $router->post('/registre/{id}', [UsuarisController::class, 'registre'])->withoutMiddleware([ControlaAdministrador::class]);
     $router->get('/confirma/{id}', [UsuarisController::class, 'confirma'])->withoutMiddleware([ControlaAdministrador::class]);
+    $router->get('token/{token}', [UsuarisController::class, 'showToken'])->withoutMiddleware([ControlaAdministrador::class]);
 });
 
 // Rutas para listar, crear, almacenar, mostrar, editar, actualizar y eliminar valoracions
 $router->group(['prefix' => 'valoracions'], function () use ($router) {
     $router->get('', [ValoracionsController::class, 'index']);
-    $router->get('{id}', [ValoracionsController::class, 'show']);
+    $router->get('{id}', [ValoracionsController::class, 'show'])->middleware(ControlaDadesValoracions::class);
     $router->post('', [ValoracionsController::class, 'store'])->middleware(ControlaToken::class);
     $router->put('{id}', [ValoracionsController::class, 'update'])->middleware(ControlaDadesValoracions::class);
     $router->delete('{id}', [ValoracionsController::class, 'destroy'])->middleware(ControlaAdministrador::class);
 });
 
 // Rutas para listar, crear, almacenar, mostrar, editar, actualizar y eliminar visites
-$router->group(['prefix' => 'visites', 'middleware' => ControlaAdministrador::class], function () use ($router) {
+$router->group(['prefix' => 'visites'], function () use ($router) {
     $router->get('', [VisitesController::class, 'index']);
-    $router->get('{id}', [VisitesController::class, 'show']);
-    $router->post('', [VisitesController::class, 'store'])->middleware(ControlaAdministrador::class);
+    $router->get('{id}', [VisitesController::class, 'show'])->middleware(ControlaDadesVisites::class);
+    $router->post('', [VisitesController::class, 'store'])->middleware(ControlaGestor::class);
     $router->put('{id}', [VisitesController::class, 'update'])->middleware(ControlaDadesVisites::class);
     $router->put('delete/{id}', [VisitesController::class, 'delete'])->middleware(ControlaAdministrador::class);
     $router->delete('{id}', [VisitesController::class, 'destroy'])->middleware(ControlaAdministrador::class);

@@ -219,6 +219,19 @@ class UsuarisController extends Controller
         }
     }
 
+    public function showToken($token)
+    {
+        try {
+            $tupla = Usuaris::where('api_token', $token)->firstOrFail();
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['status' => 'error', 'message' => 'Token not found'], 404);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+        }
+    }
+
+
     /**
      * @OA\Put(
      *     path="/usuaris/{id}",

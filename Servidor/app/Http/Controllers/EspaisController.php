@@ -138,7 +138,7 @@ class EspaisController extends Controller
         try {
             $reglesValidacio = [
                 'nom' => 'required|string|max:255',
-                'descripcio' => 'required|string',
+                'descripcio' => 'required|string|max:3000',
                 'carrer' => 'required|string|max:255',
                 'numero' => 'required|string|max:10',
                 'pis_porta' => 'nullable|string|max:50',

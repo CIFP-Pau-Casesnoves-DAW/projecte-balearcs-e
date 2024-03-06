@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Fotos;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\File;
 
 /**
  * @OA\Tag(
@@ -127,7 +128,7 @@ class FotosController extends Controller
     {
         try {
             $reglesValidacio = [
-                'foto' => 'required|mimes:jpg,jpeg,bmp,png||max:10240',
+                'foto' => 'required|mimes:jpg,jpeg,bmp,png|max:10240',
                 'punt_interes_id' => 'required|exists:punts_interes,id',
                 'espai_id' => 'required|exists:espais,id',
                 'comentari' => 'filled|string',
@@ -154,13 +155,51 @@ class FotosController extends Controller
             if ($request->hasFile('foto')) {
                 $foto = $request->file('foto');
                 $nombreFoto = time() . '_' . $foto->getClientOriginalName();
-                $ruta = $foto->storeAs('public/fotos', $nombreFoto); 
+                $ruta = $foto->storeAs('/fotos', $nombreFoto);
                 $fotoModelo->foto = $ruta;
             }
 
             $fotoModelo->save();
 
             return response()->json(['status' => 'success', 'data' => $fotoModelo], 200);
+        } catch (\Illuminate\Validation\ValidationException $validationException) {
+            return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
+        }
+    }
+
+    public function update(Request $request, $id)
+    {
+        try {
+            $tupla = Fotos::findOrFail($id);
+
+            $reglesValidacio = [
+                'punt_interes_id' => 'filled|exists:punts_interes,id',
+                'espai_id' => 'filled|exists:espais,id',
+                'comentari' => 'filled|string',
+            ];
+            $missatges = [
+                'mimes' => 'Es requereix jpg,jpeg,bmp,png',
+                'max' => 'Excedit el tamany màxim de 10240',
+                'filled' => 'El camp :attribute no pot estar buit',
+                'exists' => ':attribute ha de existir',
+                'required' => 'El camp :attribute és obligatori.'
+            ];
+
+            $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
+            if ($validacio->fails()) {
+                throw new \Illuminate\Validation\ValidationException($validacio);
+            }
+
+            // Guardar la imagen utilizando Eloquent
+            $tupla->punt_interes_id = $request->punt_interes_id;
+            $tupla->espai_id = $request->espai_id;
+            $tupla->comentari = $request->comentari;
+
+            $tupla->save();
+
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
         } catch (\Illuminate\Validation\ValidationException $validationException) {
             return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
         } catch (\Exception $exception) {

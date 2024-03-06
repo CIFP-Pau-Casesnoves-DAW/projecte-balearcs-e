@@ -117,6 +117,56 @@ export default function PuntsinteresCRUD(props) {
         });
     }
 
+    const baixaPunt = () => {
+        fetch(`http://balearc.aurorakachau.com/public/api/punts_interes/delete/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        .then(response => {
+            if (response.error === 200) {
+                setError("Error al donar de baixa el punt d'interès.");
+                console.log(response.error);
+            } else {
+                navigate('/puntsinteres');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            setError("Error al donar de baixa el punt d'interès.");
+        });
+    }
+
+    const altaPunt = () => {
+        fetch(`http://balearc.aurorakachau.com/public/api/punts_interes/${id}`, {    
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                titol: puntInteres,
+                descripcio: descripcio,
+                espai_id: espai_id,
+                data_baixa: null
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                setError("Error al modificar el punt d'interès.");
+            } else {
+                navigate('/puntsinteres');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            setError("Error al modificar el punt d'interès.");
+        });
+    }
+
     if (loading) {
         return <Spinner animation="border" />;
     }
@@ -158,12 +208,20 @@ export default function PuntsinteresCRUD(props) {
                 <Button variant="warning" type="button" onClick={() => navigate("/puntsinteres")}>
                     Cancel·la
                 </Button>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;
                 {edita &&
                     <Button variant="danger" type="button" onClick={esborraPuntInteres}>
                         Esborra
                     </Button>
                 }
+                &nbsp;&nbsp;
+                <Button variant="danger" type="button" onClick={baixaPunt}>
+                    Donar de baixa
+                </Button>
+                &nbsp;&nbsp;
+                <Button variant="success" type="button" onClick={altaPunt}>
+                    Donar d'alta
+                </Button>
             </Form>
             <br />
             {error !== '' && <Alert variant="danger">{error}</Alert>}

@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
 import { Form, Button, Spinner } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { Alert } from 'react-bootstrap';
-import ModalitatsSelect from '../espais/ModalitatsSelect';
 
 export default function EspaisAfegeix(props) {
     const [nom, setNom] = useState('');
@@ -108,7 +106,9 @@ export default function EspaisAfegeix(props) {
                 }
             });
             const responseData = await response.json();
-            setGestors(responseData.data);
+            // Filtra els usuaris que tenen el rol de "gestor"
+            const gestorsFiltrats = responseData.data.filter(user => user.rol === 'gestor');
+            setGestors(gestorsFiltrats);
         } catch (error) {
             console.log(error);
         }
@@ -323,11 +323,6 @@ export default function EspaisAfegeix(props) {
                             </option>
                         ))}
                     </Form.Control>
-                </Form.Group>
-
-                <Form.Group className="mb-3">
-                    <Form.Label>Modalitat:</Form.Label>
-                    <ModalitatsSelect api_token = {token}></ModalitatsSelect>
                 </Form.Group>
 
                 <Button variant="primary" type="button" onClick={guardaEspai}>

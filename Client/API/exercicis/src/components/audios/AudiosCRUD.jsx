@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Form, Button, Alert, Spinner } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
-import { SelectEspais } from "./SelectEspais";
-import { SelectPuntsInteres } from "./SelectPunts";
+import {SelectEspais} from "../fotos/SelectEspais.jsx";
+import {SelectPuntsInteres} from "../fotos/SelectPunts.jsx";
 
 export default function AudiosCRUD(props) {
     const [audioFile, setAudioFile] = useState("");
@@ -169,7 +169,7 @@ export default function AudiosCRUD(props) {
                     {edita ? "Guarda" : "Crea"}
                 </Button>
                 &nbsp;&nbsp;
-                <Button variant="warning" type="button" onClick={() => navigate("/fotos")}>
+                <Button variant="warning" type="button" onClick={() => navigate("/audios")}>
                     Cancel·la
                 </Button>
                 &nbsp;&nbsp;

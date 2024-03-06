@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Confirmació registre</title>
+    <title>Missatge de "Contacta amb nosaltres" de {{$nom}}</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
@@ -17,12 +17,10 @@
                         <h3 class="text-center">Balearcs DAW Pau Casesnoves</h3>
                     </div>
                     <div class="card-body">
-                        <p class="text-center">Benvingut {{$nom}} a la missatgeria.</p>
-                        <p class="text-center">Per a confirmar el teu registre segueix el següent link</p>
-                        <div class="text-center">
-                            <a href="{{$link}}" class="btn btn-primary">Confirmar registre</a>
-                        </div>
-                        <p class="text-center mt-3">Si no has sol·licitat el registre, ignora aquest email.</p>
+                        <p class="text-center">Nom: {{$nom}}</p>
+                        <p class="text-center">Llinatges: {{$llinatges}}</p>
+                        <p class="text-center">Mail: {{$mail}}</p>
+                        <p class="text-center">Missatge: {{$missatge}}</p>
                     </div>
                 </div>
             </div>
