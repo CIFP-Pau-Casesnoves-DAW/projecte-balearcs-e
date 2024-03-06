@@ -123,8 +123,8 @@ export default function EspaisCRUD(props){
     }
 
     const esborraEspai = () => {
-        fetch(`http://balearc.aurorakachau.com/public/api/espais/${id}`, {
-            method: 'DELETE',
+        fetch(`http://balearc.aurorakachau.com/public/api/espais/delete/${id}`, {
+            method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
@@ -132,14 +132,53 @@ export default function EspaisCRUD(props){
         }).then(response => response.json())
             .then(data => {
                 if (data.error) {
-                    setError("Error al eliminar l'espai.");
+                    setError("Error al donar de baixa l'espai.");
                 } else {
                     navigate('/espais');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                setError("Error al eliminar l'espai.");
+                setError("Error al donar de baixa l'espai.");
+            });
+    }
+
+    const altaEspai = () => {
+        fetch(`http://balearc.aurorakachau.com/public/api/espais/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                nom: nom,
+                descripcio: descripcio,
+                any_cons: anyCons,
+                web: web,
+                mail: mail,
+                arquitecte_id: arquitecteId,
+                gestor_id: gestorId,
+                carrer: carrer,
+                pis_porta: pis_porta,
+                numero: numero,
+                grauAcc: grauAcc,
+                tipus_id: selectedTipusId,
+                municipi_id: municipiId,
+                destacat: destacat,
+                data_baixa: null
+            })
+        }).then(response => response.json())
+            .then((data) => {
+                if (data.error) {
+                    setError("Error al donar d'alta l'espai l'espai.");
+                } else {
+                    setError('');
+                    navigate('/espais');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                setError("Error al donar d'alta l'espai l'espai.");
             });
     }
 
@@ -474,7 +513,10 @@ export default function EspaisCRUD(props){
                 Cancel·la
             </Button>
             <Button variant="danger" type="button" onClick={esborraEspai}>
-                Esborra
+                Donar de baixa
+            </Button>
+            <Button variant="success" type="button" onClick={altaEspai}>
+                Donar d'alta
             </Button>
             <br />
         </Form>

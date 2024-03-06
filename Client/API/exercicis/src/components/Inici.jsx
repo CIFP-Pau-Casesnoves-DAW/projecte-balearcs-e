@@ -64,22 +64,24 @@ const HomePage = () => {
             <h1 style={{ color: 'Darkgreen', textAlign: 'center', padding: '30px'}}>BaleArts</h1>
             <p style={{ fontStyle: 'italic', textAlign: 'center' , paddingBottom: '30px'}}>Benvingut a la pàgina web de BaleArts</p>        <hr />
             <Carousel prevIcon={<span aria-hidden="true" className="carousel-control-prev-icon" />}
-                    nextIcon={<span aria-hidden="true" className="carousel-control-next-icon" />}>
+                nextIcon={<span aria-hidden="true" className="carousel-control-next-icon" />}>
 
                 {/* Mapegem sobre els espais destacats per a crear un item del Carousel per a cada un. */}
                 {espaisDestacats.map((espai) => (
-                    <Carousel.Item key={espai.id}>
-                        <img
-                            className="d-block w-100"
-                            src={getFotoEspai(espai.id)}
-                            alt={`Imatge de l'espai ${espai.nom}`}
-                            style={{ width: '100%', height: '700px', objectFit: 'cover', borderRadius:'15px' }}                        
-                        />
-                        <Carousel.Caption style={modalStyle}>
-                            <h3>{espai.nom}</h3>
-                            <p>{espai.descripcio}</p>
-                        </Carousel.Caption>
-                    </Carousel.Item>
+                    espai.data_baixa === null ? ( // Afegim una condició per a filtrar espais amb data_baixa no nula
+                        <Carousel.Item key={espai.id}>
+                            <img
+                                className="d-block w-100"
+                                src={getFotoEspai(espai.id)}
+                                alt={`Imatge de l'espai ${espai.nom}`}
+                                style={{ width: '100%', height: '700px', objectFit: 'cover', borderRadius: '15px' }}
+                            />
+                            <Carousel.Caption style={modalStyle}>
+                                <h3>{espai.nom}</h3>
+                                <p>{espai.descripcio}</p>
+                            </Carousel.Caption>
+                        </Carousel.Item>
+                    ) : null
                 ))}
             </Carousel>
         </>

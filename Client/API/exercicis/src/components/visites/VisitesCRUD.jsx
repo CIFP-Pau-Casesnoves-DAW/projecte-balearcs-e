@@ -122,8 +122,63 @@ export default function VisitesCRUD(props) {
         });
     }
 
+    const baixaVisita = () => {
+        fetch(`http://balearc.aurorakachau.com/public/api/visites/delete/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                setError("Error en donar de baixa la visita.");
+            } else {
+                navigate('/visites');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            setError("Error en donar de baixa la visita.");
+        });
+    }
+
+    const altaVisita = () => {
+        fetch(`http://balearc.aurorakachau.com/public/api/visites/${id}`, {    
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                titol,
+                descripcio,
+                inscripcio_previa: parseInt(inscripcioPrevia),
+                n_places: parseInt(nPlaces),
+                data_inici: dataInici,
+                data_fi: dataFi,
+                horari: horari,
+                espai_id: parseInt(espaiId),
+                data_baixa: null
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                setError("Error al donar d'alta la visita la visita.");
+            } else {
+                navigate('/visites');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            setError("Error al donar d'alta la visita la visita.");
+        });
+    }
+
     const EspaiActual = () => {
-        fetch(`http://balearc.aurorakachau.com/public/api/espais/${id}`,{
+fetch(`http://balearc.aurorakachau.com/public/api/espais/${id}`,{
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
@@ -217,18 +272,27 @@ export default function VisitesCRUD(props) {
                     <Form.Label>Espai actual: <strong>{nomEspaiactual}</strong> </Form.Label>
                     <SelectEspais id={espaiId} onChange={(e) => { setEspaiId(e.target.value) }} />
                 </Form.Group>
-                <Button variant="primary" type="button" onClick={guardaVisita}>
+                <Button variant="primary" type="button" onClick={modificaVisita}>
                     {edita ? "Guarda" : "Crea"}
                 </Button>
                 &nbsp;&nbsp;
                 <Button variant="warning" type="button" onClick={() => navigate("/visites")}>
                     Cancel·la
                 </Button>
+                &nbsp;&nbsp;
                 {edita && (
                     <Button variant="danger" type="button" onClick={esborraVisita}>
                         Esborra
                     </Button>
                 )}
+                &nbsp;&nbsp;
+                <Button variant="danger" type="button" onClick={baixaVisita}>
+                    Donar de baixa
+                </Button>
+                &nbsp;&nbsp;
+                <Button variant="success" type="button" onClick={altaVisita}>
+                    Donar d'alta
+                </Button>
             </Form>
             <br />
             {error !== '' && <Alert variant="danger">{error}</Alert>}

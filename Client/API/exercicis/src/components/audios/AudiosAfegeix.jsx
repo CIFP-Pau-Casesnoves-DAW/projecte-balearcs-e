@@ -35,7 +35,6 @@ export default function AudiosAfegeix(props) {
             }
         })
             .then(response => {
-                console.log(response.data);
                 setError('');
                 navigate('/audios');
             })

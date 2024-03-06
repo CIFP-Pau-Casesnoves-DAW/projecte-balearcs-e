@@ -153,14 +153,16 @@ const MesEspais = (props) => {
             <hr />
             <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', margin: '-0.5rem', marginTop: '0.5rem' }}>
                 {elementsActuals.map((espai) => (
-                    <Card key={espai.id} style={{ width: 'calc(25% - 1rem)', margin: '0.5rem' }}>
-                        <Card.Img variant="top" src={getFotoEspai(espai.id)} style={{ width: '100%', height: '200px', objectFit: 'cover' }} />
-                        <Card.Body>
-                            <Card.Title>{espai.nom}</Card.Title>
-                            <Card.Text>{espai.descripcio}</Card.Text>
-                            <Button variant="primary" onClick={() => mostraInformacioEspai(espai)}>Més informació</Button>
-                        </Card.Body>
-                    </Card>
+                    espai.data_baixa == null ? (
+                        <Card key={espai.id} style={{ width: 'calc(25% - 1rem)', margin: '0.5rem' }}>
+                            <Card.Img variant="top" src={getFotoEspai(espai.id)} style={{ width: '100%', height: '200px', objectFit: 'cover' }} />
+                            <Card.Body>
+                                <Card.Title>{espai.nom}</Card.Title>
+                                <Card.Text>{espai.descripcio}</Card.Text>
+                                <Button variant="primary" onClick={() => mostraInformacioEspai(espai)}>Més informació</Button>
+                            </Card.Body>
+                        </Card>
+                    ) : null
                 ))}
                 <Modal show={modalObert} onHide={tancaModal}>
                     {espaiSeleccionat ? (
