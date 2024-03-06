@@ -4,16 +4,19 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\PuntsInteres;
+use App\Models\Espais;
 
 class Audios extends Model
 {
     use HasFactory;
 
     protected $table = 'audios';
-    
+
     protected $fillable = [
-        'url',
-        'punt_interes_id'
+        'audio',
+        'punt_interes_id',
+        'espai_id',
     ];
 
     /**
@@ -24,5 +27,8 @@ class Audios extends Model
         return $this->belongsTo(PuntsInteres::class, 'punt_interes_id');
     }
 
-    
+    public function espai()
+    {
+        return $this->belongsTo(Espais::class, 'espai_id');
+    }
 }

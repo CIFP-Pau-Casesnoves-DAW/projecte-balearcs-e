@@ -60,9 +60,9 @@ class ValoracionsController extends Controller
     {
         try {
             $tuples = Valoracions::all();
-            return response()->json(['status' => 'correcto', 'data' => $tuples], 200);
+            return response()->json(['status' => 'success', 'data' => $tuples], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json(['status' => 'Comentari no trobat'], 400);
+            return response()->json(['status' => 'error', 'data' => $e], 400);
         }
     }
 
@@ -114,7 +114,7 @@ class ValoracionsController extends Controller
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string")
+     *             @OA\Property(property="data", type="string")
      *         )
      *     )
      * )
@@ -129,10 +129,12 @@ class ValoracionsController extends Controller
 
             $reglesValidacio = [
                 'puntuacio' => 'required|integer',
-                'espai_id' => 'required|integer',
+                'espai_id' => 'required|integer|exists:espais,id'
             ];
 
             $missatges = [
+                'filled' => 'El camp :attribute no pot estar buit',
+                'exists' => ':attribute ha de existir',
                 'required' => 'El camp :attribute és obligatori.',
                 'max' => 'El :attribute ha de tenir màxim :max caràcters.'
             ];
@@ -145,11 +147,11 @@ class ValoracionsController extends Controller
 
             $tupla = Valoracions::create($request->all());
 
-            return response()->json(['status' => 'correcte', 'data' => $tupla], 200);
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
         } catch (\Illuminate\Validation\ValidationException $validationException) {
             return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 
@@ -177,7 +179,7 @@ class ValoracionsController extends Controller
      *         description="Valoració trobada correctament",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="status", type="string", example="correcto"),
+     *             @OA\Property(property="status", type="string", example="success"),
      *             @OA\Property(property="data", type="object", ref="#/components/schemas/Valoracio")
      *         )
      *     ),
@@ -196,7 +198,7 @@ class ValoracionsController extends Controller
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string", example="Valoració no trobada")
+     *             @OA\Property(property="data", type="string", example="Valoració no trobada")
      *         )
      *     ),
      *     @OA\Response(
@@ -205,7 +207,7 @@ class ValoracionsController extends Controller
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string")
+     *             @OA\Property(property="data", type="string")
      *         )
      *     )
      * )
@@ -214,9 +216,9 @@ class ValoracionsController extends Controller
     {
         try {
             $tupla = Valoracions::findOrFail($id);
-            return response()->json(['status' => 'correcto', 'data' => $tupla], 200);
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json(['status' => 'No trobat'], 400);
+            return response()->json(['status' => 'error', 'data' => $e], 400);
         }
     }
 
@@ -276,7 +278,7 @@ class ValoracionsController extends Controller
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string", example="Valoració no trobada")
+     *             @OA\Property(property="data", type="string", example="Valoració no trobada")
      *         )
      *     ),
      *     @OA\Response(
@@ -285,7 +287,7 @@ class ValoracionsController extends Controller
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string")
+     *             @OA\Property(property="data", type="string")
      *         )
      *     )
      * )
@@ -296,11 +298,13 @@ class ValoracionsController extends Controller
             $tupla = Valoracions::findOrFail($id);
 
             $reglesValidacio = [
-                'puntuacio' => 'nullable|integer',
-                'espai_id' => 'nullable|integer',
+                'puntuacio' => 'filled|integer',
+                'espai_id' => 'filled|integer|exists:espais,id',
             ];
 
             $missatges = [
+                'filled' => 'El camp :attribute no pot estar buit',
+                'exists' => ':attribute ha de existir',
                 'required' => 'El camp :attribute és obligatori.',
                 'max' => 'El :attribute ha de tenir màxim :max caràcters.'
             ];
@@ -340,7 +344,7 @@ class ValoracionsController extends Controller
         } catch (\Illuminate\Validation\ValidationException $validationException) {
             return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 
@@ -387,7 +391,7 @@ class ValoracionsController extends Controller
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string", example="Valoració no trobada")
+     *             @OA\Property(property="data", type="string", example="Valoració no trobada")
      *         )
      *     ),
      *     @OA\Response(
@@ -396,7 +400,7 @@ class ValoracionsController extends Controller
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string")
+     *             @OA\Property(property="data", type="string")
      *         )
      *     )
      * )
@@ -408,9 +412,9 @@ class ValoracionsController extends Controller
             $valoracio->delete();
             return response()->json(['status' => 'success', 'data' => $valoracio], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json(['status' => 'Error'], 400);
+            return response()->json(['status' => 'error', 'data' => $e], 400);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 }

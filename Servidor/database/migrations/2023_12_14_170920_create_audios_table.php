@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('audios', function (Blueprint $table) {
             $table->id();
-            $table->string('url');
+            $table->longblob('audio');
             $table->foreignId('punt_interes_id')->constrained('punts_interes')->onUpdate('cascade')->onDelete('restrict');
+            $table->foreignId('espai_id')->constrained('espais')->onUpdate('cascade')->onDelete('restrict');
             $table->timestamps();
-            $table->date('data_baixa')->nullable();
         });
     }
 

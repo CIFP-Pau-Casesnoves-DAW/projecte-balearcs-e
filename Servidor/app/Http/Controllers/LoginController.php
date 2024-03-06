@@ -44,13 +44,15 @@ class LoginController extends Controller
     public function login(Request $request)
     {
         $usuari = Usuaris::where('mail', $request->input('mail'))->first();
-        if ($usuari && Hash::check($request->input('contrasenya'), $usuari->contrasenya)) {
+        if ($usuari && Hash::check($request->input('contrasenya'), $usuari->contrasenya) && $usuari->actiu == true) {
             $apikey = base64_encode(Str::random(40));
             $usuari["api_token"] = $apikey;
             $usuari->save();
-            return response()->json(['status' => 'Login ok', 'result' => $apikey]);
+            return response()->json(['status' => 'success', 'data' => $usuari]);
+        } else if ($usuari->actiu == false) {
+            return response()->json(['status' => 'error', 'data' => $usuari, 'info' => 'NO S\'HA VALIDAT EL COMPTE']);
         } else {
-            return response()->json(['status' => 'fail', 'usuari' => $usuari], 401);
+            return response()->json(['status' => 'error', 'data' => $usuari], 401);
         }
     }
 }

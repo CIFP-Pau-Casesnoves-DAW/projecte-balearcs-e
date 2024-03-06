@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('fotos', function (Blueprint $table) {
+        Schema::create('missatges', function (Blueprint $table) {
             $table->id();
-            $table->blob('foto');
-            $table->foreignId('punt_interes_id')->constrained('punts_interes')->onUpdate('cascade')->onDelete('restrict');
-            $table->foreignId('espai_id')->constrained('espais')->onUpdate('cascade')->onDelete('restrict');
-            $table->text('comentari')->nullable();
+            $table->string('nom');
+            $table->string('llinatges');
+            $table->string('mail');
+            $table->text('missatge');
             $table->timestamps();
         });
     }
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('fotos');
+        Schema::dropIfExists('missatges');
     }
 };

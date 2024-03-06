@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\PuntsInteres;
+use App\Models\Espais;
 
 class Fotos extends Model
 {
@@ -12,7 +14,7 @@ class Fotos extends Model
     protected $table = 'fotos';
 
     protected $fillable = [
-        'url',
+        'foto',
         'punt_interes_id',
         'espai_id',
         'comentari',

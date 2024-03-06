@@ -58,9 +58,9 @@ class ComentarisController extends Controller
     {
         try {
             $tuples = Comentaris::all();
-            return response()->json(['status' => 'correcto', 'data' => $tuples], 200);
+            return response()->json(['status' => 'success', 'data' => $tuples], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json(['status' => 'Comentari no trobat'], 400);
+            return response()->json(['status' => 'error', 'data' => $e], 400);
         }
     }
 
@@ -113,15 +113,16 @@ class ComentarisController extends Controller
         try {
             $mdId = $request->md_id;
 
-            $request->merge(['data' => Carbon::now()]);
+            $request->merge(['data' => now()]);
             $request->merge(['usuari_id' => $mdId]);
 
             $reglesValidacio = [
                 'comentari' => 'required|string|max:2000',
-                'espai_id' => 'required|integer',
+                'espai_id' => 'required|integer|exists:espais,id',
             ];
 
             $missatges = [
+                'exists' => ':attribute ha de existir',
                 'required' => 'El camp :attribute és obligatori.',
                 'max' => 'El :attribute ha de tenir màxim :max caràcters.'
             ];
@@ -134,11 +135,11 @@ class ComentarisController extends Controller
 
             $tupla = Comentaris::create($request->all());
 
-            return response()->json(['status' => 'correcte', 'data' => $tupla], 200);
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
         } catch (\Illuminate\Validation\ValidationException $validationException) {
             return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 
@@ -179,9 +180,9 @@ class ComentarisController extends Controller
     {
         try {
             $tupla = Comentaris::findOrFail($id);
-            return response()->json(['status' => 'correcto', 'data' => $tupla], 200);
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json(['status' => 'No trobat'], 400);
+            return response()->json(['status' => 'error', 'data' => $e], 400);
         }
     }
 
@@ -247,11 +248,16 @@ class ComentarisController extends Controller
             $tupla = Comentaris::findOrFail($id);
 
             $reglesValidacio = [
-                'comentari' => 'nullable|string|max:2000',
-                'espai_id' => 'nullable|integer',
+                'comentari' => 'filled|string|max:2000',
+                'espai_id' => 'filled|integer|exists:espais,id',
+                'usuari_id' => 'filled|integer|exists:usuaris,id',
+                'validat' => 'filled|boolean',
             ];
 
             $missatges = [
+                'boolean' => ':attribute ha de ser un valor booleà',
+                'filled' => 'El camp :attribute no pot estar buit',
+                'exists' => ':attribute ha de existir',
                 'required' => 'El camp :attribute és obligatori.',
                 'max' => 'El :attribute ha de tenir màxim :max caràcters.'
             ];
@@ -265,15 +271,13 @@ class ComentarisController extends Controller
             }
 
             if ($request->filled('validat') && $mdRol == 'administrador') {
-                $comentari = Comentaris::find($id);
-                $comentari->validat = $request->input('validat');
-                $comentari->save();
+                $tupla->validat = $request->input('validat');
+                $tupla->save();
             }
 
             if ($request->filled('usuari_id') && $mdRol == 'administrador') {
-                $comentari = Comentaris::find($id);
-                $comentari->usuari_id = $request->input('usuari_id');
-                $comentari->save();
+                $tupla->usuari_id = $request->input('usuari_id');
+                $tupla->save();
             }
 
             $request->merge(['data' => Carbon::now()]);
@@ -283,7 +287,7 @@ class ComentarisController extends Controller
         } catch (\Illuminate\Validation\ValidationException $validationException) {
             return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 
@@ -332,13 +336,13 @@ class ComentarisController extends Controller
     public function destroy($id)
     {
         try {
-            $comentari = Comentaris::findOrFail($id);
-            $comentari->delete();
-            return response()->json(['status' => 'success', 'data' => $comentari], 200);
+            $tupla = Comentaris::findOrFail($id);
+            $tupla->delete();
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json(['status' => 'Error'], 400);
+            return response()->json(['status' => 'error', 'data' => $e], 400);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 }

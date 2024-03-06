@@ -27,7 +27,7 @@ class ServeisIdiomesController extends Controller
      *             @OA\Property(
      *                 property="status",
      *                 type="string",
-     *                 example="correcto"
+     *                 example="success"
      *             ),
      *             @OA\Property(
      *                 property="data",
@@ -61,11 +61,11 @@ class ServeisIdiomesController extends Controller
     {
         try {
             $tuples = ServeisIdiomes::all();
-            return response()->json(['status' => 'correcto', 'data' => $tuples], 200);
+            return response()->json(['status' => 'success', 'data' => $tuples], 200);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json(['status' => 'error', 'data' => $e->errors()], 400);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 
@@ -108,7 +108,7 @@ class ServeisIdiomesController extends Controller
      *         description="Error del servidor",
      *         @OA\JsonContent(
      *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string")
+     *             @OA\Property(property="data", type="string")
      *         )
      *     ),
      * )
@@ -117,11 +117,13 @@ class ServeisIdiomesController extends Controller
     {
         try {
             $reglesValidacio = [
-                'idioma_id' => 'required|int',
-                'servei_id' => 'required|int',
+                'idioma_id' => 'required|int|exists:idiomes,id',
+                'servei_id' => 'required|int|exists:serveis,id',
                 'traduccio' => 'required|string|max:255',
             ];
             $missatges = [
+                'filled' => 'El camp :attribute no pot estar buit',
+                'exists' => ':attribute ha de existir',
                 'required' => 'El camp :attribute és obligatori.',
                 'max' => 'El :attribute ha de tenir màxim :max caràcters.'
             ];
@@ -143,7 +145,7 @@ class ServeisIdiomesController extends Controller
         } catch (\Illuminate\Validation\ValidationException $validationException) {
             return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 
@@ -194,11 +196,11 @@ class ServeisIdiomesController extends Controller
         try {
             $serveiIdioma = ServeisIdiomes::where('idioma_id', $idioma_id)->where('servei_id', $servei_id)->first();
             if (!$serveiIdioma) {
-                return response()->json(['message' => 'Traducció no trobada'], 404);
+                return response()->json(['data' => 'Traducció no trobada'], 404);
             }
             return response()->json(['servei_idioma' => $serveiIdioma], 200);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 
@@ -269,9 +271,11 @@ class ServeisIdiomesController extends Controller
     public function update(Request $request, $idioma_id, $servei_id)
     {
         $reglesValidacio = [
-            'traduccio' => 'nullable|string|max:255',
+            'traduccio' => 'filled|string|max:255',
         ];
         $missatges = [
+            'filled' => 'El camp :attribute no pot estar buit',
+            'exists' => ':attribute ha de existir',
             'required' => 'El camp :attribute és obligatori.',
             'max' => 'El :attribute ha de tenir màxim :max caràcters.'
         ];
@@ -296,7 +300,7 @@ class ServeisIdiomesController extends Controller
             } catch (\Exception $e) {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'La traduccio del servei amb la id ' . $servei_id . 'amb idioma' . $idioma_id . 'no existeix'
+                    'data' => 'La traduccio del servei amb la id ' . $servei_id . 'amb idioma' . $idioma_id . 'no existeix'
                 ], 404);
             }
         }
@@ -355,7 +359,7 @@ class ServeisIdiomesController extends Controller
                 return response()->json(['status' => 'No trobat'], 404);
             }
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 }

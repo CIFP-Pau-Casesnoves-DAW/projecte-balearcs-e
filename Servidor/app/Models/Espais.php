@@ -8,6 +8,12 @@ use App\Models\Arquitectes;
 use App\Models\Usuaris;
 use App\Models\Tipus;
 use App\Models\Municipis;
+use App\Models\Comentaris;
+use App\Models\Valoracions;
+use App\Models\Visites;
+use App\Models\PuntsInteres;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Espais extends Model
 {
@@ -24,7 +30,10 @@ class Espais extends Model
         'web',
         'mail',
         'grau_acc',
-        'any_cons'
+        'any_cons',
+        'arquitecte_id',
+        'tipus_id',
+        'municipi_id'
     ];
 
     /**
@@ -57,5 +66,27 @@ class Espais extends Model
     public function municipi()
     {
         return $this->belongsTo(Municipis::class, 'municipi_id');
+    }
+
+    protected $with = ['comentaris', 'valoracions', 'visites', 'puntsinteres'];
+
+    public function comentaris()
+    {
+        return $this->hasMany(Comentaris::class, 'espai_id', 'id');
+    }
+
+    public function valoracions()
+    {
+        return $this->hasMany(Valoracions::class, 'espai_id', 'id');
+    }
+
+    public function visites()
+    {
+        return $this->hasMany(Visites::class, 'espai_id', 'id');
+    }
+
+    public function puntsinteres()
+    {
+        return $this->hasMany(PuntsInteres::class, 'espai_id', 'id');
     }
 }

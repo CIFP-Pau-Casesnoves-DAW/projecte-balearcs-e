@@ -26,7 +26,7 @@ class VisitesIdiomesController extends Controller
      *         description="Llista d'entitats VisitesIdiomes recuperada amb èxit",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="status", type="string", example="correcto"),
+     *             @OA\Property(property="status", type="string", example="success"),
      *             @OA\Property(
      *                 property="data",
      *                 type="array",
@@ -49,7 +49,7 @@ class VisitesIdiomesController extends Controller
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string")
+     *             @OA\Property(property="data", type="string")
      *         )
      *     )
      * )
@@ -69,11 +69,11 @@ class VisitesIdiomesController extends Controller
     {
         try {
             $tuples = VisitesIdiomes::all();
-            return response()->json(['status' => 'correcto', 'data' => $tuples], 200);
+            return response()->json(['status' => 'success', 'data' => $tuples], 200);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json(['status' => 'error', 'data' => $e->errors()], 400);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 
@@ -119,7 +119,7 @@ class VisitesIdiomesController extends Controller
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string")
+     *             @OA\Property(property="data", type="string")
      *         )
      *     )
      * )
@@ -129,12 +129,14 @@ class VisitesIdiomesController extends Controller
     {
         try {
             $reglesValidacio = [
-                'idioma_id' => 'required|int',
-                'visita_id' => 'required|int',
+                'idioma_id' => 'required|int|exists:idiomes,id',
+                'visita_id' => 'required|int|exists:visites,id',
                 'traduccio' => 'required|string|max:255',
                 'data_baixa' => 'nullable|date',
             ];
             $missatges = [
+                'filled' => 'El camp :attribute no pot estar buit',
+                'exists' => ':attribute ha de existir',
                 'required' => 'El camp :attribute és obligatori.',
                 'max' => 'El :attribute ha de tenir màxim :max caràcters.'
             ];
@@ -150,7 +152,7 @@ class VisitesIdiomesController extends Controller
         } catch (\Illuminate\Validation\ValidationException $validationException) {
             return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 
@@ -191,7 +193,7 @@ class VisitesIdiomesController extends Controller
      *         description="Traducció no trobada",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="message", type="string", example="Traducció no trobada")
+     *             @OA\Property(property="data", type="string", example="Traducció no trobada")
      *         )
      *     ),
      *     @OA\Response(
@@ -200,7 +202,7 @@ class VisitesIdiomesController extends Controller
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string")
+     *             @OA\Property(property="data", type="string")
      *         )
      *     )
      * )
@@ -210,11 +212,11 @@ class VisitesIdiomesController extends Controller
         try {
             $visitaIdioma = VisitesIdiomes::where('idioma_id', $idioma_id)->where('visita_id', $visita_id)->first();
             if (!$visitaIdioma) {
-                return response()->json(['message' => 'Traducció no trobada'], 404);
+                return response()->json(['status' => 'error', 'data' => 'Traducció no trobada'], 404);
             }
-            return response()->json(['visita_idioma' => $visitaIdioma], 200);
+            return response()->json(['status' => 'success', 'data' => $visitaIdioma], 200);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 
@@ -276,7 +278,7 @@ class VisitesIdiomesController extends Controller
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string")
+     *             @OA\Property(property="data", type="string")
      *         )
      *     ),
      *     @OA\Response(
@@ -285,7 +287,7 @@ class VisitesIdiomesController extends Controller
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string")
+     *             @OA\Property(property="data", type="string")
      *         )
      *     )
      * )
@@ -293,19 +295,18 @@ class VisitesIdiomesController extends Controller
     public function update(Request $request, $idioma_id, $visita_id)
     {
         $reglesValidacio = [
-            'traduccio' => 'nullable|string|max:255',
+            'traduccio' => 'filled|string|max:255',
         ];
         $missatges = [
+            'filled' => 'El camp :attribute no pot estar buit',
+            'exists' => ':attribute ha de existir',
             'required' => 'El camp :attribute és obligatori.',
             'max' => 'El :attribute ha de tenir màxim :max caràcters.'
         ];
 
         $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
         if ($validacio->fails()) {
-            return response()->json([
-                'status' => 'error',
-                'errors' => $validacio->errors()
-            ], 400);
+            return response()->json(['status' => 'error', 'data' => $validacio->errors()], 400);
         } else {
             try {
                 $traduccio_visita = VisitesIdiomes::where('idioma_id', $idioma_id)->where('visita_id', $visita_id);
@@ -316,15 +317,9 @@ class VisitesIdiomesController extends Controller
                 }
 
                 $traduccio_visita->update($request->all());
-                return response()->json([
-                    'status' => 'success',
-                    'data' => $traduccio_visita
-                ], 200);
+                return response()->json(['status' => 'success', 'data' => $traduccio_visita], 200);
             } catch (\Exception $e) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'La traduccio de la visita amb la id ' . $visita_id . 'amb idioma' . $idioma_id . 'no existeix'
-                ], 404);
+                return response()->json(['status' => 'error', 'data' => 'La traduccio de la visita amb la id ' . $visita_id . 'amb idioma' . $idioma_id . 'no existeix'], 404);
             }
         }
     }
@@ -376,12 +371,12 @@ class VisitesIdiomesController extends Controller
             $traduccio_visita->delete();
 
             if ($traduccio_visita) {
-                return response()->json(['status' => ' Esborrat correctament'], 200);
+                return response()->json(['status' => 'success', 'data' => 'Esborrat correctament'], 200);
             } else {
-                return response()->json(['status' => 'No trobat'], 404);
+                return response()->json(['status' => 'error', 'data' => 'No trobat'], 404);
             }
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 }

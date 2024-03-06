@@ -46,11 +46,11 @@ class EspaisModalitatsController extends Controller
     {
         try {
             $tuples = EspaisModalitats::all();
-            return response()->json(['status' => 'correcto', 'data' => $tuples], 200);
+            return response()->json(['status' => 'success', 'data' => $tuples], 200);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json(['status' => 'error', 'data' => $e->errors()], 400);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 
@@ -90,7 +90,7 @@ class EspaisModalitatsController extends Controller
      *         description="Error del servidor",
      *         @OA\JsonContent(
      *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string")
+     *             @OA\Property(property="data", type="string")
      *         )
      *     )
      * )
@@ -100,10 +100,11 @@ class EspaisModalitatsController extends Controller
     {
         try {
             $reglesValidacio = [
-                'modalitat_id' => 'required|int',
-                'espai_id' => 'required|int',
+                'modalitat_id' => 'required|int|exists:modalitats,id',
+                'espai_id' => 'required|int|exists:espais,id',
             ];
             $missatges = [
+                'exists' => ':attribute ha de existir',
                 'required' => 'El camp :attribute és obligatori.',
                 'max' => 'El :attribute ha de tenir màxim :max caràcters.'
             ];
@@ -125,7 +126,7 @@ class EspaisModalitatsController extends Controller
         } catch (\Illuminate\Validation\ValidationException $validationException) {
             return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 
@@ -166,11 +167,11 @@ class EspaisModalitatsController extends Controller
         try {
             $espaimodalitat = EspaisModalitats::where('espai_id', $espai_id)->where('modalitat_id', $modalitat_id)->first();
             if (!$espaimodalitat) {
-                return response()->json(['message' => 'No trobat'], 404);
+                return response()->json(['status' => 'error', 'data' => 'No trobat'], 404);
             }
-            return response()->json(['modalitat_idioma' => $espaimodalitat], 200);
+            return response()->json(['status' => 'success', 'data' => $espaimodalitat], 200);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 
@@ -228,18 +229,25 @@ class EspaisModalitatsController extends Controller
     {
         try {
             $reglesValidacio = [
-                'modalitat_id' => 'nullable|int',
-                'espai_id' => 'nullable|int',
+                'modalitat_id' => 'filled|int|exists:modalitats,id',
+                'espai_id' => 'filles|int|exists:espais,id',
             ];
 
-            $validacio = Validator::make($request->all(), $reglesValidacio);
+            $missatges = [
+                'exists' => ':attribute ha de existir',
+                'required' => 'El camp :attribute és obligatori.',
+                'max' => 'El :attribute ha de tenir màxim :max caràcters.',
+                'filled' => 'El camp :attribute no pot estar buit',
+            ];
+
+            $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
             if ($validacio->fails()) {
-                return response()->json(['errors' => $validacio->errors()], 400);
+                return response()->json(['status' => 'error', 'data' => $validacio->errors()], 400);
             }
 
             $espaimodalitat = EspaisModalitats::where('espai_id', $espai_id)->where('modalitat_id', $modalitat_id)->first();
             if (!$espaimodalitat) {
-                return response()->json(['message' => 'No trobat'], 404);
+                return response()->json(['status' => 'error', 'data' => 'No trobat'], 404);
             }
 
             if (!empty($request->data_baixa)) {
@@ -249,9 +257,9 @@ class EspaisModalitatsController extends Controller
             }
 
             $espaimodalitat->update($request->all());
-            return response()->json(['modalitat_idioma' => $espaimodalitat], 200);
+            return response()->json(['status' => 'success', 'data' => $espaimodalitat], 200);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 
@@ -284,14 +292,14 @@ class EspaisModalitatsController extends Controller
      *         response=200,
      *         description="EspaiModalitat eliminat correctament",
      *         @OA\JsonContent(
-     *            @OA\Property(property="message", type="string", example="Eliminat correctament")
+     *            @OA\Property(property="data", type="string", example="Eliminat correctament")
      *         )
      *     ),
      *     @OA\Response(
      *         response=404,
      *         description="No trobat",
      *         @OA\JsonContent(
-     *            @OA\Property(property="message", type="string", example="No trobat")
+     *            @OA\Property(property="data", type="string", example="No trobat")
      *         )
      *     ),
      *     @OA\Response(
@@ -299,7 +307,7 @@ class EspaisModalitatsController extends Controller
      *         description="Error del servidor",
      *         @OA\JsonContent(
      *            @OA\Property(property="status", type="string", example="error"),
-     *            @OA\Property(property="message", type="string", example="Missatge d'error")
+     *            @OA\Property(property="data", type="string", example="Missatge d'error")
      *         )
      *     )
      * )
@@ -309,13 +317,13 @@ class EspaisModalitatsController extends Controller
         try {
             $espaimodalitat = EspaisModalitats::where('espai_id', $espai_id)->where('modalitat_id', $modalitat_id)->first();
             if (!$espaimodalitat) {
-                return response()->json(['message' => 'No trobat'], 404);
+                return response()->json(['status' => 'error', 'data' => 'No trobat'], 404);
             }
 
             $espaimodalitat->delete();
-            return response()->json(['message' => 'Eliminat correctament'], 200);
+            return response()->json(['status' => 'success', 'data' => 'Eliminat correctament'], 200);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 }

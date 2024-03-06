@@ -32,7 +32,7 @@ class VisitesPuntsInteresController extends Controller
      *         description="Llista d'associacions entre visites i punts d'interès recuperada amb èxit",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="status", type="string", example="correcto"),
+     *             @OA\Property(property="status", type="string", example="success"),
      *             @OA\Property(
      *                 property="data",
      *                 type="array",
@@ -55,7 +55,7 @@ class VisitesPuntsInteresController extends Controller
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string")
+     *             @OA\Property(property="data", type="string")
      *         )
      *     )
      * )
@@ -76,11 +76,11 @@ class VisitesPuntsInteresController extends Controller
     {
         try {
             $tuples = VisitesPuntsInteres::all();
-            return response()->json(['status' => 'correcto', 'data' => $tuples], 200);
+            return response()->json(['status' => 'success', 'data' => $tuples], 200);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json(['status' => 'error', 'data' => $e->errors()], 400);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 
@@ -130,7 +130,7 @@ class VisitesPuntsInteresController extends Controller
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string")
+     *             @OA\Property(property="data", type="string")
      *         )
      *     )
      * )
@@ -141,11 +141,13 @@ class VisitesPuntsInteresController extends Controller
     {
         try {
             $reglesValidacio = [
-                'punt_interes_id' => 'required|int',
-                'visita_id' => 'required|int',
+                'punt_interes_id' => 'required|int|exists:punts_interes,id',
+                'visita_id' => 'required|int|exists:visites,id',
                 'ordre' => 'required|int',
             ];
             $missatges = [
+                'filled' => 'El camp :attribute no pot estar buit',
+                'exists' => ':attribute ha de existir',
                 'required' => 'El camp :attribute és obligatori.',
                 'max' => 'El :attribute ha de tenir màxim :max caràcters.'
             ];
@@ -161,7 +163,7 @@ class VisitesPuntsInteresController extends Controller
         } catch (\Illuminate\Validation\ValidationException $validationException) {
             return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 
@@ -209,7 +211,7 @@ class VisitesPuntsInteresController extends Controller
      *         description="Associació no trobada",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="message", type="string", example="Traducció no trobada")
+     *             @OA\Property(property="data", type="string", example="Traducció no trobada")
      *         )
      *     ),
      *     @OA\Response(
@@ -218,7 +220,7 @@ class VisitesPuntsInteresController extends Controller
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string")
+     *             @OA\Property(property="data", type="string")
      *         )
      *     )
      * )
@@ -229,11 +231,11 @@ class VisitesPuntsInteresController extends Controller
         try {
             $visitapuntinteres = VisitesPuntsInteres::where('visita_id', $visita_id)->where('punt_interes_id', $punt_interes_id)->first();
             if (!$visitapuntinteres) {
-                return response()->json(['message' => 'No trobat'], 404);
+                return response()->json(['status' => 'error', 'data' => 'No trobat'], 404);
             }
-            return response()->json(['punt_interes_idioma' => $visitapuntinteres], 200);
+            return response()->json(['status' => 'success', 'data' => $visitapuntinteres], 200);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 
@@ -290,7 +292,7 @@ class VisitesPuntsInteresController extends Controller
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string")
+     *             @OA\Property(property="data", type="string")
      *         )
      *     ),
      *     @OA\Response(
@@ -299,7 +301,7 @@ class VisitesPuntsInteresController extends Controller
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string")
+     *             @OA\Property(property="data", type="string")
      *         )
      *     )
      * )
@@ -308,21 +310,20 @@ class VisitesPuntsInteresController extends Controller
     public function update(Request $request, $visita_id, $punt_interes_id)
     {
         $reglesValidacio = [
-            'punt_interes_id' => 'nullable|int',
-            'visita_id' => 'nullable|int',
-            'ordre' => 'nullable|int',
+            'punt_interes_id' => 'filled|int|exists:punts_interes,id',
+            'visita_id' => 'filled|int|exists:visites,id',
+            'ordre' => 'filled|int',
         ];
         $missatges = [
+            'filled' => 'El camp :attribute no pot estar buit',
+            'exists' => ':attribute ha de existir',
             'required' => 'El camp :attribute és obligatori.',
             'max' => 'El :attribute ha de tenir màxim :max caràcters.'
         ];
 
         $validacio = Validator::make($request->all(), $reglesValidacio, $missatges);
         if ($validacio->fails()) {
-            return response()->json([
-                'status' => 'error',
-                'errors' => $validacio->errors()
-            ], 400);
+            return response()->json(['status' => 'error', 'data' => $validacio->errors()], 400);
         } else {
             try {
                 $visita_punt_interes = VisitesPuntsInteres::where('punt_interes_id', $punt_interes_id)->where('visita_id', $visita_id);
@@ -334,8 +335,7 @@ class VisitesPuntsInteresController extends Controller
                 ], 200);
             } catch (\Exception $e) {
                 return response()->json([
-                    'status' => 'error',
-                    'message' => 'La traduccio de la visita amb la id ' . $visita_id . 'amb punt interes ' . $punt_interes_id . 'no existeix'
+                    'status' => 'error', 'data' => 'La traduccio de la visita amb la id ' . $visita_id . 'amb punt interes ' . $punt_interes_id . 'no existeix'
                 ], 404);
             }
         }
@@ -395,7 +395,7 @@ class VisitesPuntsInteresController extends Controller
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string")
+     *             @OA\Property(property="data", type="string")
      *         )
      *     ),
      *     security={{"apiAuth":{}}}
@@ -408,12 +408,12 @@ class VisitesPuntsInteresController extends Controller
             $punt_interes_visita->delete();
 
             if ($punt_interes_visita) {
-                return response()->json(['status' => ' Esborrat correctament'], 200);
+                return response()->json(['status' => 'success', 'data' => 'Esborrat correctament'], 200);
             } else {
-                return response()->json(['status' => 'No trobat'], 404);
+                return response()->json(['status' => 'error', 'data' => 'No trobat'], 404);
             }
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 }

@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\URL;
 
 /**
  * @OA\Tag(
@@ -39,7 +41,7 @@ class UsuarisController extends Controller
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="data", type="object", example={"field_name": {"Error message"}})
+     *             @OA\Property(property="data", type="object", example={"field_name": {"Error data"}})
      *         )
      *     ),
      *     @OA\Response(
@@ -48,7 +50,7 @@ class UsuarisController extends Controller
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string", example="Missatge d'error intern del servidor")
+     *             @OA\Property(property="data", type="string", example="Missatge d'error intern del servidor")
      *         )
      *     )
      * )
@@ -73,11 +75,11 @@ class UsuarisController extends Controller
     {
         try {
             $tuples = Usuaris::all();
-            return response()->json(['status' => 'correcto', 'data' => $tuples], 200);
+            return response()->json(['status' => 'success', 'data' => $tuples], 200);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json(['status' => 'error', 'data' => $e->errors()], 400);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 
@@ -122,7 +124,7 @@ class UsuarisController extends Controller
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string")
+     *             @OA\Property(property="data", type="string")
      *         )
      *     )
      * )
@@ -130,11 +132,6 @@ class UsuarisController extends Controller
     public function store(Request $request)
     {
         try {
-            $defaultValues = [
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ];
-
             $reglesValidacio = [
                 'nom' => 'required|string|max:255',
                 'llinatges' => 'required|string|max:255',
@@ -142,8 +139,6 @@ class UsuarisController extends Controller
                 'mail' => 'required|email|unique:usuaris,mail|max:255',
                 'contrasenya' => 'required|string|min:6',
             ];
-
-            $request->merge($defaultValues);
 
             $missatges = [
                 'required' => 'El camp :attribute és obligatori.',
@@ -164,11 +159,11 @@ class UsuarisController extends Controller
             $request->merge(['contrasenya' => $contrasenya]);
             $tupla = Usuaris::create($request->all());
 
-            return response()->json(['status' => 'correcte', 'data' => $tupla], 200);
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
         } catch (\Illuminate\Validation\ValidationException $validationException) {
             return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 
@@ -189,7 +184,7 @@ class UsuarisController extends Controller
      *         description="Dades de l'usuari",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="status", type="string", example="correcto"),
+     *             @OA\Property(property="status", type="string", example="success"),
      *             @OA\Property(property="data", type="object", ref="#/components/schemas/Usuari")
      *         )
      *     ),
@@ -207,7 +202,7 @@ class UsuarisController extends Controller
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string")
+     *             @OA\Property(property="data", type="string")
      *         )
      *     )
      * )
@@ -216,13 +211,26 @@ class UsuarisController extends Controller
     {
         try {
             $tupla = Usuaris::findOrFail($id);
-            return response()->json(['status' => 'correcto', 'data' => $tupla], 200);
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json(['status' => 'Usuari no trobat'], 400);
+            return response()->json(['status' => 'error', 'data' => $e], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
+        }
+    }
+
+    public function showToken($token)
+    {
+        try {
+            $tupla = Usuaris::where('api_token', $token)->firstOrFail();
+            return response()->json(['status' => 'success', 'data' => $tupla], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['status' => 'error', 'message' => 'Token not found'], 404);
         } catch (\Exception $exception) {
             return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
         }
     }
+
 
     /**
      * @OA\Put(
@@ -273,7 +281,7 @@ class UsuarisController extends Controller
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string")
+     *             @OA\Property(property="data", type="string")
      *         )
      *     )
      * )
@@ -284,15 +292,18 @@ class UsuarisController extends Controller
             $tupla = Usuaris::findOrFail($id);
 
             $reglesValidacio = [
-                'nom' => 'nullable|string|max:255',
-                'llinatges' => 'nullable|string|max:255',
-                'dni' => 'nullable|string|max:20',
-                'mail' => 'nullable|email|unique:usuaris,mail|max:255',
-                'contrasenya' => 'nullable|string|min:6',
-                'rol' => 'nullable|in:usuari,administrador,gestor',
+                'nom' => 'filled|string|max:255',
+                'llinatges' => 'filled|string|max:255',
+                'dni' => 'filled|string|max:20',
+                'mail' => 'filled|email|unique:usuaris,mail,' . $id . '|max:255',
+                'contrasenya' => 'filled|string|min:6',
+                'rol' => 'filled|in:usuari,administrador,gestor',
+                'actiu' => 'filled|boolean'
             ];
 
             $missatges = [
+                'filled' => 'El camp :attribute no pot estar buit',
+                'exists' => ':attribute ha de existir',
                 'required' => 'El camp :attribute és obligatori.',
                 'unique' => 'El :attribute ja està en ús.',
                 'email' => 'El :attribute ha de ser una adreça de correu electrònic vàlida.',
@@ -313,16 +324,20 @@ class UsuarisController extends Controller
             }
 
             if ($request->filled('rol') && $mdRol == 'administrador') {
-                $usuari = Usuaris::find($id);
-                $usuari->rol = $request->input('rol');
-                $usuari->save();
+                $tupla->rol = $request->input('rol');
+                $tupla->save();
+            }
+
+            if ($request->filled('actiu') && $mdRol == 'administrador') {
+                $tupla->actiu = $request->input('actiu');
+                $tupla->save();
             }
             $tupla->update($request->all());
             return response()->json(['status' => 'success', 'data' => $tupla], 200);
         } catch (\Illuminate\Validation\ValidationException $validationException) {
             return response()->json(['status' => 'error', 'data' => $validationException->errors()], 400);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 
@@ -362,7 +377,7 @@ class UsuarisController extends Controller
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string")
+     *             @OA\Property(property="data", type="string")
      *         )
      *     )
      * )
@@ -374,9 +389,9 @@ class UsuarisController extends Controller
             $usuari->delete();
             return response()->json(['status' => 'success', 'data' => $usuari], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json(['status' => 'Error'], 400);
+            return response()->json(['status' => 'error', 'data' => $e], 400);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 
@@ -416,7 +431,7 @@ class UsuarisController extends Controller
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string")
+     *             @OA\Property(property="data", type="string")
      *         )
      *     )
      * )
@@ -430,9 +445,43 @@ class UsuarisController extends Controller
             $usuari->save();
             return response()->json(['status' => 'success', 'data' => $usuari], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json(['status' => 'Error'], 400);
+            return response()->json(['status' => 'error', 'data' => $e], 400);
         } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()], 500);
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
+        }
+    }
+
+    public function registre($id)
+    {
+        try {
+            $usuari = Usuaris::findOrFail($id);
+            $url = URL::to('/api/usuaris/confirma/' . $id); // genera la url
+            $data = array('nom' => $usuari->nom, 'link' => $url); // dades a enviar
+            Mail::send('mails.confirmacio', $data, function ($message) use ($usuari) {
+                $message->to($usuari->mail, $usuari->nom)->subject('Confirmació registre.')
+                    ->cc(['missatgeria@balearcgrupe.com']);
+            });
+            return response()->json(['status' => 'success', 'data' => $usuari], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['status' => 'error', 'data' => $e], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
+        }
+    }
+
+    public function confirma($id)
+    {
+        try {
+            $usuari = Usuaris::findOrFail($id);
+            $usuari->actiu = true;
+            $mail = $usuari->mail;
+            $nom = $usuari->nom;
+            $usuari->save();
+            return view('mails.usuari_confirmat', ['nom' => $nom, 'mail' => $mail]);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['status' => 'error', 'data' => $e], 400);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 'error', 'data' => $exception->getMessage()], 500);
         }
     }
 }
