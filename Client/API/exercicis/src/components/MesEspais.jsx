@@ -52,7 +52,7 @@ const MesEspais = (props) => {
                 }
                 return { ...espai, valoracioMitjana };
             });
-            
+
 
             setEspais(espaisAmbValoracions);
 
@@ -88,13 +88,13 @@ const MesEspais = (props) => {
                 nomMunicipi: municipiRes.data.data.nom || "No disponible",
                 nomTipus: tipusRes.data.data.nom_tipus || "No disponible"
             };
-            
+
         } catch (error) {
             console.error('Error al obtenir informació addicional', error);
             return null; // Canviat per retornar null en cas d'error
         }
     };
-    
+
 
     const getFotoEspai = (espaiId) => {
         const foto = fotos.find(f => f.espai_id === espaiId);
@@ -113,14 +113,12 @@ const MesEspais = (props) => {
             console.error('No es pot obtenir la informació addicional de l\'espai');
         }
     };
-    
+
 
     const tancaModal = () => {
         setModalObert(false);
         setEspaiSeleccionat(null);
-    };    
-
-
+    };
 
     const indexUltimElement = paginaActual * elementsPerPagina;
     const indexPrimerElement = indexUltimElement - elementsPerPagina;
@@ -139,28 +137,29 @@ const MesEspais = (props) => {
         }
         return <Pagination>{items}</Pagination>;
     };
-    
 
     return (
         <>
             <hr />
             <h1 className="mb-3" style={{ textAlign: 'center', padding: '20px' }}>Espais</h1>
             <hr />
-              {/* BarraCerca */}
+            {/* BarraCerca */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <BarraCerca />
-            </div> 
+                <BarraCerca />
+            </div>
             <hr />
             <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', margin: '-0.5rem', marginTop: '0.5rem' }}>
                 {elementsActuals.map((espai) => (
-                    <Card key={espai.id} style={{ width: 'calc(25% - 1rem)', margin: '0.5rem' }}>
-                        <Card.Img variant="top" src={getFotoEspai(espai.id)} style={{ width: '100%', height: '200px', objectFit: 'cover' }} />
-                        <Card.Body>
-                            <Card.Title>{espai.nom}</Card.Title>
-                            <Card.Text>{espai.descripcio}</Card.Text>
-                            <Button variant="primary" onClick={() => mostraInformacioEspai(espai)}>Més informació</Button>
-                        </Card.Body>
-                    </Card>
+                    espai.data_baixa == null ? (
+                        <Card key={espai.id} style={{ width: 'calc(25% - 1rem)', margin: '0.5rem' }}>
+                            <Card.Img variant="top" src={getFotoEspai(espai.id)} style={{ width: '100%', height: '200px', objectFit: 'cover' }} />
+                            <Card.Body>
+                                <Card.Title>{espai.nom}</Card.Title>
+                                <Card.Text>{espai.descripcio}</Card.Text>
+                                <Button variant="primary" onClick={() => mostraInformacioEspai(espai)}>Més informació</Button>
+                            </Card.Body>
+                        </Card>
+                    ) : null
                 ))}
                 <Modal show={modalObert} onHide={tancaModal}>
                     {espaiSeleccionat ? (
@@ -182,9 +181,11 @@ const MesEspais = (props) => {
                                 <p><strong>Comentaris:</strong></p>
                                 <ul>
                                     {espaiSeleccionat.comentaris.map((comentariObj, index) => (
-                                        <li key={index}>
-                                            {comentariObj.comentari} - {new Date(comentariObj.data).toLocaleDateString()}
-                                        </li>
+                                        comentariObj.validat ? (
+                                            <li key={index}>
+                                                {comentariObj.comentari} - {new Date(comentariObj.data).toLocaleDateString()}
+                                            </li>
+                                        ) : null
                                     ))}
                                 </ul>
                             </Modal.Body>
@@ -208,4 +209,3 @@ const MesEspais = (props) => {
 }
 
 export default MesEspais;
-    

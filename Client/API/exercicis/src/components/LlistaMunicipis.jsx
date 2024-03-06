@@ -34,32 +34,6 @@ const LlistaMunicipis = ({ api_token }) => {
     return <div>Carregant dades...</div>;
   }
 
-
-
-
-        // Segona crida a la API per obtenir els espais, que es realitza després de la primera
-    //     const respostaEspais = await fetch('http://balearc.aurorakachau.com/public/api/espais', headersConfig);
-    //     if (!respostaEspais.ok) throw new Error('Error en la resposta de la API d\'espais');
-    //     const dadesEspais = await respostaEspais.json();
-    //     setEspais(dadesEspais.data);
-    //   } catch (error) {
-    //     console.error('Error en obtenir les dades:', error);
-    //   } finally {
-    //     setCarregant(false);
-    //   }
-    // }
-
-       
-
-
-
-  // Funció per combinar la informació d'espais i municipis
-  // const informacioCombinada = municipis.map(municipi => ({
-  //   ...municipi,
-    //espais: espais.filter(espai => espai.municipi_id === municipi.id),
-  //   municipi_id: municipi.id.filter(espai => espai.municipi_id === municipi.id)
-  // }));
-
   if (carregant) {
     return <div>Carregant dades...</div>;
   }
