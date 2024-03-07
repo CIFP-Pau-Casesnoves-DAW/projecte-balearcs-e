@@ -352,3 +352,35 @@ div#puntsinteres {
 }
 
 
+/* Estils imatge capçalera i text */
+#imatgeheader{
+    dispay:block;
+}
+
+#textheader{
+    display: none;
+}
+
+@media screen and (max-width: 600px) {
+    #imatgeheader{
+        display: none;
+    }
+
+    #textheader{
+        display: block;
+        color: white;
+        text-align: center;
+        margin: auto; 
+    }
+
+    button.navbar-toggler.collapsed {
+        margin: 20px;
+        position: absolute;
+    }
+}
+
+@media screen and (max-width: 600px){}
+.button.navbar-toggler.collapsed {
+    margin: 20px;
+    position: absolute;
+}
