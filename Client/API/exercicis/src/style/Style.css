@@ -384,3 +384,35 @@ div#puntsinteres {
     justify-content: center;
     margin-top: 1rem;
 }
+
+/* Estils imatge capçalera i text */
+#imatgeheader{
+    display:block;
+}
+
+#textheader{
+    display: none;
+}
+
+@media screen and (max-width: 600px) {
+    #imatgeheader{
+        display: none;
+    }
+
+    #textheader{
+        display: block;
+        color: white;
+        text-align: center;
+        margin: auto; 
+    }
+
+    button.navbar-toggler {
+        margin: 20px;
+        position: absolute;
+    }
+}
+
+.button.navbar-toggler {
+    margin: 20px;
+    position: absolute;
+}

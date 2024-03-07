@@ -20,15 +20,22 @@ export default function Menu({ api_token, usuari_nom, usuari_rol }) {
     return (
         <>
             <Navbar bg="dark" className="color-nav" variant="dark" expand="sm" sticky="top">
-                <Navbar.Brand onClick={toggleMenu}></Navbar.Brand>
+                {/* Posam el logo aquí perque es vegi sempre */}
+                <Link className='nav-link' to="/inici" style={{paddingLeft:'20px'}} id='imatgeheader'>
+                    <img style={{width: '80px', height: '80px', borderRadius: '30px', border: '2px solid black' }}
+                        src={logo} alt="Foto del header"
+                    />
+                </Link>
+                <h2 id='textheader'>BALEARTS</h2>
+                <Navbar.Brand onClick={toggleMenu} ></Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                <Navbar.Collapse id="basic-navbar-nav" className={showMenu ? "show" : ""}>
+                <Navbar.Collapse id="basic-navbar-nav" className={showMenu ? "show" : ""} >
                     <Nav className="mr-auto align-items-center">
-                        <Link className='nav-link' to="/inici">
+                        {/* <Link className='nav-link' to="/inici">
                             <img style={{ width: '80px', height: '80px', borderRadius: '30px', border: '2px solid black' }}
                                 src={logo} alt="Foto del header"
                             />
-                        </Link>
+                        </Link> */}
                         <Link className="nav-link" to="/inici">Inici</Link>
                         <Link className="nav-link" to="/ajuda">Ajuda</Link>
                         <NavDropdown title="Espais" id="basic-nav-dropdown">
