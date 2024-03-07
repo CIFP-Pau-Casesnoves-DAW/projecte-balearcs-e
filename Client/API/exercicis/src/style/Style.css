@@ -373,14 +373,13 @@ div#puntsinteres {
         margin: auto; 
     }
 
-    button.navbar-toggler.collapsed {
+    button.navbar-toggler {
         margin: 20px;
         position: absolute;
     }
 }
 
-@media screen and (max-width: 600px){}
-.button.navbar-toggler.collapsed {
+.button.navbar-toggler {
     margin: 20px;
     position: absolute;
 }
